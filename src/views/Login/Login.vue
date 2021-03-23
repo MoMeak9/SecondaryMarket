@@ -1,52 +1,78 @@
 <template>
-    <div id="login">
-      <div class="header">
-        欢迎登入福大跳蚤市场
+  <div id="login">
+    <div class="header">
+      欢迎登入福大跳蚤市场
+    </div>
+    <div class="content">
+      <div class="login-banner-wrap">
+        <vue-particles
+            color="#dedede"
+            :particleOpacity="0.7"
+            :particlesNumber="80"
+            shapeType="circle"
+            :particleSize="4"
+            linesColor="#dedede"
+            :linesWidth="1"
+            :lineLinked="true"
+            :lineOpacity="0.4"
+            :linesDistance="150"
+            :moveSpeed="3"
+            :hoverEffect="true"
+            hoverMode="grab"
+            :clickEffect="true"
+            clickMode="push"
+        >
+        </vue-particles>
+        <!--          <img src="~@/assets/image/68128465.png">-->
       </div>
-      <div class="content">
-        <div class="login-banner-wrap">
-<!--          <img src="~@/assets/image/68128465.png">-->
-        </div>
-        <div class="login-form">
-          <div class="form-wrap">
-            <div class="login-switch-tab">
-              <a href="#"  v-for="(item, index) in menuTab" :key="item.id" :class="{'item-active':item.isActive}" @click="toggleMenu(item, index)">{{ item.txt }}</a>
-            </div>
-            <el-form :model="loginForm" v-show="menuTab[0].isActive" status-icon :rules="rules" ref="loginForm">
-              <el-form-item prop="email" props="email">
-                <el-input v-model="loginForm.email" placeholder="用户邮箱" prefix-icon="el-icon-user-solid"></el-input>
-              </el-form-item>
-              <el-form-item prop="password" props="password">
-                <el-input type="password" v-model="loginForm.password" placeholder="请输入登录密码" prefix-icon="el-icon-lock"></el-input>
-              </el-form-item>
-              <el-button type="danger" @click="login()">登录</el-button>
-            </el-form>
-            <el-form :model="registerForm" status-icon :rules="rules" ref="registerForm" v-show="menuTab[1].isActive">
-              <el-form-item prop="name">
-                <el-input v-model="registerForm.name" placeholder="用户名称" prefix-icon="el-icon-user"></el-input>
-              </el-form-item>
-              <el-form-item prop="email">
-                <el-input v-model="registerForm.email" placeholder="用户邮箱" prefix-icon="el-icon-user-solid"></el-input>
-              </el-form-item>
-              <el-form-item prop="password">
-                <el-input type="password" v-model="registerForm.password" placeholder="请输入登录密码" prefix-icon="el-icon-lock"></el-input>
-              </el-form-item>
-              <el-form-item prop="checkPassword">
-                <el-input type="password" v-model="registerForm.checkPassword" placeholder="请再次输入密码" prefix-icon="el-icon-lock"></el-input>
-              </el-form-item>
-              <el-button type="danger" @click="register()">注册</el-button>
-            </el-form>
+      <div class="login-form">
+        <div class="form-wrap">
+          <div class="login-switch-tab">
+            <a href="#" v-for="(item, index) in menuTab" :key="item.id" :class="{'item-active':item.isActive}"
+               @click="toggleMenu(item, index)">{{ item.txt }}</a>
+          </div>
+          <el-form :model="loginForm" v-show="menuTab[0].isActive" status-icon :rules="rules" ref="loginForm">
+            <el-form-item prop="email" props="email">
+              <el-input v-model="loginForm.email" placeholder="用户邮箱" prefix-icon="el-icon-user-solid"></el-input>
+            </el-form-item>
+            <el-form-item prop="password" props="password">
+              <el-input type="password" v-model="loginForm.password" placeholder="请输入登录密码"
+                        prefix-icon="el-icon-lock"></el-input>
+            </el-form-item>
             <div class="form-bottom">
               <a href="#">忘记密码</a>
             </div>
-          </div>
+            <el-button type="danger" @click="login()">登录</el-button>
+          </el-form>
+          <el-form :model="registerForm" status-icon :rules="rules" ref="registerForm" v-show="menuTab[1].isActive">
+            <el-form-item prop="name">
+              <el-input v-model="registerForm.name" placeholder="用户名称" prefix-icon="el-icon-user"></el-input>
+            </el-form-item>
+            <el-form-item prop="email">
+              <el-input v-model="registerForm.email" placeholder="用户邮箱" prefix-icon="el-icon-message"></el-input>
+            </el-form-item>
+            <el-button type="primary" icon="el-icon-search">发送验证码</el-button>
+            <el-form-item prop="emailCode">
+              <el-input v-model="registerForm.emailCode" placeholder="验证码" prefix-icon="el-icon-chat-dot-square"></el-input>
+            </el-form-item>
+            <el-form-item prop="password">
+              <el-input type="password" v-model="registerForm.password" placeholder="请输入登录密码"
+                        prefix-icon="el-icon-lock"></el-input>
+            </el-form-item>
+            <el-form-item prop="checkPassword">
+              <el-input type="password" v-model="registerForm.checkPassword" placeholder="请再次输入密码"
+                        prefix-icon="el-icon-lock"></el-input>
+            </el-form-item>
+            <el-button type="danger" @click="register()">注册</el-button>
+          </el-form>
         </div>
       </div>
     </div>
+  </div>
 </template>
 <script>
 export default {
-  data () {
+  data() {
     var validatePass = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入密码'))
@@ -92,37 +118,38 @@ export default {
         name: '',
         email: '',
         password: '',
-        checkPassword: ''
+        checkPassword: '',
+        emailCode:''
       },
       menuTab: [
-        { txt: '登录', isActive: true },
-        { txt: '注册', isActive: false }
+        {txt: '登录', isActive: true},
+        {txt: '注册', isActive: false}
       ],
       rules: {
         password: [
-          { validator: validatePass, trigger: 'blur' }
+          {validator: validatePass, trigger: 'blur'}
         ],
         checkPassword: [
-          { validator: validatePass2, trigger: 'blur' }
+          {validator: validatePass2, trigger: 'blur'}
         ],
         name: [
-          { validator: validatePass4, trigger: 'blur' }
+          {validator: validatePass4, trigger: 'blur'}
         ],
         email: [
-          { validator: validatePass3, trigger: 'blur' }
-        //  自定义验证器vue-validator
+          {validator: validatePass3, trigger: 'blur'}
+          //  自定义验证器vue-validator
         ]
       }
     }
   },
   methods: {
-    toggleMenu (item, index) {
+    toggleMenu(item, index) {
       if (item.isActive !== true) {
         this.menuTab[1 - index].isActive = item.isActive
         item.isActive = !item.isActive
       }
     },
-    login () {
+    login() {
       this.$axios.post('/apis/user', this.loginForm).then((resp) => {
         const data = resp.data
         if (data.code === 200) {
@@ -138,7 +165,7 @@ export default {
         }
       })
     },
-    register () {
+    register() {
       this.$axios.post('/apis/users', this.registerForm).then((resp) => {
         const data = resp.data
         if (data.code === 200) {
@@ -167,13 +194,16 @@ export default {
   width: 100%;
   padding: 22px 0;
   align-items: center;
+
   .header {
     margin: 0 18vw;
     height: 44px;
+
     .icon-B {
       font-size: 35px;
     }
   }
+
   .content {
     background-color: rgb(198, 235, 253);
     margin-top: 25px;
@@ -189,8 +219,8 @@ export default {
 
     .login-form {
       width: 350px;
-      height: 300px;
       display: flex;
+      padding-bottom: 20px;
       position: absolute;
       top: 91px;
       right: 425px;
@@ -209,7 +239,7 @@ export default {
           margin-top: 20px;
 
           .item-active {
-            border-bottom:2px solid #000000;
+            border-bottom: 2px solid #000000;
           }
 
           a {
@@ -229,6 +259,7 @@ export default {
         .form-bottom {
           text-align: right;
           margin-top: 10px;
+
           a {
             font-size: 12px;
             color: #6c6c6c;
