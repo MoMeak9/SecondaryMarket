@@ -1,7 +1,7 @@
 <template>
   <div id="login">
     <div class="header">
-      欢迎登入福大跳蚤市场
+      <a href="/"><i class="iconfont icon-B"></i></a>
     </div>
     <div class="content">
       <div class="login-banner-wrap">
@@ -37,7 +37,7 @@
             </el-form-item>
             <el-form-item prop="password" props="password">
               <el-input type="password" v-model="loginForm.password" placeholder="请输入登录密码"
-                        prefix-icon="el-icon-lock"></el-input>
+                        prefix-icon="el-icon-lock" show-password></el-input>
             </el-form-item>
             <div class="form-bottom">
               <a href="#">忘记密码</a>
@@ -49,19 +49,21 @@
               <el-input v-model="registerForm.name" placeholder="用户名称" prefix-icon="el-icon-user"></el-input>
             </el-form-item>
             <el-form-item prop="email">
-              <el-input v-model="registerForm.email" placeholder="用户邮箱" prefix-icon="el-icon-message"></el-input>
+              <el-input v-model="registerForm.email" placeholder="用户邮箱" prefix-icon="el-icon-message"
+                        style="width: 70%;float: left"></el-input>
+              <el-button type="primary" icon="el-icon-s-promotion" @click="validation()">验证</el-button>
             </el-form-item>
-            <el-button type="primary" icon="el-icon-search">发送验证码</el-button>
             <el-form-item prop="emailCode">
-              <el-input v-model="registerForm.emailCode" placeholder="验证码" prefix-icon="el-icon-chat-dot-square"></el-input>
+              <el-input v-model="registerForm.emailCode" placeholder="验证码"
+                        prefix-icon="el-icon-chat-dot-square"></el-input>
             </el-form-item>
             <el-form-item prop="password">
               <el-input type="password" v-model="registerForm.password" placeholder="请输入登录密码"
-                        prefix-icon="el-icon-lock"></el-input>
+                        prefix-icon="el-icon-lock" show-password></el-input>
             </el-form-item>
             <el-form-item prop="checkPassword">
               <el-input type="password" v-model="registerForm.checkPassword" placeholder="请再次输入密码"
-                        prefix-icon="el-icon-lock"></el-input>
+                        prefix-icon="el-icon-lock" show-password></el-input>
             </el-form-item>
             <el-button type="danger" @click="register()">注册</el-button>
           </el-form>
@@ -109,6 +111,11 @@ export default {
         callback()
       }
     }
+    var validatePass5 = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入验证码'))
+      }
+    }
     return {
       loginForm: {
         email: '',
@@ -119,7 +126,7 @@ export default {
         email: '',
         password: '',
         checkPassword: '',
-        emailCode:''
+        emailCode: ''
       },
       menuTab: [
         {txt: '登录', isActive: true},
@@ -138,6 +145,9 @@ export default {
         email: [
           {validator: validatePass3, trigger: 'blur'}
           //  自定义验证器vue-validator
+        ],
+        emailCode: [
+          {validator: validatePass5, trigger: 'blur'}
         ]
       }
     }
@@ -180,7 +190,24 @@ export default {
         } else {
           this.$notify.error({
             title: '错误',
-            message: '邮箱已注册！'
+            message: '邮箱验证码错误！'
+          })
+        }
+      })
+    },
+    validation() {
+      this.$axios.post('/apis/users', this.registerForm.email).then((resp) => {
+        const data = resp.data
+        if (data.code === 200) {
+          this.$notify({
+            title: '成功',
+            message: '请查看您的邮箱',
+            type: 'success'
+          })
+        } else {
+          this.$notify.error({
+            title: '错误',
+            message: '邮箱已被注册！'
           })
         }
       })
