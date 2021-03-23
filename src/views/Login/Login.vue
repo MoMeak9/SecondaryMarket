@@ -1,11 +1,11 @@
 <template>
     <div id="login">
       <div class="header">
-        <a href="/"><i class="iconfont icon-B"></i></a>
+        欢迎登入福大跳蚤市场
       </div>
       <div class="content">
         <div class="login-banner-wrap">
-          <img src="https://img.alicdn.com/tfs/TB1gEXbFEY1gK0jSZFCXXcwqXXa-1190-600.jpg">
+<!--          <img src="~@/assets/image/68128465.png">-->
         </div>
         <div class="login-form">
           <div class="form-wrap">
@@ -181,18 +181,23 @@ export default {
     position: relative;
 
     .login-banner-wrap {
-      width: 1190px;
-      margin: auto;
+      background-size: cover;
+      background: url("~@/assets/image/68128465.png") fixed no-repeat top;
+      height: 100vh;
+      width: 100vw;
     }
 
     .login-form {
       width: 350px;
-      height: 400px;
+      height: 300px;
       display: flex;
       position: absolute;
       top: 91px;
       right: 425px;
       background-color: #fff;
+      border: #8c939d solid 1px;
+      border-radius: 6px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
       justify-content: center;
 
       .form-wrap {
