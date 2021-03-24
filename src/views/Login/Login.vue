@@ -1,8 +1,8 @@
 <template>
   <div id="login">
-    <div class="header">
-      <a href="/"><i class="iconfont icon-B"></i></a>
-    </div>
+<!--    <div class="header">-->
+<!--      <a href="/"><i class="iconfont icon-B"></i></a>-->
+<!--    </div>-->
     <div class="content">
       <div class="login-banner-wrap">
         <vue-particles
@@ -39,7 +39,7 @@
               <el-input type="password" v-model="loginForm.password" placeholder="请输入登录密码"
                         prefix-icon="el-icon-lock" show-password></el-input>
             </el-form-item>
-            <div class="form-bottom">
+            <div class="form-bottom" @click="repassowrd()">
               <a href="#">忘记密码</a>
             </div>
             <el-button type="danger" @click="login()">登录</el-button>
@@ -160,13 +160,12 @@ export default {
       }
     },
     login() {
+      // this.$router.push({path:'/home'})
       this.$axios.post('/apis/user', this.loginForm).then((resp) => {
         const data = resp.data
         if (data.code === 200) {
           this.$store.commit('GET_USER', data.data)
-          this.$router.push({
-            name: 'Home'
-          })
+          this.$router.push({path:'/home'})
         } else {
           this.$notify.error({
             title: '错误',
@@ -190,7 +189,8 @@ export default {
         } else {
           this.$notify.error({
             title: '错误',
-            message: '邮箱验证码错误！'
+            message: '邮箱验证码错误！',
+            type:'error'
           })
         }
       })
@@ -207,9 +207,15 @@ export default {
         } else {
           this.$notify.error({
             title: '错误',
-            message: '邮箱已被注册！'
+            message: '邮箱已被注册！',
+            type:'error'
           })
         }
+      })
+    },
+    repassowrd(){
+      this.$router.push({
+        name: 'repassword'
       })
     }
   }

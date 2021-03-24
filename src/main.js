@@ -14,3 +14,32 @@ new Vue({
     store,
     render: h => h(App)
 }).$mount('#app')
+
+router.beforeEach((to, from, next) => {
+    if(to.path === '/') {
+        next()
+    }else if(to.path === '/login') {
+        document.title = to.meta.title
+        next()
+    }else if(to.path === '/repassword') {
+        document.title = to.meta.title
+        next()
+    }else if(to.path === '/home') {
+        document.title = to.meta.title
+        next()
+    }else if(to.path === '/setting') {
+        document.title = to.meta.title
+        next()
+    }else if(to.path === '/admin') {
+        document.title = to.meta.title
+        next()
+    }else if(to.path === '/check') {
+        document.title = to.meta.title
+        next()
+    }else {
+        next({path: '/'})
+    }
+})
+
+import axios from 'axios'
+Vue.prototype.$axios = axios;

@@ -1,36 +1,45 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import Page404 from '../views/404/Page404'
+import Repassword from "@/views/Login/Repassword";
+import Login from "@/views/Login/Login";
+import Home from "@/views/Home/Home";
 
 Vue.use(VueRouter)
 //添加跳转与404跳转
 const routes = [
-  {
-    path:'/',
-    redirect:'/login'
-  },
-  {
-    path: '/login',
-    name: 'Login',
-    component: () => import('../views/Login/Login.vue')
-  },
-  {
-    path: "/page404",
-    name: "page404",
-    component: Page404,
-    meta:{
-      title: '未知页面'
+    {
+        path: '/',
+        redirect: '/login'
+    },
+    {
+        path: '/login',
+        name: 'login',
+        component: Login,
+        meta: {
+            title: '用户登入'
+        }
+    },
+    {
+        path: '/repassword',
+        name: 'repassword',
+        component: Repassword,
+        meta: {
+            title: '密码找回'
+        }
+    },
+    {
+        path: '/home',
+        name: 'home',
+        component: Home,
+        meta: {
+            title: '商城主页'
+        }
     }
-  }, {
-    path: "*",
-    redirect: "/page404"
-  }
-
 ]
 
 const router = new VueRouter({
-  routes
+    routes
 })
 
 export default router
