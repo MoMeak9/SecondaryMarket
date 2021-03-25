@@ -4,6 +4,8 @@ import VueRouter from 'vue-router'
 import Repassword from "@/views/Login/Repassword";
 import Login from "@/views/Login/Login";
 import Home from "@/views/Home/Home";
+import AdminHome from "@/views/Home/AdminHome";
+import AdminLogin from "@/views/Login/AdminLogin";
 
 Vue.use(VueRouter)
 //添加跳转与404跳转
@@ -34,6 +36,22 @@ const routes = [
         component: Home,
         meta: {
             title: '商城主页'
+        }
+    },
+    {
+        path: '/adminHome',
+        name: 'AdminHome',
+        component: AdminHome,
+        meta: {
+            title: '管理审核'
+        }
+    },
+    {
+        path: '/adminLogin',
+        name: 'AdminLogin',
+        component: AdminLogin,
+        meta: {
+            title: '管理员登入'
         }
     }
 ]

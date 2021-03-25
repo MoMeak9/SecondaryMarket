@@ -27,10 +27,10 @@ router.beforeEach((to, from, next) => {
     }else if(to.path === '/home') {
         document.title = to.meta.title
         next()
-    }else if(to.path === '/setting') {
+    }else if(to.path === '/adminHome') {
         document.title = to.meta.title
         next()
-    }else if(to.path === '/admin') {
+    }else if(to.path === '/adminLogin') {
         document.title = to.meta.title
         next()
     }else if(to.path === '/check') {

@@ -39,8 +39,8 @@
               <el-input type="password" v-model="loginForm.password" placeholder="请输入登录密码"
                         prefix-icon="el-icon-lock" show-password></el-input>
             </el-form-item>
-            <div class="form-bottom" @click="repassowrd()">
-              <a href="#">忘记密码</a>
+            <div class="form-bottom">
+              <a href="http://localhost:8080/#/repassword">忘记密码</a>
             </div>
             <el-button type="danger" @click="login()">登录</el-button>
           </el-form>
@@ -164,6 +164,7 @@ export default {
       this.$axios.post('/apis/user', this.loginForm).then((resp) => {
         const data = resp.data
         if (data.code === 200) {
+          //用户数据单
           this.$store.commit('GET_USER', data.data)
           this.$router.push({path:'/home'})
         } else {
@@ -211,11 +212,6 @@ export default {
             type:'error'
           })
         }
-      })
-    },
-    repassowrd(){
-      this.$router.push({
-        name: 'repassword'
       })
     }
   }
@@ -291,8 +287,7 @@ export default {
 
         .form-bottom {
           text-align: right;
-          margin-top: 10px;
-
+          margin-bottom: 10px;
           a {
             font-size: 12px;
             color: #6c6c6c;
