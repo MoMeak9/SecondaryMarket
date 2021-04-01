@@ -1,8 +1,8 @@
 <template>
   <div id="login">
-<!--    <div class="header">-->
-<!--      <a href="/"><i class="iconfont icon-B"></i></a>-->
-<!--    </div>-->
+    <!--    <div class="header">-->
+    <!--      <a href="/"><i class="iconfont icon-B"></i></a>-->
+    <!--    </div>-->
     <div class="content">
       <div class="login-banner-wrap">
         <vue-particles
@@ -126,7 +126,13 @@ export default {
         email: '',
         password: '',
         checkPassword: '',
-        emailCode: ''
+        //验证码
+        code: '',
+        //  加密验证码
+        encryptionCode: '',
+        //  验证码时效
+        time: '',
+        //
       },
       menuTab: [
         {txt: '登录', isActive: true},
@@ -161,12 +167,12 @@ export default {
     },
     login() {
       // this.$router.push({path:'/home'})
-      this.$axios.post('/apis/user', this.loginForm).then((resp) => {
+      this.$axios.post('/apis/user/login', this.loginForm).then((resp) => {
         const data = resp.data
         if (data.code === 200) {
           //用户数据单
           this.$store.commit('GET_USER', data.data)
-          this.$router.push({path:'/home'})
+          this.$router.push({path: '/home'})
         } else {
           this.$notify.error({
             title: '错误',
@@ -176,9 +182,9 @@ export default {
       })
     },
     register() {
-      this.$axios.post('/apis/users', this.registerForm).then((resp) => {
+      this.$axios.post('/apis/message/sendEmail', this.registerForm).then((resp) => {
         const data = resp.data
-        if (data.code === 200) {
+        if (data.code === 1) {
           this.$notify({
             title: '成功',
             message: '您已成功注册，请等待管理员审核通过',
@@ -191,25 +197,29 @@ export default {
           this.$notify.error({
             title: '错误',
             message: '邮箱验证码错误！',
-            type:'error'
+            type: 'error'
           })
         }
       })
     },
     validation() {
-      this.$axios.post('/apis/users', this.registerForm.email).then((resp) => {
-        const data = resp.data
-        if (data.code === 200) {
+      this.$axios.post('/apis/message/sendEmail', this.$qs.stringify({
+        userEmail: this.registerForm.email,
+      })).then((response) => {
+        const data = response.data
+        if (data.code === 1) {
           this.$notify({
-            title: '成功',
+            title: '发送成功',
             message: '请查看您的邮箱',
             type: 'success'
           })
+          this.code = response.obj.code;
+          this.time = response.obj.time;
         } else {
           this.$notify.error({
             title: '错误',
             message: '邮箱已被注册！',
-            type:'error'
+            type: 'error'
           })
         }
       })
@@ -218,6 +228,8 @@ export default {
 }
 </script>
 <style lang="scss">
+@import "src/styles/main";
+
 #login {
   min-width: 1190px;
   width: 100%;
@@ -288,6 +300,7 @@ export default {
         .form-bottom {
           text-align: right;
           margin-bottom: 10px;
+
           a {
             font-size: 12px;
             color: #6c6c6c;

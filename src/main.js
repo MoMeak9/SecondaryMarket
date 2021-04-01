@@ -43,3 +43,6 @@ router.beforeEach((to, from, next) => {
 
 import axios from 'axios'
 Vue.prototype.$axios = axios;
+
+import qs from 'qs'
+Vue.prototype.$qs = qs;

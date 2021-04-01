@@ -6,7 +6,7 @@ Vue.use(Vuex)
 const state = {
   user: window.sessionStorage.getItem('user'),
   commodity: window.sessionStorage.getItem('commodity'),
-  hostServer:'',
+  hostServer:'39.105.228.56:8080/shop',
   token:''
 }
 const mutations = {
