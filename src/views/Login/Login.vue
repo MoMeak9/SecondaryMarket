@@ -53,9 +53,9 @@
                         style="width: 70%;float: left"></el-input>
               <el-button type="primary" icon="el-icon-s-promotion" @click="validation()">验证</el-button>
             </el-form-item>
-            <el-form-item prop="emailCode">
-              <el-input v-model="registerForm.emailCode" placeholder="验证码"
-                        prefix-icon="el-icon-chat-dot-square"></el-input>
+            <el-form-item prop="code">
+              <el-input v-model="code" placeholder="验证码"
+                        prefix-icon=""></el-input>
             </el-form-item>
             <el-form-item prop="password">
               <el-input type="password" v-model="registerForm.password" placeholder="请输入登录密码"
@@ -126,14 +126,13 @@ export default {
         email: '',
         password: '',
         checkPassword: '',
-        //验证码
-        code: '',
-        //  加密验证码
-        encryptionCode: '',
-        //  验证码时效
-        time: '',
-        //
       },
+      //验证码
+      code: '',
+      //  加密验证码
+      encryptionCode: '',
+      //  验证码时效
+      time: '',
       menuTab: [
         {txt: '登录', isActive: true},
         {txt: '注册', isActive: false}
@@ -152,7 +151,7 @@ export default {
           {validator: validatePass3, trigger: 'blur'}
           //  自定义验证器vue-validator
         ],
-        emailCode: [
+        code: [
           {validator: validatePass5, trigger: 'blur'}
         ]
       }
@@ -166,41 +165,73 @@ export default {
       }
     },
     login() {
-      // this.$router.push({path:'/home'})
-      this.$axios.post('/apis/user/login', this.loginForm).then((resp) => {
-        const data = resp.data
-        if (data.code === 200) {
-          //用户数据单
-          this.$store.commit('GET_USER', data.data)
-          this.$router.push({path: '/home'})
-        } else {
-          this.$notify.error({
-            title: '错误',
-            message: '用户名或密码错误！'
-          })
-        }
-      })
+      if (this.loginForm.email === '' || this.loginForm.password === '') {
+        this.$notify.error({
+          title: '错误',
+          message: '请填写相应的邮箱和密码后登入！',
+          type: 'error'
+        })
+      } else {
+        this.$axios.post('/apis/user/login', this.$qs.stringify({
+          userEmail: this.loginForm.email,
+          userPassword: this.loginForm.password,
+        })).then((resp) => {
+          const data = resp.data
+          if (data.code === 1) {
+            //用户数据
+            this.$notify({
+              title: '登入成功',
+              message: '福大二手交易市场欢迎您',
+              type: 'success'
+            })
+            this.$store.commit('SET_TOKEN', data.obj.token)
+            this.$store.commit('GET_USER', data.obj.userBean.userName)
+            console.log()
+            this.$router.push({path: '/home'})
+          } else {
+            this.$notify.error({
+              title: '错误',
+              message: '用户名或密码错误！'
+            })
+          }
+        })
+      }
     },
     register() {
-      this.$axios.post('/apis/message/sendEmail', this.registerForm).then((resp) => {
-        const data = resp.data
-        if (data.code === 1) {
-          this.$notify({
-            title: '成功',
-            message: '您已成功注册，请等待管理员审核通过',
-            type: 'success'
-          })
-          this.registerForm = []
-          this.menuTab[0].isActive = true
-          this.menuTab[1].isActive = false
-        } else {
-          this.$notify.error({
-            title: '错误',
-            message: '邮箱验证码错误！',
-            type: 'error'
-          })
-        }
-      })
+      if (this.registerForm.email === '' || this.registerForm.code === '' || this.registerForm.password === '' || this.registerForm.checkPassword === '' || this.registerForm.name === '') {
+        this.$notify.error({
+          title: '错误',
+          message: '您是不是漏了什么？',
+          type: 'error',
+        })
+      } else {
+        this.$axios.post('/apis/user/register', this.$qs.stringify({
+          code: this.code,
+          encryptionCode: this.encryptionCode,
+          time: this.time,
+          userEmail: this.registerForm.email,
+          userName: this.registerForm.name,
+          userPassword: this.registerForm.password,
+        })).then((resp) => {
+          const data = resp.data
+          if (data.code === 1) {
+            this.$notify({
+              title: '注册成功',
+              message: '福大二手交易市场欢迎您',
+              type: 'success'
+            })
+            this.registerForm = []
+            this.menuTab[0].isActive = true
+            this.menuTab[1].isActive = false
+          } else {
+            this.$notify.error({
+              title: '错误',
+              message: '邮箱验证码错误！',
+              type: 'error'
+            })
+          }
+        })
+      }
     },
     validation() {
       this.$axios.post('/apis/message/sendEmail', this.$qs.stringify({
@@ -213,8 +244,10 @@ export default {
             message: '请查看您的邮箱',
             type: 'success'
           })
-          this.code = response.obj.code;
-          this.time = response.obj.time;
+          this.encryptionCode = data.obj.code;
+          this.time = data.obj.time;
+          console.log(this.encryptionCode)
+          console.log(this.time)
         } else {
           this.$notify.error({
             title: '错误',
