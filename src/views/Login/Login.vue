@@ -55,7 +55,7 @@
             </el-form-item>
             <el-form-item prop="code">
               <el-input v-model="code" placeholder="验证码"
-                        prefix-icon=""></el-input>
+                        prefix-icon="el-icon-paperclip"></el-input>
             </el-form-item>
             <el-form-item prop="password">
               <el-input type="password" v-model="registerForm.password" placeholder="请输入登录密码"
@@ -185,8 +185,9 @@ export default {
               type: 'success'
             })
             this.$store.commit('SET_TOKEN', data.obj.token)
-            this.$store.commit('GET_USER', data.obj.userBean.userName)
-            console.log()
+            this.$store.commit('GET_USER', data.obj.userBean)
+            console.log(this.$store.state.token)
+            console.log(this.$store.state.user)
             this.$router.push({path: '/home'})
           } else {
             this.$notify.error({

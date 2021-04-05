@@ -5,12 +5,11 @@
                 <a href="/home"><i class="iconfont icon-B"></i></a>
             </div>
             <div class="menu-tab" v-if="!this.$store.state.user">
-                <span>你好，欢迎来Bistu校园二手市场</span>
+                <span>你好，欢迎来福大校园二手市场</span>
                 <a href="/login" class="register">请登录</a>
-                <a href="/register" class="login">注册</a>
             </div>
             <div class="user-info" v-else>
-                <span>你好,<a href="/user">{{ this.$store.state.user.name }}。</a></span>
+                <span>你好,<a href="/user">{{ this.$store.state.user }}。</a></span>
                 <span><a href="/login">退出</a></span>
             </div>
         </div>

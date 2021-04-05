@@ -12,8 +12,12 @@
               <el-table-column prop="userStatus" label="账号状态"></el-table-column>
               <el-table-column label="账号操作">
                 <template slot-scope="scope">
-                  <el-button type="primary" @click="banUser(scope.row.id)" @click.native.prevent="deleteRow(scope.$index, regUsers)">封禁</el-button>
-                  <el-button type="danger" @click="unbanUser(scope.row.id)" @click.native.prevent="deleteRow(scope.$index, regUsers)">解封</el-button>
+                  <el-button type="primary" @click="banUser(scope.row.id)"
+                             @click.native.prevent="deleteRow(scope.$index, regUsers)">封禁
+                  </el-button>
+                  <el-button type="danger" @click="unbanUser(scope.row.id)"
+                             @click.native.prevent="deleteRow(scope.$index, regUsers)">解封
+                  </el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -33,8 +37,12 @@
               <el-table-column prop="quantity" label="数量"></el-table-column>
               <el-table-column label="是否允许" width="180">
                 <template slot-scope="scope">
-                  <el-button type="primary" @click="allowCommo(scope.row.id)" @click.native.prevent="deleteRow(scope.$index, auditCommos)" size="small">允许</el-button>
-                  <el-button type="danger" @click="refuseCommo(scope.row.id)" @click.native.prevent="deleteRow(scope.$index, auditCommos)" size="small">拒绝</el-button>
+                  <el-button type="primary" @click="allowCommo(scope.row.id)"
+                             @click.native.prevent="deleteRow(scope.$index, auditCommos)" size="small">允许
+                  </el-button>
+                  <el-button type="danger" @click="refuseCommo(scope.row.id)"
+                             @click.native.prevent="deleteRow(scope.$index, auditCommos)" size="small">拒绝
+                  </el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -46,10 +54,10 @@
 </template>
 <script>
 export default {
-  data () {
+  data() {
     return {
       tabActive: 'first',
-      allUsers: [{ id: 0, name: '', createOn: '', email: '' }],
+      allUsers: [{id: 0, name: '', createOn: '', email: ''}],
       auditCommos: [],
       userList: []
     }
@@ -89,15 +97,22 @@ export default {
     //   })
     // },
 
-    deleteRow (index, rows) {
+    deleteRow(index, rows) {
       rows.splice(index, 1)
     },
-    allowCommo (id) {
-      this.$axios.put('/apis/commodities/' + id + '/status', {
-        status: 0
-      }).then(resp => {
+    allowCommo() {
+      this.$axios.post('/apis/admin/auditComm', this.$qs.stringify({
+            auditComm: 1,
+            auditor: this.$store.state.user,
+            commNo: ""
+          }), {
+            headers: {
+              token: this.$store.state.token,
+            }
+          }
+      ).then(resp => {
         var data = resp.data
-        if (data.code === 200) {
+        if (data.code === 1) {
           this.$notify({
             title: '成功',
             message: '处理完成',
@@ -108,12 +123,18 @@ export default {
         console.log(error)
       })
     },
-    refuseCommo (id) {
-      this.$axios.put('/apis/commodities/' + id + '/status', {
-        status: -2
+    refuseCommo() {
+      this.$axios.post('/apis/admin/auditComm', this.$qs.stringify({
+        auditComm: 2,
+        auditor: this.$store.state.user,
+        commNo: ""
+      }), {
+        headers: {
+          token: this.$store.state.token,
+        }
       }).then(resp => {
         var data = resp.data
-        if (data.code === 200) {
+        if (data.code === 1) {
           this.$notify({
             title: '成功',
             message: '处理完成',
@@ -125,7 +146,7 @@ export default {
       })
     }
   },
-  mounted () {
+  mounted() {
     this.$axios.get('/apis/users').then(resp => {
       var data = resp.data
       if (data.code === 200) {
@@ -148,6 +169,7 @@ export default {
     height: 60px;
     background: rgb(70, 70, 70);
   }
+
   .content {
     width: 90%;
     margin: 30px auto;

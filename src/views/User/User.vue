@@ -3,7 +3,7 @@
     <el-header class="header" style="height:30px">
       <div class="header-wrap">
         <a href="/home">
-          <span>商城首页</span>
+          <span>福大二手商城首页</span>
         </a>
       </div>
     </el-header>
@@ -53,7 +53,7 @@
               </div>
               <div class="right-item">
                 <div class="item-label">角色</div>
-                <div class="item-info" v-if="user.role == 0">普通用户</div>
+                <div class="item-info" v-if="user.role === 0">普通用户</div>
                 <div class="item-info" v-else>管理员</div>
               </div>
             </div>
@@ -170,20 +170,20 @@
                       <el-button type="primary" size="small" @click="changeStatus(scope.row, true)">发货</el-button>
                       <el-button type="danger" size="small" @click="changeStatus(scope.row, false)">取消</el-button>
                     </div>
-                    <div v-else-if="scope.row.status == 1">
+                    <div v-else-if="scope.row.status === 1">
                       <el-button type="primary" size="small" @click="changeStatus(scope.row, true)">已完成</el-button>
                     </div>
-                    <div v-if="scope.row.status == -2">
+                    <div v-if="scope.row.status === -2">
                       <el-button type="primary" size="small" @click="changeStatus(scope.row, true)">同意</el-button>
                       <el-button type="danger" size="small" @click="changeStatus(scope.row, false)">取消</el-button>
                     </div>
-                    <div v-else-if="scope.row.status == 2">
+                    <div v-else-if="scope.row.status === 2">
                       <el-tag>等待确认</el-tag>
                     </div>
-                    <div v-else-if="scope.row.status == 3">
+                    <div v-else-if="scope.row.status === 3">
                       <el-tag type="success">已完成！</el-tag>
                     </div>
-                    <div v-else-if="scope.row.status == -1">
+                    <div v-else-if="scope.row.status === -1">
                       <el-tag type="danger">已取消！</el-tag>
                     </div>
                   </div>

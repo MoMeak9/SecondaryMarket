@@ -33,6 +33,9 @@ router.beforeEach((to, from, next) => {
     }else if(to.path === '/adminLogin') {
         document.title = to.meta.title
         next()
+    }else if(to.path === '/user') {
+        document.title = to.meta.title
+        next()
     }else if(to.path === '/check') {
         document.title = to.meta.title
         next()
