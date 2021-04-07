@@ -20,7 +20,7 @@
           <div class="img-wrap">
             <el-upload
                 class="avatar-uploader"
-                :headers = "headers"
+                :headers="headers"
                 :action=profilePhotoAction
                 :show-file-list="false"
                 :on-success="handleProfilePhotoSuccess"
@@ -45,12 +45,16 @@
               </div>
               <div class="right-item">
                 <div class="item-label">性别 :</div>
-                <div class="item-info" v-if="userBean.userInfo !== null  && userBean.userInfo !== ''">{{userBean.userSex}}</div>
+                <div class="item-info" v-if="userBean.userInfo !== null  && userBean.userInfo !== ''">
+                  {{ userBean.userSex }}
+                </div>
                 <div class="item-info" v-else>保密</div>
               </div>
               <div class="right-item">
                 <div class="item-label">简介 :</div>
-                <div class="item-info" v-if="userBean.userInfo !== null  && userBean.userInfo !== ''">{{ userBean.userInfo }}</div>
+                <div class="item-info" v-if="userBean.userInfo !== null  && userBean.userInfo !== ''">
+                  {{ userBean.userInfo }}
+                </div>
                 <div class="item-info" v-else>暂无</div>
               </div>
               <div class="right-item">
@@ -105,11 +109,15 @@
                 <div class="item-label">图片</div>
                 <div class="item-info">
                   <el-upload
-                      class="avatar-uploader"
-                      action="https://jsonplaceholder.typicode.com/posts/"
-                      :show-file-list="false"
+                      class="upload-demo"
+                      action=""
+                      :show-file-list="true"
+                      :list-type="picture"
+                      limit="5"
+                      :file-list="fileList"
                       :on-success="handleAvatarSuccess"
                       :before-upload="beforeAvatarUpload">
+                    <el-button size="small" type="primary">点击上传</el-button>
                     <img v-if="imageUrl" :src="imageUrl" class="avatar">
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                   </el-upload>
@@ -121,14 +129,15 @@
                   <el-input v-model="commodity.name" placeholder="请输入商品名称" maxlength="50" show-word-limit></el-input>
                 </div>
               </div>
-              <div class="right-item">
+              <div class="right-item" style="padding-bottom: 7em">
                 <div class="item-label">描述</div>
                 <div class="item-info" style="width: 500px">
                   <el-input
-                      type="text"
+                      type="textarea"
                       placeholder="请输入商品描述"
                       v-model="commodity.description"
-                      maxlength="100"
+                      :autosize="{ minRows:7, maxRows: 8}"
+                      maxlength="150"
                       show-word-limit
                   >
                   </el-input>
@@ -145,6 +154,18 @@
                 <div class="item-info" style="width:300px">
                   <el-input v-model="commodity.price" placeholder="请输入单件商品价格，单位：元"></el-input>
                 </div>
+              </div>
+              <div class="right-item">
+                <div class="item-label">标签</div>
+                <el-radio-group v-model="commType" @change="select(commType)">
+                  <el-radio-button label="衣物"></el-radio-button>
+                  <el-radio-button label="数码"></el-radio-button>
+                  <el-radio-button label="食品"></el-radio-button>
+                  <el-radio-button label="图书"></el-radio-button>
+                  <el-radio-button label="化妆品"></el-radio-button>
+                  <el-radio-button label="文具"></el-radio-button>
+                  <el-radio-button label="居家"></el-radio-button>
+                </el-radio-group>
               </div>
               <div class="right-item">
                 <div class="item-label"></div>
@@ -206,16 +227,18 @@
 export default {
   data() {
     return {
+      commType: '',
+      fileList: [],
       headers: {
-        Authorization:window.sessionStorage.getItem('token')
+        Authorization: window.sessionStorage.getItem('token')
       },
       userBean: {
         userName: '',
         isBan: '',
         userRoot: '',
-        userInfo:'',
-        userSex:'',
-        profileUrl:''
+        userInfo: '',
+        userSex: '',
+        profileUrl: ''
       },
       menuTab: [
         {
@@ -252,7 +275,7 @@ export default {
         description: '',
         quantity: 1,
         price: '',
-        commTag:''
+        commTag: ''
       },
       imageUrl: '',
       imageFile: '',
@@ -349,7 +372,7 @@ export default {
       data.isActive = true
     },
     // element-ui 上传图片的方法 头像的！！！！
-    handleProfilePhotoSuccess(res) {
+    handleProfilePhotoSuccess (res) {
       this.userBean.profileUrl = res.data
     },
     // 上传前 头像的！！！！
@@ -368,7 +391,7 @@ export default {
       // console.log(file)
       // 创建临时的路径来展示图片
       var windowURL = window.URL || window.webkitURL
-      this.userBean.photoUrl = windowURL.createObjectURL(file)
+      this.userBean.profileUrl = windowURL.createObjectURL(file)
       return true
     },
 
@@ -399,23 +422,42 @@ export default {
       this.imageFile.append('file', file, file.name)
       return false
     },
+    //商品标签转换
+    select(commType) {
+      console.log(commType)
+      if (commType === '衣物') {
+        this.commodity.commTag = 0
+      } else if (commType === '数码') {
+        this.commodity.commTag = 1
+      } else if (commType === '食品') {
+        this.commodity.commTag = 2
+      } else if (commType === '图书') {
+        this.commodity.commTag = 3
+      } else if (commType === '化妆品') {
+        this.commodity.commTag = 4
+      } else if (commType === '文具') {
+        this.commodity.commTag = 5
+      } else {
+        this.commodity.commTag = 6
+      }
+      console.log(this.commodity)
+    },
     publish() {
       const config = {
         headers: this.headers,
       }
       this.$axios.post('/apis/commodity/releaseComm', this.$qs.stringify({
-        commDesc:this.commodity.description,
-        commName:this.commodity.name,
-        commPrice:this.commodity.price,
-        commStock:this.commodity.quantity,
-        commTag:this.commodity.commTag
+        commDesc: this.commodity.description,
+        commName: this.commodity.name,
+        commPrice: this.commodity.price,
+        commStock: this.commodity.quantity,
+        commTag: this.commodity.commTag
         //更改为一同上传
-      }),config).then(resp => {
+      }), config).then(resp => {
         var data = resp.data
         if (data.code === 1) {
           var commodity = data.data
-          this.$axios.post('/apis/commodities/' + commodity.id + '/images',this.$qs.stringify({
-          }), config).then(resp => {
+          this.$axios.post('/apis/commodities/' + commodity.id + '/images', this.$qs.stringify({}), config).then(resp => {
             var data = resp.data
             if (data.code === 1) {
               this.$notify({
