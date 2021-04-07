@@ -53,7 +53,10 @@ export default {
       searchText: '',
       timeout: null,
       loading: false,
-      noMore: false
+      noMore: false,
+      userBean:{
+        userName:'',
+      }
     }
   },
   mounted() {
@@ -61,6 +64,7 @@ export default {
   },
   methods: {
     initData() {
+      this.userBean = this.$store.state.userBean
       this.$axios.get('/apis/commodity/bannerCommList', {
         params: {
           num: 4,

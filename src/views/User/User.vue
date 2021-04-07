@@ -19,12 +19,13 @@
         <el-col :span="4" class="ct-left">
           <div class="img-wrap">
             <el-upload
-              class="avatar-uploader"
-              :action=profilePhotoAction
-              :show-file-list="false"
-              :on-success="handleProfilePhotoSuccess"
-              :before-upload="beforeProfilePhotoUpload">
-              <img v-if="user.photoUrl" :src="user.photoUrl" class="avatar">
+                class="avatar-uploader"
+                :headers = "headers"
+                :action=profilePhotoAction
+                :show-file-list="false"
+                :on-success="handleProfilePhotoSuccess"
+                :before-upload="beforeProfilePhotoUpload">
+              <img v-if="userBean.profileUrl" :src="userBean.profileUrl" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               <div class="img-bottom">上传头像</div>
             </el-upload>
@@ -39,21 +40,26 @@
           <div class="right-container">
             <div class="user-info" v-show="menuTab[0].isActive">
               <div class="right-item">
-                <div class="item-label">名称</div>
-                <div class="item-info">{{ user.name }}</div>
+                <div class="item-label">名称 :</div>
+                <div class="item-info">{{ userBean.userName }}</div>
               </div>
               <div class="right-item">
-                <div class="item-label">简介</div>
-                <div class="item-info" v-if="user.biography != null  && user.biography != ''">{{ user.biography }}</div>
+                <div class="item-label">性别 :</div>
+                <div class="item-info" v-if="userBean.userInfo !== null  && userBean.userInfo !== ''">{{userBean.userSex}}</div>
+                <div class="item-info" v-else>保密</div>
+              </div>
+              <div class="right-item">
+                <div class="item-label">简介 :</div>
+                <div class="item-info" v-if="userBean.userInfo !== null  && userBean.userInfo !== ''">{{ userBean.userInfo }}</div>
                 <div class="item-info" v-else>暂无</div>
               </div>
               <div class="right-item">
-                <div class="item-label">账户</div>
-                <div class="item-info">{{ user.email }}</div>
+                <div class="item-label">账户 :</div>
+                <div class="item-info">{{ userBean.userEmail }}</div>
               </div>
               <div class="right-item">
-                <div class="item-label">角色</div>
-                <div class="item-info" v-if="user.role === 0">普通用户</div>
+                <div class="item-label">角色 :</div>
+                <div class="item-info" v-if="userBean.userRoot === 0">普通用户</div>
                 <div class="item-info" v-else>管理员</div>
               </div>
             </div>
@@ -99,11 +105,11 @@
                 <div class="item-label">图片</div>
                 <div class="item-info">
                   <el-upload
-                    class="avatar-uploader"
-                    action="https://jsonplaceholder.typicode.com/posts/"
-                    :show-file-list="false"
-                    :on-success="handleAvatarSuccess"
-                    :before-upload="beforeAvatarUpload">
+                      class="avatar-uploader"
+                      action="https://jsonplaceholder.typicode.com/posts/"
+                      :show-file-list="false"
+                      :on-success="handleAvatarSuccess"
+                      :before-upload="beforeAvatarUpload">
                     <img v-if="imageUrl" :src="imageUrl" class="avatar">
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                   </el-upload>
@@ -119,11 +125,11 @@
                 <div class="item-label">描述</div>
                 <div class="item-info" style="width: 500px">
                   <el-input
-                    type="text"
-                    placeholder="请输入商品描述"
-                    v-model="commodity.description"
-                    maxlength="100"
-                    show-word-limit
+                      type="text"
+                      placeholder="请输入商品描述"
+                      v-model="commodity.description"
+                      maxlength="100"
+                      show-word-limit
                   >
                   </el-input>
                 </div>
@@ -198,15 +204,18 @@
 </template>
 <script>
 export default {
-  data () {
+  data() {
     return {
-      user: {
-        id: 0,
-        name: '',
-        biography: '',
-        email: '',
-        role: '',
-        photoUrl: ''
+      headers: {
+        Authorization:window.sessionStorage.getItem('token')
+      },
+      userBean: {
+        userName: '',
+        isBan: '',
+        userRoot: '',
+        userInfo:'',
+        userSex:'',
+        profileUrl:''
       },
       menuTab: [
         {
@@ -243,32 +252,33 @@ export default {
         description: '',
         quantity: 1,
         price: '',
-        ownerId: this.$store.state.user.id
+        commTag:''
       },
       imageUrl: '',
       imageFile: '',
-      profilePhotoAction: '/apis/users/' + this.$store.state.user.id + '/images',
+      profilePhotoAction: '/apis/user/updateUserInfo',
       socket: null
     }
   },
-  mounted () {
+  mounted() {
     this.initData()
+
     // this.websocketLink()
   },
   methods: {
-    initData () {
-      this.user = this.$store.state.user
+    initData() {
+      this.userBean = this.$store.state.userBean
       // 获取购买历史
-      this.$axios.get('/apis/buyer-orders/' + this.user.id).then(resp => {
+      this.$axios.get('/apis/buyer-orders/' + this.userBean.id).then(resp => {
         var data = resp.data
-        if (data.code === 200) {
+        if (data.code === 1) {
           this.historyOrder = data.data
         }
       }).catch(function (error) {
         console.log(error)
       })
       // 获取用户在售卖的商品
-      this.$axios.get('/apis/users/' + this.user.id + '/commodities').then(resp => {
+      this.$axios.get('/apis/users/' + this.userBean.id + '/commodities').then(resp => {
         var data = resp.data
         if (data.code === 200) {
           this.myCommodity = data.data
@@ -278,7 +288,7 @@ export default {
       })
 
       // 获取用户已卖出的商品
-      this.$axios.get('/apis/pending-orders/' + this.user.id).then(resp => {
+      this.$axios.get('/apis/pending-orders/' + this.userBean.id).then(resp => {
         var data = resp.data
         if (data.code === 200) {
           this.pendingOrder = data.data
@@ -288,7 +298,7 @@ export default {
       })
     },
     // websocketLink () {
-    //   this.socket = new WebSocket('ws://localhost:8082/websocket/' + this.$store.state.user.id)
+    //   this.socket = new WebSocket('ws://localhost:8082/websocket/' + this.$store.state.userBean.id)
     //   this.socket.onopen = () => {
     //     console.log('socket 已经打开！')
     //     this.socket.send('hello!')
@@ -300,7 +310,7 @@ export default {
     //     console.log('Socket已关闭')
     //   }
     // },
-    changeStatus (item, isOk) {
+    changeStatus(item, isOk) {
       if (isOk) {
         this.$axios.put('/apis/pending-orders/' + item.id + '?status=' + (item.status + 1)).then(resp => {
           var data = resp.data
@@ -332,18 +342,18 @@ export default {
       }
     },
     // 切换左侧菜单
-    toggleMenuItem (data) {
+    toggleMenuItem(data) {
       this.menuTab.forEach(item => {
         item.isActive = false
       })
       data.isActive = true
     },
     // element-ui 上传图片的方法 头像的！！！！
-    handleProfilePhotoSuccess (res, file) {
-      this.user.photoUrl = res.data
+    handleProfilePhotoSuccess(res) {
+      this.userBean.profileUrl = res.data
     },
     // 上传前 头像的！！！！
-    beforeProfilePhotoUpload (file) {
+    beforeProfilePhotoUpload(file) {
       const isJPG = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png'
       const isLt10M = file.size / 1024 / 1024 < 10
 
@@ -358,17 +368,17 @@ export default {
       // console.log(file)
       // 创建临时的路径来展示图片
       var windowURL = window.URL || window.webkitURL
-      this.user.photoUrl = windowURL.createObjectURL(file)
+      this.userBean.photoUrl = windowURL.createObjectURL(file)
       return true
     },
 
     // element-ui 上传图片的方法 商品的！！！！！
-    handleAvatarSuccess (res, file) {
+    handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
       this.imageFile = file
     },
     // 上传前 商品的！！！！！
-    beforeAvatarUpload (file) {
+    beforeAvatarUpload(file) {
       const isJPG = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 10
 
@@ -389,17 +399,25 @@ export default {
       this.imageFile.append('file', file, file.name)
       return false
     },
-    publish () {
-      this.$axios.post('/apis/commodities', this.commodity).then(resp => {
+    publish() {
+      const config = {
+        headers: this.headers,
+      }
+      this.$axios.post('/apis/commodity/releaseComm', this.$qs.stringify({
+        commDesc:this.commodity.description,
+        commName:this.commodity.name,
+        commPrice:this.commodity.price,
+        commStock:this.commodity.quantity,
+        commTag:this.commodity.commTag
+        //更改为一同上传
+      }),config).then(resp => {
         var data = resp.data
-        if (data.code === 200) {
+        if (data.code === 1) {
           var commodity = data.data
-          const config = {
-            headers: { 'Content-Type': 'multipart/form-data' }
-          }
-          this.$axios.post('/apis/commodities/' + commodity.id + '/images', this.imageFile, config).then(resp => {
+          this.$axios.post('/apis/commodities/' + commodity.id + '/images',this.$qs.stringify({
+          }), config).then(resp => {
             var data = resp.data
-            if (data.code === 200) {
+            if (data.code === 1) {
               this.$notify({
                 title: '成功',
                 message: '创建商品成功，请等待审核',
@@ -433,7 +451,7 @@ export default {
         console.log(error)
       })
     },
-    confirm (item) {
+    confirm(item) {
       this.$axios.put('/apis/pending-orders/' + item.id + '?status=3').then(resp => {
         if (resp.status === 200) {
           var res = resp.data
@@ -451,7 +469,7 @@ export default {
         console.log(error)
       })
     },
-    cancelOrder (item) {
+    cancelOrder(item) {
       this.$axios.put('/apis/pending-orders/' + item.id + '?status=-2').then(resp => {
         if (resp.status === 200) {
           var res = resp.data

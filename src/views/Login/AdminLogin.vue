@@ -26,10 +26,11 @@ export default {
   },
   methods: {
     submit () {
-      this.$axios.post('/apis/user', this.loginForm).then(resp => {
+      this.$axios.post('/apis/user/login', this.loginForm).then(resp => {
         var data = resp.data
-        if (data.code === 200) {
-          this.$store.commit('GET_USER', data.data)
+        if (data.code === 1) {
+          this.$store.commit('GET_USER', data.obj.userBean)
+          this.$store.commit('SET_TOKEN', data.obj.token)
           this.$router.push({
             name: 'AdminHome'
           })

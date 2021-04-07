@@ -7,7 +7,7 @@ const state = {
   userBean: window.sessionStorage.getItem('user'),
   commodity: window.sessionStorage.getItem('commodity'),
   hostServer:'39.105.228.56:8080/shop',
-  token:''
+  token:window.sessionStorage.getItem('token')
 }
 const mutations = {
 

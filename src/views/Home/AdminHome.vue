@@ -59,7 +59,7 @@ export default {
       tabActive: 'first',
       allUsers: [{id: 0, name: '', createOn: '', email: ''}],
       auditCommos: [],
-      userList: []
+      userList: [],
     }
   },
   methods: {
@@ -103,7 +103,7 @@ export default {
     allowCommo() {
       this.$axios.post('/apis/admin/auditComm', this.$qs.stringify({
             auditComm: 1,
-            auditor: this.$store.state.user,
+            auditor: this.$store.state.user.userName,
             commNo: ""
           }), {
             headers: {
@@ -126,7 +126,7 @@ export default {
     refuseCommo() {
       this.$axios.post('/apis/admin/auditComm', this.$qs.stringify({
         auditComm: 2,
-        auditor: this.$store.state.user,
+        auditor: this.au,
         commNo: ""
       }), {
         headers: {
