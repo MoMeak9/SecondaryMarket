@@ -47,14 +47,6 @@ const routes = [
         }
     },
     {
-        path: '/adminLogin',
-        name: 'AdminLogin',
-        component: AdminLogin,
-        meta: {
-            title: '管理员登入'
-        }
-    },
-    {
         path: '/user',
         name: 'User',
         component: User,

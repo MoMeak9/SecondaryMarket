@@ -23,7 +23,7 @@
             </el-table>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="商品审核" name="third">
+        <el-tab-pane label="商品审核" name="second">
           <div class="item-audit">
             <el-table :data="auditCommos" style="width: 100%">
               <el-table-column label="图片" width="180">
@@ -48,6 +48,34 @@
             </el-table>
           </div>
         </el-tab-pane>
+        <el-tab-pane label="商品管理" name="third">
+          <div class="item-audit">
+            <el-table :data="auditCommos" style="width: 100%">
+              <el-table-column label="图片" width="180">
+                <template slot-scope="scope">
+                  <el-image :src="scope.row.photoUrl" width="150" fit="contain"></el-image>
+                </template>
+              </el-table-column>
+              <el-table-column prop="name" label="名称" width="180"></el-table-column>
+              <el-table-column prop="description" label="简述" width="180"></el-table-column>
+              <el-table-column prop="price" label="价格"></el-table-column>
+              <el-table-column prop="quantity" label="数量"></el-table-column>
+              <el-table-column label="是否允许" width="180">
+                <template slot-scope="scope">
+                  <el-button type="primary" @click="allowCommo(scope.row.id)"
+                             @click.native.prevent="deleteRow(scope.$index, auditCommos)" size="small">允许
+                  </el-button>
+                  <el-button type="danger" @click="refuseCommo(scope.row.id)"
+                             @click.native.prevent="deleteRow(scope.$index, auditCommos)" size="small">拒绝
+                  </el-button>
+                  <el-button type="danger" @click="deleteCommo(scope.row.id)"
+                             @click.native.prevent="deleteRow(scope.$index, auditCommos)" size="small">拒绝
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -60,46 +88,14 @@ export default {
       allUsers: [{id: 0, name: '', createOn: '', email: ''}],
       auditCommos: [],
       userList: [],
+      commList: []
     }
   },
   methods: {
-    //更改为qs插件形式
-    // allowReg (id) {
-    //   this.$axios.put('/apis/users/' + id, {
-    //     role: 0
-    //   }).then(resp => {
-    //     var data = resp.data
-    //     if (data.code === 200) {
-    //       this.$notify({
-    //         title: '成功',
-    //         message: '处理完成',
-    //         type: 'success'
-    //       })
-    //     }
-    //   }).catch(function (error) {
-    //     console.log(error)
-    //   })
-    // },
-    // refuseReg (id) {
-    //   this.$axios.put('/apis/users/' + id, {
-    //     role: -1
-    //   }).then(resp => {
-    //     var data = resp.data
-    //     if (data.code === 200) {
-    //       this.$notify({
-    //         title: '成功',
-    //         message: '处理完成',
-    //         type: 'success'
-    //       })
-    //     }
-    //   }).catch(function (error) {
-    //     console.log(error)
-    //   })
-    // },
-
     deleteRow(index, rows) {
       rows.splice(index, 1)
     },
+    //审核通过
     allowCommo() {
       this.$axios.post('/apis/admin/auditComm', this.$qs.stringify({
             auditComm: 1,
@@ -123,11 +119,34 @@ export default {
         console.log(error)
       })
     },
+    //拒绝
     refuseCommo() {
       this.$axios.post('/apis/admin/auditComm', this.$qs.stringify({
+        auditMsg: '',
         auditComm: 2,
-        auditor: this.au,
-        commNo: ""
+        auditor: '',
+        commNo: '',
+      }), {
+        headers: {
+          token: this.$store.state.token,
+        }
+      }).then(resp => {
+        var data = resp.data
+        if (data.code === 1) {
+          this.$notify({
+            title: '成功',
+            message: '处理完成',
+            type: 'success'
+          })
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    // 删除商品
+    deleteCommo() {
+      this.$axios.post('/apis/admin/auditComm', this.$qs.stringify({
+        commNo: '',
       }), {
         headers: {
           token: this.$store.state.token,
@@ -147,10 +166,10 @@ export default {
     }
   },
   mounted() {
-    this.$axios.get('/apis/users').then(resp => {
+    this.$axios.get('/apis/admin/commList').then(resp => {
       var data = resp.data
       if (data.code === 200) {
-        this.regUsers = data.data
+        this.commList = data.data
       }
     })
     //待审核商品列表

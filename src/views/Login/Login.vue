@@ -66,7 +66,7 @@
               <el-input type="password" v-model="registerForm.checkPassword" placeholder="请再次输入密码"
                         prefix-icon="el-icon-lock" show-password></el-input>
             </el-form-item>
-            <el-button type="danger" @click="register()">注册</el-button>
+            <el-button type="danger" @click="register">注册</el-button>
           </el-form>
         </div>
       </div>
@@ -180,16 +180,26 @@ export default {
           const data = resp.data
           if (data.code === 1) {
             //用户数据
-            this.$notify({
-              title: '登入成功',
-              message: '福大二手交易市场欢迎您',
-              type: 'success'
-            })
             this.$store.commit('SET_TOKEN', data.obj.token)
             this.$store.commit('GET_USER', data.obj.userBean)
             console.log(this.$store.state.token)
             console.log(this.$store.state.user)
-            this.$router.push({path: '/home'})
+            if (data.obj.userBean.userRoot === 0) {
+              this.$notify({
+                title: '登入成功',
+                message: '福大二手交易市场欢迎您',
+                type: 'success'
+              })
+              this.$router.push({path: '/home'})
+            } else {
+              this.$notify({
+                title: '登入成功',
+                message: '欢迎您，管理员',
+                type: 'success'
+              })
+              this.$router.push({path: '/adminHome'})
+            }
+
           } else {
             this.$notify.error({
               title: '错误',
