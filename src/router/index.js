@@ -5,7 +5,6 @@ import Repassword from "@/views/Login/Repassword";
 import Login from "@/views/Login/Login";
 import Home from "@/views/Home/Home";
 import AdminHome from "@/views/Home/AdminHome";
-import AdminLogin from "@/views/Login/AdminLogin";
 import User from "@/views/User/User";
 
 Vue.use(VueRouter)
