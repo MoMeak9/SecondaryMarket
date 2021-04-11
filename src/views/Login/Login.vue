@@ -40,7 +40,7 @@
                         prefix-icon="el-icon-lock" show-password></el-input>
             </el-form-item>
             <div class="form-bottom">
-              <a href="/repassword">忘记密码</a>
+              <a href="/#/repassword">忘记密码</a>
             </div>
             <el-button type="danger" @click="login()">登录</el-button>
           </el-form>

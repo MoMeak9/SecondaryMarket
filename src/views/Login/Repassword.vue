@@ -40,7 +40,7 @@
           <el-input type="password" v-model="resetForm.checkPassword" placeholder="请再次输入密码"
                     prefix-icon="el-icon-lock" show-password></el-input>
         </el-form-item>
-        <el-button type="danger" @click="resetpassword()">>修改密码</el-button>
+        <el-button type="danger" @click="resetpassword()">修改密码</el-button>
       </el-form>
     </div>
   </el-row>
