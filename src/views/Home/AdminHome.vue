@@ -6,13 +6,13 @@
         <el-tab-pane label="账号管理" name="first">
           <div class="item-reg">
             <el-table :data="userList" style="width: 100%">
-              <el-table-column prop="createdOn" label="日期" width="180"></el-table-column>
-              <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-              <el-table-column prop="email" label="邮箱"></el-table-column>
-              <el-table-column prop="userStatus" label="账号状态"></el-table-column>
+              <el-table-column prop="lastLoginTime" label="最后登入日期" width></el-table-column>
+              <el-table-column prop="userName" label="姓名" width="180"></el-table-column>
+              <el-table-column prop="userEmail" label="邮箱" width="180"></el-table-column>
+              <el-table-column prop="isBan" label="账号状态" width="180"></el-table-column>
               <el-table-column label="账号操作">
                 <template slot-scope="scope">
-                  <el-button type="primary" @click="banUser(scope.row.id)"
+                  <el-button type="primary" @click="banUser(scope.row.isBan)"
                              @click.native.prevent="deleteRow(scope.$index, userList)">封禁
                   </el-button>
                   <el-button type="danger" @click="unbanUser(scope.row.id)"
@@ -93,7 +93,8 @@ export default {
         auditMsg: '',
         createUser: '',
         auditStatus: ''
-      }]
+      }],
+      token:''
     }
   },
   methods: {
@@ -154,7 +155,7 @@ export default {
         commNo: commNo
       }), {
         headers: {
-          Authorization: this.$store.state.token,
+          Authorization: this.token
         }
       }).then(resp => {
         var data = resp.data
@@ -171,25 +172,36 @@ export default {
     },
     banUser() {
 
+    },
+    unBanUser() {
+
+    },
+    //  获取数据
+    initDate() {
+      //用户列表
+      this.$axios.post('/apis/admin/userList', {}, {
+        headers: {
+          Authorization: this.$store.state.token
+        }
+      }).then(resp => {
+        var data = resp.data
+        console.log(data)
+        if (data.code === 1) {
+          this.userList = data.obj
+        }
+      })
+    //  商品列表
+
+    //  待审核商品列表
     }
   },
   mounted() {
-    //所有用户列表
-    this.$axios.post('/apis/admin/userList', {
-      headers: {
-        Authorization: this.$store.state.token
-      }
-    }).then(resp => {
-      console.log(resp)
-      var data = resp.data
-      if (data.code === 1) {
-        this.userList = data.obj
-      }
-    })
+    this.token = this.$store.state.token
+    this.initDate()
     //所有商品列表
     this.$axios.get('/apis/admin/commList', {
       headers: {
-        Authorization: this.$store.state.token
+        Authorization: this.token
       }
     }).then(resp => {
       console.log(resp)
