@@ -40,7 +40,7 @@
                         prefix-icon="el-icon-lock" show-password></el-input>
             </el-form-item>
             <div class="form-bottom">
-              <a href="http://localhost:8080/#/repassword">忘记密码</a>
+              <a href="/repassword">忘记密码</a>
             </div>
             <el-button type="danger" @click="login()">登录</el-button>
           </el-form>
@@ -245,9 +245,11 @@ export default {
       }
     },
     validation() {
-      this.$axios.post('/apis/message/sendEmail', this.$qs.stringify({
-        userEmail: this.registerForm.email,
-      })).then((response) => {
+      this.$axios.get('/apis/message/sendEmail', {
+        params:{
+          userEmail:this.registerForm.email,
+        }
+      }).then((response) => {
         const data = response.data
         if (data.code === 1) {
           this.$notify({
@@ -275,7 +277,6 @@ export default {
 @import "src/styles/main";
 
 #login {
-  min-width: 1190px;
   width: 100%;
   padding: 22px 0;
   align-items: center;
@@ -307,8 +308,8 @@ export default {
       display: flex;
       padding-bottom: 20px;
       position: absolute;
-      top: 91px;
-      right: 425px;
+      top: 20%;
+      right: 30%;
       background-color: #fff;
       border: #8c939d solid 1px;
       border-radius: 6px;

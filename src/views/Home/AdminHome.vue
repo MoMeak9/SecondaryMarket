@@ -174,6 +174,18 @@ export default {
     }
   },
   mounted() {
+    //所有用户列表
+    this.$axios.post('/apis/admin/userList', {
+      headers: {
+        Authorization: this.$store.state.token
+      }
+    }).then(resp => {
+      console.log(resp)
+      var data = resp.data
+      if (data.code === 1) {
+        this.userList = data.obj
+      }
+    })
     //所有商品列表
     this.$axios.get('/apis/admin/commList', {
       headers: {

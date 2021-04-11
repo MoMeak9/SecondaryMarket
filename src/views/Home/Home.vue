@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Nav></Nav>
+    <Nav> </Nav>
     <div id="header">
       <div class="search">
         <div class="input-wrap">
@@ -159,8 +159,7 @@ export default {
 
   .input-wrap {
     display: flex;
-    border: solid #FF0036;
-    border-width: 2px;
+    border: 2px solid #ff0036;
 
     .el-input__inner {
       width: 400px;
@@ -251,7 +250,6 @@ export default {
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
-        -webkit-line-clamp: 2;
       }
 
       .hot-item-price {
