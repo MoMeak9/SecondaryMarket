@@ -54,8 +54,7 @@
               <el-button type="primary" icon="el-icon-s-promotion" @click="validation()">验证</el-button>
             </el-form-item>
             <el-form-item prop="code">
-              <el-input v-model="code" placeholder="验证码"
-                        prefix-icon="el-icon-paperclip"></el-input>
+              <el-input v-model="code" placeholder="验证码" prefix-icon="el-icon-chat-line-round"></el-input>
             </el-form-item>
             <el-form-item prop="password">
               <el-input type="password" v-model="registerForm.password" placeholder="请输入登录密码"
@@ -75,7 +74,7 @@
 <script>
 export default {
   data() {
-    var validatePass = (rule, value, callback) => {
+    let validatePass = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入密码'))
       } else {
@@ -84,8 +83,8 @@ export default {
         }
         callback()
       }
-    }
-    var validatePass2 = (rule, value, callback) => {
+    };
+    let validatePass2 = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请再次输入密码'))
       } else if (value !== this.registerForm.password) {
@@ -94,7 +93,7 @@ export default {
         callback()
       }
     }
-    var validatePass3 = (rule, value, callback) => {
+    let validatePass3 = (rule, value, callback) => {
       const reg = '^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$'
       if (value === '') {
         callback(new Error('请输入邮箱'))
@@ -104,16 +103,18 @@ export default {
         callback()
       }
     }
-    var validatePass4 = (rule, value, callback) => {
+    let validatePass4 = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入用户名'))
       } else {
         callback()
       }
     }
-    var validatePass5 = (rule, value, callback) => {
+    let validatePass5 = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入验证码'))
+      } else {
+        callback()
       }
     }
     return {
@@ -246,8 +247,8 @@ export default {
     },
     validation() {
       this.$axios.get('/apis/message/sendEmail', {
-        params:{
-          userEmail:this.registerForm.email,
+        params: {
+          userEmail: this.registerForm.email,
         }
       }).then((response) => {
         const data = response.data

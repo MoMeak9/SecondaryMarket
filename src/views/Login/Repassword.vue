@@ -175,11 +175,11 @@ export default {
 
 .reset-content {
   background: white;
-  width: 30em;
+  width: 20em;
   padding: 2em;
   position: absolute;
-  top: 10%;
-  right: 40%;
+  left: 0; top: 5vh; right: 0;
+  margin: auto;
   border-radius: 1em;
   box-shadow: black 0 0 2em;
 }

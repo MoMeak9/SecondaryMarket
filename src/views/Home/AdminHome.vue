@@ -9,13 +9,14 @@
               <el-table-column prop="lastLoginTime" label="最后登入日期" width></el-table-column>
               <el-table-column prop="userName" label="姓名" width="180"></el-table-column>
               <el-table-column prop="userEmail" label="邮箱" width="180"></el-table-column>
+              <el-table-column prop="userNo" label="编号" width=""></el-table-column>
               <el-table-column prop="isBan" label="账号状态" width="180"></el-table-column>
               <el-table-column label="账号操作">
                 <template slot-scope="scope">
-                  <el-button type="primary" @click="banUser(scope.row.isBan)"
+                  <el-button type="primary" @click="banUser(scope.row.userNo)"
                              @click.native.prevent="deleteRow(scope.$index, userList)">封禁
                   </el-button>
-                  <el-button type="danger" @click="unbanUser(scope.row.id)"
+                  <el-button type="danger" @click="unbanUser(scope.row.userNo)"
                              @click.native.prevent="deleteRow(scope.$index, userList)">解封
                   </el-button>
                 </template>
@@ -23,6 +24,7 @@
             </el-table>
           </div>
         </el-tab-pane>
+<!--        审核商品-->
         <el-tab-pane label="商品审核" name="second">
           <div class="item-audit">
             <el-table :data="auditCommos" style="width: 100%">
@@ -48,6 +50,7 @@
             </el-table>
           </div>
         </el-tab-pane>
+<!--        管理所有商品-->
         <el-tab-pane label="商品管理" name="third">
           <div class="item-audit">
             <el-table :data="commList" style="width: 100%">
@@ -170,18 +173,19 @@ export default {
         console.log(error)
       })
     },
-    banUser() {
+    banUser(userNo) {
+      console.log(userNo)
 
     },
-    unBanUser() {
-
+    unBanUser(userNo) {
+      console.log(userNo)
     },
     //  获取数据
     initDate() {
       //用户列表
       this.$axios.post('/apis/admin/userList', {}, {
         headers: {
-          Authorization: this.$store.state.token
+          Authorization: this.token
         }
       }).then(resp => {
         var data = resp.data
@@ -191,25 +195,33 @@ export default {
         }
       })
     //  商品列表
-
+      this.$axios.get('/apis/admin/commList', {
+        headers: {
+          Authorization: this.token
+        }
+      }).then(resp => {
+        console.log(resp)
+        var data = resp.data
+        if (data.code === 1) {
+          this.commList = data.obj
+        }
+      })
     //  待审核商品列表
     }
   },
   mounted() {
     this.token = this.$store.state.token
+    if (this.token === '') {
+      this.$message({
+        message: '用户未登录！即将返回登录页面',
+        type: 'error'
+      });
+      clearTimeout(this.timer);
+      this.timer = setTimeout(() => {
+        this.$router.push({path: '/login'});
+      }, 1500);
+    }
     this.initDate()
-    //所有商品列表
-    this.$axios.get('/apis/admin/commList', {
-      headers: {
-        Authorization: this.token
-      }
-    }).then(resp => {
-      console.log(resp)
-      var data = resp.data
-      if (data.code === 1) {
-        this.commList = data.obj
-      }
-    })
     //待审核商品列表
     this.auditCommos = this.commList
     for (let i = 0; i < this.auditCommos.length; i++) {
