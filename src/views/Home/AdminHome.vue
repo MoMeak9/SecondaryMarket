@@ -24,7 +24,7 @@
             </el-table>
           </div>
         </el-tab-pane>
-<!--        审核商品-->
+        <!--        审核商品-->
         <el-tab-pane label="商品审核" name="second">
           <div class="item-audit">
             <el-table :data="auditCommos" style="width: 100%">
@@ -50,23 +50,24 @@
             </el-table>
           </div>
         </el-tab-pane>
-<!--        管理所有商品-->
+        <!--        管理所有商品-->
         <el-tab-pane label="商品管理" name="third">
           <div class="item-audit">
-            <el-table :data="commList" style="width: 100%">
-              <el-table-column label="图片" width="180">
+            <el-table :data="commList" style="width: 100%" height="90vh" stripe="true">
+              <el-table-column label="图片" width="120">
                 <template slot-scope="scope">
-                  <el-image :src="scope.row.photoUrl" width="150" fit="contain"></el-image>
+                  <el-image :src="scope.row.commPicList[0]" fit='cover' :preview-src-list="scope.row.commPicList"
+                            style="width: 100px;height: 100px"></el-image>
                 </template>
               </el-table-column>
-              <el-table-column prop="commName" label="名称" width="180"></el-table-column>
-              <el-table-column prop="auditMsg" label="简述"></el-table-column>
-              <el-table-column prop="createUser" label="创建者" width="180"></el-table-column>
-              <el-table-column prop="auditStatus" label="审核状态"></el-table-column>
+              <el-table-column prop="commodity.commName" label="名称"></el-table-column>
+              <el-table-column prop="commodity.commDesc" label="简述"></el-table-column>
+              <el-table-column prop="commodity.createUser" label="创建者" width="180"></el-table-column>
+              <el-table-column prop="commodity.auditStatus" label="审核状态"></el-table-column>
               <el-table-column label="商品操作" width="250">
                 <template slot-scope="scope">
-                  <el-button type="primary" @click="allowCommo(scope.row.commNo)"
-                             @click.native.prevent="deleteRow(scope.$index, auditCommos)" size="small">允许
+                  <el-button type="primary" @click="allowCommo(scope.row.commodity.commNo)"
+                             @click.native.prevent="deleteRow(scope.$index, auditCommos)" size="small">通过
                   </el-button>
                   <el-button type="danger" @click="refuseCommo(scope.row.commNo)"
                              @click.native.prevent="deleteRow(scope.$index, auditCommos)" size="small">拒绝
@@ -97,7 +98,7 @@ export default {
         createUser: '',
         auditStatus: ''
       }],
-      token:''
+      token: ''
     }
   },
   methods: {
@@ -194,7 +195,7 @@ export default {
           this.userList = data.obj
         }
       })
-    //  商品列表
+      //  商品列表
       this.$axios.get('/apis/admin/commList', {
         headers: {
           Authorization: this.token
@@ -206,7 +207,7 @@ export default {
           this.commList = data.obj
         }
       })
-    //  待审核商品列表
+      //  待审核商品列表
     }
   },
   mounted() {
