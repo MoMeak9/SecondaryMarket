@@ -33,7 +33,7 @@
           </div>
           <el-form :model="loginForm" v-show="menuTab[0].isActive" status-icon :rules="rules" ref="loginForm">
             <el-form-item prop="email" props="email">
-              <el-input v-model="loginForm.email" placeholder="用户邮箱" prefix-icon="el-icon-user-solid"></el-input>
+              <el-input v-model="loginForm.email" placeholder="用户邮箱" prefix-icon="el-icon-message"></el-input>
             </el-form-item>
             <el-form-item prop="password" props="password">
               <el-input type="password" v-model="loginForm.password" placeholder="请输入登录密码"

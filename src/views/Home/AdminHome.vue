@@ -24,56 +24,33 @@
             </el-table>
           </div>
         </el-tab-pane>
-        <!--        审核商品-->
-        <el-tab-pane label="商品审核" name="second">
+        <!--        管理所有商品  可筛选-->
+        <el-tab-pane label="商品管理" name="second">
           <div class="item-audit">
-            <el-table :data="auditCommos" style="width: 100%">
-              <el-table-column label="图片" width="180">
-                <template slot-scope="scope">
-                  <el-image :src="scope.row.photoUrl" width="150" fit="contain"></el-image>
-                </template>
-              </el-table-column>
-              <el-table-column prop="commName" label="名称" width="180"></el-table-column>
-              <el-table-column prop="auditMsg" label="简述"></el-table-column>
-              <el-table-column prop="createUser" label="创建者" width="180"></el-table-column>
-              <el-table-column prop="auditStatus" label="审核状态"></el-table-column>
-              <el-table-column label="是否允许" width="180">
-                <template slot-scope="scope">
-                  <el-button type="primary" @click="allowCommo(scope.row.id)"
-                             @click.native.prevent="deleteRow(scope.$index, auditCommos)" size="small">允许
-                  </el-button>
-                  <el-button type="danger" @click="refuseCommo(scope.row.id)"
-                             @click.native.prevent="deleteRow(scope.$index, auditCommos)" size="small">拒绝
-                  </el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-        </el-tab-pane>
-        <!--        管理所有商品-->
-        <el-tab-pane label="商品管理" name="third">
-          <div class="item-audit">
-            <el-table :data="commList" style="width: 100%" height="90vh" stripe="true">
+            <el-table :data="commList" style="width: 100%" height="90vh" stripe
+                      :default-sort="{prop: 'commodity.commName', order: 'increasing'}">
               <el-table-column label="图片" width="120">
                 <template slot-scope="scope">
                   <el-image :src="scope.row.commPicList[0]" fit='cover' :preview-src-list="scope.row.commPicList"
-                            style="width: 100px;height: 100px"></el-image>
+                            style="width: 70px;height: 70px"></el-image>
                 </template>
               </el-table-column>
-              <el-table-column prop="commodity.commName" label="名称"></el-table-column>
+              <el-table-column prop="commodity.commName" label="名称" sortable></el-table-column>
               <el-table-column prop="commodity.commDesc" label="简述"></el-table-column>
-              <el-table-column prop="commodity.createUser" label="创建者" width="180"></el-table-column>
-              <el-table-column prop="commodity.auditStatus" label="审核状态"></el-table-column>
+              <el-table-column prop="commodity.createUser" label="创建者" width="180" sortable></el-table-column>
+              <el-table-column prop="commodity.auditStatus" label="审核状态" sortable
+                               :filters="[{text: '待审核', value: 0},{text: '审核通过', value: 1},{text: '驳回', value: 2}]"
+                               :filter-method="filterHandler"></el-table-column>
               <el-table-column label="商品操作" width="250">
                 <template slot-scope="scope">
                   <el-button type="primary" @click="allowCommo(scope.row.commodity.commNo)"
-                             @click.native.prevent="deleteRow(scope.$index, auditCommos)" size="small">通过
+                             @click.native.prevent="deleteRow(scope.$index, commList)" size="small">通过
                   </el-button>
-                  <el-button type="danger" @click="refuseCommo(scope.row.commNo)"
-                             @click.native.prevent="deleteRow(scope.$index, auditCommos)" size="small">拒绝
+                  <el-button type="danger" @click="refuseCommo(scope.row.commodity.commNo)"
+                             @click.native.prevent="deleteRow(scope.$index, commList)" size="small">拒绝
                   </el-button>
-                  <el-button type="danger" @click="deleteCommo(scope.row.commNo)"
-                             @click.native.prevent="deleteRow(scope.$index, auditCommos)" size="small">删除
+                  <el-button type="danger" @click="deleteCommo(scope.row.commodity.commNo)"
+                             @click.native.prevent="deleteRow(scope.$index, commList)" size="small">删除
                   </el-button>
                 </template>
               </el-table-column>
@@ -88,6 +65,7 @@
 export default {
   data() {
     return {
+      userName:'',
       tabActive: 'first',
       allUsers: [{id: 0, name: '', createOn: '', email: ''}],
       auditCommos: [],
@@ -109,11 +87,11 @@ export default {
     allowCommo(commNo) {
       this.$axios.post('/apis/admin/auditComm', this.$qs.stringify({
             auditStatus: 1,
-            auditor: this.$store.state.user.userName,
+            auditor: this.userName,
             commNo: commNo
           }), {
             headers: {
-              Authorization: this.$store.state.token,
+              Authorization: this.token
             }
           }
       ).then(resp => {
@@ -134,11 +112,11 @@ export default {
       this.$axios.post('/apis/admin/auditComm', this.$qs.stringify({
         auditMsg: '',
         auditStatus: 2,
-        auditor: this.$store.state.userBean.userName,
+        auditor: this.userName,
         commNo: commNo
       }), {
         headers: {
-          Authorization: this.$store.state.token,
+          Authorization: this.token
         }
       }).then(resp => {
         var data = resp.data
@@ -183,7 +161,11 @@ export default {
     },
     //  获取数据
     initDate() {
-      //用户列表
+      this.getUserList()
+      this.getCommList()
+    },
+    //用户列表
+    getUserList() {
       this.$axios.post('/apis/admin/userList', {}, {
         headers: {
           Authorization: this.token
@@ -195,6 +177,8 @@ export default {
           this.userList = data.obj
         }
       })
+    },
+    getCommList() {
       //  商品列表
       this.$axios.get('/apis/admin/commList', {
         headers: {
@@ -207,10 +191,15 @@ export default {
           this.commList = data.obj
         }
       })
-      //  待审核商品列表
-    }
+    },
+    //  待审核商品筛选器
+    filterHandler(value, row, column) {
+      const property = column['property'];
+      return row[property] === value;
+    },
   },
   mounted() {
+    this.userName = this.$store.state.userBean.userName
     this.token = this.$store.state.token
     if (this.token === '') {
       this.$message({
