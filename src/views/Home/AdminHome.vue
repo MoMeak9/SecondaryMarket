@@ -43,18 +43,20 @@
                                :filter-method="filterHandler"></el-table-column>
               <el-table-column label="商品操作" width="250">
                 <template slot-scope="scope">
-                  <el-button type="primary" @click="allowCommo(scope.row.commodity.commNo)"
-                             @click.native.prevent="deleteRow(scope.$index, commList)" size="small">通过
+                  <el-button type="primary" @click="allowCommo(scope.row.commodity.commNo)" size="small">通过
                   </el-button>
-                  <el-button type="danger" @click="refuseCommo(scope.row.commodity.commNo)"
-                             @click.native.prevent="deleteRow(scope.$index, commList)" size="small">拒绝
+                  <el-button type="danger" @click="refuseCommo(scope.row.commodity.commNo)" size="small">拒绝
                   </el-button>
-                  <el-button type="danger" @click="deleteCommo(scope.row.commodity.commNo)"
-                             @click.native.prevent="deleteRow(scope.$index, commList)" size="small">删除
+                  <el-button type="danger" @click="deleteCommo(scope.row.commodity.commNo)" size="small">删除
                   </el-button>
                 </template>
               </el-table-column>
             </el-table>
+            <!--            补充数据分页-->
+            <!--            <el-pagination-->
+            <!--                layout="prev, pager, next"-->
+            <!--                :total="50">-->
+            <!--            </el-pagination>-->
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -65,24 +67,17 @@
 export default {
   data() {
     return {
-      userName:'',
+      userName: '',
       tabActive: 'first',
       allUsers: [{id: 0, name: '', createOn: '', email: ''}],
       auditCommos: [],
       userList: [],
-      commList: [{
-        commName: '',
-        auditMsg: '',
-        createUser: '',
-        auditStatus: ''
-      }],
-      token: ''
+      commList: [],
+      token: '',
+      auditMsg: ''
     }
   },
   methods: {
-    deleteRow(index, rows) {
-      rows.splice(index, 1)
-    },
     //审核通过
     allowCommo(commNo) {
       this.$axios.post('/apis/admin/auditComm', this.$qs.stringify({
@@ -103,14 +98,38 @@ export default {
             type: 'success'
           })
         }
+        this.getCommList()
       }).catch(function (error) {
         console.log(error)
       })
     },
     //拒绝发布
     refuseCommo(commNo) {
+      if (this.auditMsg === '') {
+        this.$prompt('拒绝原因:', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          inputPattern: /^[\s\S]*.*[^\s][\s\S]*$/,
+          inputErrorMessage: '内容不得为空',
+          inputPlaceholder: '请输入拒绝原因，不得为空'
+        }).then(({value}) => {
+          this.auditMsg = value
+          this.$notify({
+            title: '成功',
+            type: 'success',
+            message: '审核评议成功'
+          });
+        }).catch(() => {
+          this.$notify({
+            title: '失败',
+            type: 'info',
+            message: '取消输入'
+          });
+        });
+      }
+      console.log(this.auditMsg)
       this.$axios.post('/apis/admin/auditComm', this.$qs.stringify({
-        auditMsg: '',
+        auditMsg: this.auditMsg,
         auditStatus: 2,
         auditor: this.userName,
         commNo: commNo
@@ -126,7 +145,9 @@ export default {
             message: '处理完成',
             type: 'success'
           })
+          this.auditMsg = ''
         }
+        this.getCommList()
       }).catch(function (error) {
         console.log(error)
       })
@@ -148,6 +169,7 @@ export default {
             type: 'success'
           })
         }
+        this.getCommList()
       }).catch(function (error) {
         console.log(error)
       })
@@ -224,6 +246,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 #admin-home {
+  position: relative;
+
   .header {
     height: 60px;
     background: rgb(70, 70, 70);
