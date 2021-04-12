@@ -39,6 +39,8 @@
         <el-col :span="20" class="ct-right">
           <div class="right-container">
             <div class="user-info" v-show="menuTab[0].isActive">
+              <el-tab-pane label="个人信息" name="first">123</el-tab-pane>
+              <el-tab-pane label="修改信息" name="second">123</el-tab-pane>
               <div class="right-item">
                 <div class="item-label">名称 :</div>
                 <div class="item-info">{{ userBean.userName }}</div>
@@ -62,10 +64,11 @@
                 <div class="item-info">{{ userBean.userEmail }}</div>
               </div>
               <div class="right-item">
-                <div class="item-label">角色 :</div>
+                <div class="item-label">权限 :</div>
                 <div class="item-info" v-if="userBean.userRoot === 0">普通用户</div>
                 <div class="item-info" v-else>管理员</div>
               </div>
+
             </div>
             <div class="history-order" v-show="menuTab[1].isActive">
               <div class="history-item" v-for="item in historyOrder" :key="item.id">

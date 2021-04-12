@@ -4,42 +4,39 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 //更换为Token存储
 const state = {
-    userBean: window.localStorage.getItem('user'),
-    commodity: window.localStorage.getItem('commodity'),
+    userBean: window.sessionStorage.getItem('user'),
+    commodity: window.sessionStorage.getItem('commodity'),
     hostServer: '39.105.228.56:8080/shop',
-    token: window.localStorage.getItem('token')
+    token: window.sessionStorage.getItem('token')
 }
 const mutations = {
-    GET_TOKEN: () => {
-        return window.localStorage.getItem('token')
-    },
     SET_TOKEN: (state, token) => {
         state.token = token
-        window.localStorage.token = token
+        window.sessionStorage.token = token
     },
     DEL_TOKEN: (state) => {
         state.token = ''
-        window.localStorage.removeItem('token')
+        window.sessionStorage.removeItem('token')
     },
     GET_USER: (state, data) => {
         // 把用户信息存起来
         state.userBean = data
-        window.localStorage.setItem('user', data)
+        window.sessionStorage.setItem('user', data)
     },
     LOGOUT: (state) => {
         // 登出的时候要清除用户名
         state.userBean = null
-        window.localStorage.removeItem('user')
+        window.sessionStorage.removeItem('user')
     },
     GET_COMMODITY: (state, data) => {
         // 把商品存起来
         state.commodity = data
-        window.localStorage.setItem('commodity', data)
+        window.sessionStorage.setItem('commodity', data)
     }
 }
 export default new Vuex.Store({
     state,
     mutations,
     actions: {},
-    modules: {}
+    modules: {},
 })

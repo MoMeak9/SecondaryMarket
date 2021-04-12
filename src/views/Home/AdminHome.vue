@@ -7,17 +7,15 @@
           <div class="item-reg">
             <el-table :data="userList" style="width: 100%">
               <el-table-column prop="lastLoginTime" label="最后登入日期" width></el-table-column>
-              <el-table-column prop="userName" label="姓名" width="180"></el-table-column>
+              <el-table-column prop="userName" label="用户名" width="180"></el-table-column>
               <el-table-column prop="userEmail" label="邮箱" width="180"></el-table-column>
               <el-table-column prop="userNo" label="编号" width=""></el-table-column>
               <el-table-column prop="isBan" label="账号状态" width="180"></el-table-column>
               <el-table-column label="账号操作">
                 <template slot-scope="scope">
-                  <el-button type="primary" @click="banUser(scope.row.userNo)"
-                             @click.native.prevent="deleteRow(scope.$index, userList)">封禁
+                  <el-button type="primary" @click="banUser(scope.row.userNo)">封禁
                   </el-button>
-                  <el-button type="danger" @click="unbanUser(scope.row.userNo)"
-                             @click.native.prevent="deleteRow(scope.$index, userList)">解封
+                  <el-button type="danger" @click="unBanUser(scope.row.userNo)">解封
                   </el-button>
                 </template>
               </el-table-column>
@@ -69,7 +67,7 @@ export default {
     return {
       userName: '',
       tabActive: 'first',
-      allUsers: [{id: 0, name: '', createOn: '', email: ''}],
+      allUsers: [],
       auditCommos: [],
       userList: [],
       commList: [],
@@ -105,28 +103,21 @@ export default {
     },
     //拒绝发布
     refuseCommo(commNo) {
-      if (this.auditMsg === '') {
-        this.$prompt('拒绝原因:', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          inputPattern: /^[\s\S]*.*[^\s][\s\S]*$/,
-          inputErrorMessage: '内容不得为空',
-          inputPlaceholder: '请输入拒绝原因，不得为空'
-        }).then(({value}) => {
-          this.auditMsg = value
-          this.$notify({
-            title: '成功',
-            type: 'success',
-            message: '审核评议成功'
-          });
-        }).catch(() => {
-          this.$notify({
-            title: '失败',
-            type: 'info',
-            message: '取消输入'
-          });
+      this.$prompt('拒绝原因:', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputPattern: /^[\s\S]*.*[^\s][\s\S]*$/,
+        inputErrorMessage: '内容不得为空',
+        inputPlaceholder: '请输入拒绝原因，不得为空'
+      }).then(({value}) => {
+        this.auditMsg = value
+      }).catch(() => {
+        this.$notify({
+          title: '失败',
+          type: 'info',
+          message: '取消输入'
         });
-      }
+      });
       console.log(this.auditMsg)
       this.$axios.post('/apis/admin/auditComm', this.$qs.stringify({
         auditMsg: this.auditMsg,
@@ -140,6 +131,7 @@ export default {
       }).then(resp => {
         var data = resp.data
         if (data.code === 1) {
+          this.getCommList()
           this.$notify({
             title: '成功',
             message: '处理完成',
@@ -147,7 +139,6 @@ export default {
           })
           this.auditMsg = ''
         }
-        this.getCommList()
       }).catch(function (error) {
         console.log(error)
       })
@@ -169,17 +160,54 @@ export default {
             type: 'success'
           })
         }
-        this.getCommList()
       }).catch(function (error) {
         console.log(error)
       })
+      this.getCommList()
     },
     banUser(userNo) {
       console.log(userNo)
-
+      this.$axios.post('/apis/admin/setUserIsBan', this.$qs.stringify({
+        isBan: 1,
+        userNo: userNo
+      }), {
+        headers: {
+          Authorization: this.token
+        }
+      }).then(resp => {
+        var data = resp.data
+        console.log(data)
+        if (data.code === 1) {
+          this.$notify({
+            title:'成功',
+            message:'处理完成',
+            type:'success'
+          })
+        }
+        this.getUserList()
+      })
     },
     unBanUser(userNo) {
       console.log(userNo)
+      this.$axios.post('/apis/admin/setUserIsBan', this.$qs.stringify({
+        isBan: 0,
+        userNo: userNo
+      }), {
+        headers: {
+          Authorization: this.token
+        }
+      }).then(resp => {
+        var data = resp.data
+        console.log(data)
+        if (data.code === 1) {
+          this.$notify({
+            title:'成功',
+            message:'处理完成',
+            type:'success'
+          })
+        }
+      })
+      this.getUserList()
     },
     //  获取数据
     initDate() {
@@ -223,6 +251,7 @@ export default {
   mounted() {
     this.userName = this.$store.state.userBean.userName
     this.token = this.$store.state.token
+    console.log(this.token)
     if (this.token === '') {
       this.$message({
         message: '用户未登录！即将返回登录页面',
@@ -234,13 +263,6 @@ export default {
       }, 1500);
     }
     this.initDate()
-    //待审核商品列表
-    this.auditCommos = this.commList
-    for (let i = 0; i < this.auditCommos.length; i++) {
-      if (this.auditCommos[i].auditStatus === 0) {
-        this.auditCommos[i] = ''
-      }
-    }
   }
 }
 </script>
