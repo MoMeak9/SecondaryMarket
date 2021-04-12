@@ -54,8 +54,8 @@
                 <el-form-item prop="userSex">
                   性别：
                   <div style="width: 85%;float: right">
-                  <el-radio v-model="userBean.userSex" label="男">男</el-radio>
-                  <el-radio v-model="userBean.userSex" label="女">女</el-radio>
+                    <el-radio v-model="userBean.userSex" label="男">男</el-radio>
+                    <el-radio v-model="userBean.userSex" label="女">女</el-radio>
                   </div>
                 </el-form-item>
                 <el-form-item prop="userInfo">
@@ -74,17 +74,17 @@
             <!--            历史订单展示-->
             <div class="history-order" v-show="menuTab[1].isActive">
               <el-table :data="historyOrder" stripe style="width: 100%">
-<!--                商品图片-->
+                <!--                商品图片-->
                 <el-table-column label="图片">
-<!--                  <template slot-scope="scope">-->
-<!--                    <el-image :src="scope.row.commPicList[0]" fit='cover' :preview-src-list="scope.row.commPicList"-->
-<!--                              style="width: 50px;height: 50px"></el-image>-->
-<!--                  </template>-->
+                  <!--                  <template slot-scope="scope">-->
+                  <!--                    <el-image :src="scope.row.commPicList[0]" fit='cover' :preview-src-list="scope.row.commPicList"-->
+                  <!--                              style="width: 50px;height: 50px"></el-image>-->
+                  <!--                  </template>-->
                 </el-table-column>
                 <el-table-column prop="createTime" label="下单时间" width="120"></el-table-column>
                 <el-table-column prop="commodityName" label="商品名称"></el-table-column>
                 <el-table-column prop="num" label="数量" width="50"></el-table-column>
-<!--                描述-->
+                <!--                描述-->
                 <el-table-column prop="note" label="商品描述"></el-table-column>
                 <el-table-column label="状态">
                   <div slot-scope="scope">
@@ -119,7 +119,26 @@
             </div>
             <!--            我的商品 个人商品发布列表 myCommodity-->
             <div class="my-commodity" v-show="menuTab[2].isActive">
-
+              <el-table :data="myCommodity" stripe style="width: 100%">
+                <!--                商品图片-->
+                <el-table-column label="图片">
+                  <!--                  <template slot-scope="scope">-->
+                  <!--                    <el-image :src="scope.row.commPicList[0]" fit='cover' :preview-src-list="scope.row.commPicList"-->
+                  <!--                              style="width: 50px;height: 50px"></el-image>-->
+                  <!--                  </template>-->
+                </el-table-column>
+                <el-table-column prop="commodity.commName" label="商品名称"></el-table-column>
+                <el-table-column prop="commodity.commDesc" label="商品描述"></el-table-column>
+                <el-table-column prop="commodity.commSale" label="卖出" width="50"></el-table-column>
+                <el-table-column prop="commodity.commStock" label="数量" width="50"></el-table-column>
+                <el-table-column prop="commodity.auditStatus" label="审核状态"></el-table-column>
+                <el-table-column label="商品操作">
+                  <div slot-scope="scope">
+                    <el-button type="danger" size="small" @click="deleteComm(scope.row.commodity.commNo)">下架商品
+                    </el-button>
+                  </div>
+                </el-table-column>
+              </el-table>
             </div>
             <div class="publish" v-show="menuTab[3].isActive">
               <div class="right-item" style="height: 195px; line-height:195px">
@@ -308,6 +327,7 @@ export default {
     // this.websocketLink()
   },
   methods: {
+    //初始化方法
     initData() {
       this.userBean = this.$store.state.userBean
       // 获取购买历史(用户提交的订单列表接口)
@@ -324,17 +344,20 @@ export default {
         console.log(error)
       })
       // 获取用户在售卖的商品
-      this.$axios.get('/apis/users/' + this.userBean.id + '/commodities').then(resp => {
+      this.$axios.get('/apis/commodity/queryUserComm', {
+        headers: {
+          Authorization: this.token
+        }
+      }).then(resp => {
         var data = resp.data
-        if (data.code === 200) {
-          this.myCommodity = data.data
+        if (data.code === 1) {
+          this.myCommodity = data.obj
         }
       }).catch(function (error) {
         console.log(error)
       })
-
       // 获取用户已卖出的商品
-      this.$axios.get('/apis/order/queryUserReceiveOrderList',{
+      this.$axios.get('/apis/order/queryUserReceiveOrderList', {
         headers: {
           Authorization: this.token
         }
@@ -360,6 +383,7 @@ export default {
     //     console.log('Socket已关闭')
     //   }
     // },
+    //更改订单状态
     changeStatus(item, isOk) {
       if (isOk) {
         this.$axios.put('/apis/pending-orders/' + item.id + '?status=' + (item.status + 1)).then(resp => {
@@ -390,6 +414,10 @@ export default {
           console.log(error)
         })
       }
+    },
+    //下架商品commNo
+    deleteComm() {
+
     },
     // 切换左侧菜单
     toggleMenuItem(data) {
