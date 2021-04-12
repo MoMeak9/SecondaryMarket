@@ -180,7 +180,6 @@ export default {
   position: absolute;
   left: 0; top: 5vh; right: 0;
   margin: auto;
-  border-radius: 1em;
   box-shadow: black 0 0 2em;
 }
 </style>

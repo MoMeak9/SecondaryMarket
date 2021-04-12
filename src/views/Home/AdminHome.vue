@@ -1,6 +1,8 @@
 <template>
   <div id="admin-home">
-    <div class="header"></div>
+    <div class="header">
+      <h1 style="color: white">二手交易市场后台管理系统</h1>
+    </div>
     <div class="content">
       <el-tabs v-model="tabActive">
         <el-tab-pane label="账号管理" name="first">
@@ -13,9 +15,9 @@
               <el-table-column prop="isBan" label="账号状态" width="180"></el-table-column>
               <el-table-column label="账号操作">
                 <template slot-scope="scope">
-                  <el-button type="primary" @click="banUser(scope.row.userNo)">封禁
+                  <el-button type="danger" @click="banUser(scope.row.userNo)" v-show="scope.row.isBan===0">封禁
                   </el-button>
-                  <el-button type="danger" @click="unBanUser(scope.row.userNo)">解封
+                  <el-button type="success" @click="unBanUser(scope.row.userNo)" v-show="scope.row.isBan===1">解封
                   </el-button>
                 </template>
               </el-table-column>
@@ -41,9 +43,11 @@
                                :filter-method="filterHandler"></el-table-column>
               <el-table-column label="商品操作" width="250">
                 <template slot-scope="scope">
-                  <el-button type="primary" @click="allowCommo(scope.row.commodity.commNo)" size="small">通过
+                  <el-button type="primary" @click="allowCommo(scope.row.commodity.commNo)" size="small"
+                             v-show="scope.row.commodity.auditStatus===0||scope.row.commodity.auditStatus===2">通过
                   </el-button>
-                  <el-button type="danger" @click="refuseCommo(scope.row.commodity.commNo)" size="small">拒绝
+                  <el-button type="danger" @click="refuseCommo(scope.row.commodity.commNo)" size="small"
+                             v-show="scope.row.commodity.auditStatus===0||scope.row.commodity.auditStatus===1">拒绝
                   </el-button>
                   <el-button type="danger" @click="deleteCommo(scope.row.commodity.commNo)" size="small">删除
                   </el-button>
@@ -71,7 +75,7 @@ export default {
       auditCommos: [],
       userList: [],
       commList: [],
-      token: '',
+      token: this.$store.state.token,
       auditMsg: ''
     }
   },
@@ -179,9 +183,9 @@ export default {
         console.log(data)
         if (data.code === 1) {
           this.$notify({
-            title:'成功',
-            message:'处理完成',
-            type:'success'
+            title: '成功',
+            message: '处理完成',
+            type: 'success'
           })
         }
         this.getUserList()
@@ -201,9 +205,9 @@ export default {
         console.log(data)
         if (data.code === 1) {
           this.$notify({
-            title:'成功',
-            message:'处理完成',
-            type:'success'
+            title: '成功',
+            message: '处理完成',
+            type: 'success'
           })
         }
       })
@@ -249,7 +253,6 @@ export default {
     },
   },
   mounted() {
-    this.userName = this.$store.state.userBean.userName
     this.token = this.$store.state.token
     console.log(this.token)
     if (this.token === '') {
@@ -273,6 +276,7 @@ export default {
   .header {
     height: 60px;
     background: rgb(70, 70, 70);
+    margin: 0.5em auto;
   }
 
   .content {

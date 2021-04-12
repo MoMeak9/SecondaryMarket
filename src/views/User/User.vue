@@ -38,74 +38,88 @@
         </el-col>
         <el-col :span="20" class="ct-right">
           <div class="right-container">
+            <!--            用户信息展示-->
             <div class="user-info" v-show="menuTab[0].isActive">
-              <el-tab-pane label="个人信息" name="first">123</el-tab-pane>
-              <el-tab-pane label="修改信息" name="second">123</el-tab-pane>
-              <div class="right-item">
-                <div class="item-label">名称 :</div>
-                <div class="item-info">{{ userBean.userName }}</div>
-              </div>
-              <div class="right-item">
-                <div class="item-label">性别 :</div>
-                <div class="item-info" v-if="userBean.userInfo !== null  && userBean.userInfo !== ''">
-                  {{ userBean.userSex }}
+              <el-form :model="userBean" style="width: 50%;margin: 3em">
+                <el-form-item prop="userName">
+                  用户名：
+                  <el-input v-model="userBean.userName" placeholder="用户名称" prefix-icon="el-icon-user"
+                            style="width: 85%;float: right"></el-input>
+                </el-form-item>
+                <el-form-item prop="userEmail">
+                  邮箱：
+                  <el-input v-model="userBean.userEmail" placeholder="邮箱账号" prefix-icon="el-icon-message"
+                            style="width: 85%;float: right"></el-input>
+                </el-form-item>
+                <el-form-item prop="userSex">
+                  性别：
+                  <div style="width: 85%;float: right">
+                  <el-radio v-model="userBean.userSex" label="男">男</el-radio>
+                  <el-radio v-model="userBean.userSex" label="女">女</el-radio>
+                  </div>
+                </el-form-item>
+                <el-form-item prop="userInfo">
+                  简介：
+                  <el-input type="textarea" :rows="4" v-model="userBean.userInfo" placeholder="简介"
+                            prefix-icon="el-icon-message" style="width: 85%;float: right"></el-input>
+                </el-form-item>
+                <div class="right-item">
+                  <div class="item-label">权限 :</div>
+                  <div class="item-info" v-if="userBean.userRoot === 0">普通用户</div>
+                  <div class="item-info" v-else>管理员</div>
                 </div>
-                <div class="item-info" v-else>保密</div>
-              </div>
-              <div class="right-item">
-                <div class="item-label">简介 :</div>
-                <div class="item-info" v-if="userBean.userInfo !== null  && userBean.userInfo !== ''">
-                  {{ userBean.userInfo }}
-                </div>
-                <div class="item-info" v-else>暂无</div>
-              </div>
-              <div class="right-item">
-                <div class="item-label">账户 :</div>
-                <div class="item-info">{{ userBean.userEmail }}</div>
-              </div>
-              <div class="right-item">
-                <div class="item-label">权限 :</div>
-                <div class="item-info" v-if="userBean.userRoot === 0">普通用户</div>
-                <div class="item-info" v-else>管理员</div>
-              </div>
-
+                <el-button type="danger" @click="reset()">保存修改</el-button>
+              </el-form>
             </div>
+            <!--            历史订单展示-->
             <div class="history-order" v-show="menuTab[1].isActive">
-              <div class="history-item" v-for="item in historyOrder" :key="item.id">
-                <div class="item-top">
-                  <p>订单号：{{ item.id }}</p>
-                  <p style="margin-left: 30px">下单时间：{{ item.createdOn }}</p>
-                </div>
-                <div class="item-content">
-                  <div class="img-wrap">
-                    <el-image :src="item.photoUrl" alt="" fit="cover"></el-image>
+              <el-table :data="historyOrder" stripe style="width: 100%">
+<!--                商品图片-->
+                <el-table-column label="图片">
+<!--                  <template slot-scope="scope">-->
+<!--                    <el-image :src="scope.row.commPicList[0]" fit='cover' :preview-src-list="scope.row.commPicList"-->
+<!--                              style="width: 50px;height: 50px"></el-image>-->
+<!--                  </template>-->
+                </el-table-column>
+                <el-table-column prop="createTime" label="下单时间" width="120"></el-table-column>
+                <el-table-column prop="commodityName" label="商品名称"></el-table-column>
+                <el-table-column prop="num" label="数量" width="50"></el-table-column>
+<!--                描述-->
+                <el-table-column prop="note" label="商品描述"></el-table-column>
+                <el-table-column label="状态">
+                  <div slot-scope="scope">
+                    <div v-if="scope.row.orderStatus === 0">待处理</div>
+                    <div v-else-if="scope.row.orderStatus === 1">发货中</div>
+                    <div v-else-if="scope.row.orderStatus === 2">待确认</div>
+                    <div v-else-if="scope.row.orderStatus === 3">申请取消</div>
+                    <div v-else>已取消</div>
                   </div>
-                  <div class="content-item item-name"><span>{{ item.commodityName }}</span></div>
-                  <div class="content-item item-num"><span>{{ item.num }}</span></div>
-                  <div class="content-item item-price"><span>￥{{ totalPrice(item.num * item.price, 1) }}</span></div>
-                  <div class="content-item item-status">
-                    <span v-if="item.status === 0">等待发货</span>
-                    <span v-else-if="item.status === 1">发货中</span>
-                    <span v-else-if="item.status === 2">待确认</span>
-                    <span v-else-if="item.status === 3">已完成订单</span>
-                    <span v-else-if="item.status === -1">已取消</span>
-                    <span v-else-if="item.status === -2">申请取消中</span>
+                </el-table-column>
+                <el-table-column label="操作" width="180">
+                  <div slot-scope="scope">
+                    <div v-if="scope.row.orderStatus === 0">
+                      <el-button type="danger" size="small" @click="changeStatus(scope.row, false)">取消订单</el-button>
+                    </div>
+                    <div v-else-if="scope.row.orderStatus === 1">
+                      <el-button type="primary" size="small" @click="changeStatus(scope.row, true)">取消订单</el-button>
+                    </div>
+                    <div v-if="scope.row.orderStatus === 2">
+                      <el-button type="primary" size="small" @click="changeStatus(scope.row, true)">确认收货</el-button>
+                      <el-button type="danger" size="small" @click="changeStatus(scope.row, false)">取消</el-button>
+                    </div>
+                    <div v-else-if="scope.row.orderStatus === 3">
+                      <el-tag>等待确认</el-tag>
+                    </div>
+                    <div v-else-if="scope.row.orderStatus === 4">
+                      <el-tag type="success">订单已取消！</el-tag>
+                    </div>
                   </div>
-                </div>
-                <div class="item-bottom">
-                  <div class="button-wrap">
-                    <el-button type="primary" size="small" slot="reference" @click="confirm(item)"
-                               v-show="item.status === 1 || item.status === 2">确认收货
-                    </el-button>
-                    <el-button type="danger" size="small" @click="cancelOrder(item)"
-                               v-show="item.status > -1 && item.status < 3">申请取消
-                    </el-button>
-                  </div>
-                </div>
-              </div>
+                </el-table-column>
+              </el-table>
             </div>
+            <!--            我的商品 个人商品发布列表 myCommodity-->
             <div class="my-commodity" v-show="menuTab[2].isActive">
-              <div v-for="item in myCommodity" :key="item.id"> {{ item }}</div>
+
             </div>
             <div class="publish" v-show="menuTab[3].isActive">
               <div class="right-item" style="height: 195px; line-height:195px">
@@ -177,21 +191,21 @@
                 </div>
               </div>
             </div>
+            <!--            卖家订单管理-->
             <div class="pending-order" v-show="menuTab[4].isActive">
               <el-table :data="pendingOrder" stripe style="width: 100%">
-                <el-table-column prop="id" label="订单号" width="70"></el-table-column>
-                <el-table-column prop="createdOn" label="下单时间" width="160"></el-table-column>
+                <el-table-column prop="commNo" label="订单号" width="70"></el-table-column>
+                <el-table-column prop="createTime" label="下单时间" width="160"></el-table-column>
                 <el-table-column prop="commodityName" label="商品名称"></el-table-column>
                 <el-table-column prop="num" label="商品数量"></el-table-column>
                 <el-table-column prop="note" label="备注信息"></el-table-column>
                 <el-table-column label="状态">
                   <div slot-scope="scope">
-                    <div v-if="scope.row.status === 0">待处理</div>
-                    <div v-else-if="scope.row.status === 1">发货中</div>
-                    <div v-else-if="scope.row.status === 2">待确认</div>
-                    <div v-else-if="scope.row.status === 3">已完成</div>
-                    <div v-else-if="scope.row.status === -1">已取消</div>
-                    <div v-else-if="scope.row.status === -2">申请取消</div>
+                    <div v-if="scope.row.orderStatus === 0">待处理</div>
+                    <div v-else-if="scope.row.orderStatus === 1">发货中</div>
+                    <div v-else-if="scope.row.orderStatus === 2">待确认</div>
+                    <div v-else-if="scope.row.orderStatus === 3">申请取消</div>
+                    <div v-else>已取消</div>
                   </div>
                 </el-table-column>
                 <el-table-column label="处理" width="180">
@@ -235,13 +249,15 @@ export default {
       headers: {
         Authorization: window.sessionStorage.getItem('token')
       },
+      token: this.$store.state.token,
       userBean: {
         userName: '',
         isBan: '',
         userRoot: '',
         userInfo: '',
         userSex: '',
-        profileUrl: ''
+        profileUrl: '',
+        userEmail: ''
       },
       menuTab: [
         {
@@ -294,11 +310,15 @@ export default {
   methods: {
     initData() {
       this.userBean = this.$store.state.userBean
-      // 获取购买历史
-      this.$axios.get('/apis/buyer-orders/' + this.userBean.id).then(resp => {
+      // 获取购买历史(用户提交的订单列表接口)
+      this.$axios.get('/apis/order/queryUserSubmitOrderList', {
+        headers: {
+          Authorization: this.token
+        }
+      }).then(resp => {
         var data = resp.data
         if (data.code === 1) {
-          this.historyOrder = data.data
+          this.historyOrder = data.obj
         }
       }).catch(function (error) {
         console.log(error)
@@ -314,10 +334,14 @@ export default {
       })
 
       // 获取用户已卖出的商品
-      this.$axios.get('/apis/pending-orders/' + this.userBean.id).then(resp => {
+      this.$axios.get('/apis/order/queryUserReceiveOrderList',{
+        headers: {
+          Authorization: this.token
+        }
+      }).then(resp => {
         var data = resp.data
-        if (data.code === 200) {
-          this.pendingOrder = data.data
+        if (data.code === 1) {
+          this.pendingOrder = data.obj
         }
       }).catch(function (error) {
         console.log(error)
@@ -375,7 +399,7 @@ export default {
       data.isActive = true
     },
     // element-ui 上传图片的方法 头像的！！！！
-    handleProfilePhotoSuccess (res) {
+    handleProfilePhotoSuccess(res) {
       this.userBean.profileUrl = res.data
     },
     // 上传前 头像的！！！！
@@ -530,6 +554,27 @@ export default {
       }).catch(function (error) {
         console.log(error)
       })
+    },
+    reset() {
+      this.$axios.post('/apis/user/updateUserInfo', this.$qs.stringify({
+        userInfo: this.userBean.userInfo,
+        userName: this.userBean.userName,
+        userSex: this.userBean.userSex
+      }), {
+        headers: {
+          Authorization: this.token
+        }
+      }).then(resp => {
+        var data = resp.data
+        console.log(data)
+        if (data.code === 1) {
+          this.$notify({
+            title: '成功',
+            message: '修改成功',
+            type: 'success'
+          })
+        }
+      })
     }
   },
   computed: {
@@ -549,7 +594,6 @@ export default {
     line-height: 30px;
 
     .header-wrap {
-      width: 1210px;
       margin: 0 auto;
       display: flex;
       align-items: center;

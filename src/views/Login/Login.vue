@@ -179,7 +179,7 @@ export default {
         })).then((resp) => {
           const data = resp.data
           if (data.code === 1) {
-            if (data.userBean.isBan === 1) {
+            if (data.obj.userBean.isBan === 1) {
               this.$notify({
                 title: 'Error',
                 message: '账户被封禁',
