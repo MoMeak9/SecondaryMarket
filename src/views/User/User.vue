@@ -2,9 +2,10 @@
   <el-container id="user">
     <el-header class="header" style="height:30px">
       <div class="header-wrap">
-        <a href="/home">
-          <span>福大二手商城首页</span>
-        </a>
+<!--        <a href="/home">-->
+<!--          <span>首页</span>-->
+<!--        </a>-->
+<!--        网站导航-->
       </div>
     </el-header>
     <el-container class="nav">
@@ -268,7 +269,7 @@ export default {
       headers: {
         Authorization: window.sessionStorage.getItem('token')
       },
-      token: this.$store.state.token,
+      token: '',
       userBean: {
         userName: '',
         isBan: '',
@@ -322,14 +323,26 @@ export default {
     }
   },
   mounted() {
+    this.userBean = this.$store.state.userBean
+    this.token = this.$store.state.token
+    console.log(this.token)
+    if (this.token === null || this.token === '') {
+      this.$notify({
+        title: '未登入',
+        message: '即将前往登入页',
+        type: 'error'
+      })
+      clearTimeout(this.timer);
+      this.timer = setTimeout(() => {
+        this.$router.push({path: '/login'});
+      }, 1500);
+    }
     this.initData()
-
     // this.websocketLink()
   },
   methods: {
     //初始化方法
     initData() {
-      this.userBean = this.$store.state.userBean
       // 获取购买历史(用户提交的订单列表接口)
       this.$axios.get('/apis/order/queryUserSubmitOrderList', {
         headers: {
