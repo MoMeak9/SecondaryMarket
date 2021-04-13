@@ -1,7 +1,7 @@
 <template>
   <div id="admin-home">
     <div class="header">
-      <h1 style="color: white">二手交易市场后台管理系统</h1>
+      <h1 style="color: white">二手交易市场后台管理系统</h1> <Menu></Menu>
     </div>
     <div class="content">
       <el-tabs v-model="tabActive">
@@ -66,7 +66,12 @@
   </div>
 </template>
 <script>
+import Menu from "@/components/Menu";
+
 export default {
+  comments: {
+    Menu
+  },
   data() {
     return {
       userName: '',

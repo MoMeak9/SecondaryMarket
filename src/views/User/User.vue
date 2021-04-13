@@ -3,10 +3,10 @@
     <el-header class="header" style="height:30px">
 
       <div class="header-wrap">
-<!--                <a href="/home">-->
-<!--                  <span>首页</span>-->
-<!--                </a>-->
-<!--                网站导航-->
+        <!--                <a href="/home">-->
+        <!--                  <span>首页</span>-->
+        <!--                </a>-->
+        <!--                网站导航-->
         <Menu></Menu>
       </div>
     </el-header>
@@ -26,6 +26,7 @@
                 :headers="headers"
                 :action=profilePhotoAction
                 :show-file-list="false"
+                name="profile"
                 :on-success="handleProfilePhotoSuccess"
                 :before-upload="beforeProfilePhotoUpload">
               <img v-if="userBean.profileUrl" :src="userBean.profileUrl" class="avatar">
@@ -43,36 +44,55 @@
           <div class="right-container">
             <!--            用户信息展示-->
             <div class="user-info" v-show="menuTab[0].isActive">
-              <el-form :model="userBean" style="width: 50%;margin: 3em">
-                <el-form-item prop="userName">
-                  用户名：
-                  <el-input v-model="userBean.userName" placeholder="用户名称" prefix-icon="el-icon-user"
-                            style="width: 85%;float: right"></el-input>
-                </el-form-item>
-                <el-form-item prop="userEmail">
-                  邮箱：
-                  <el-input v-model="userBean.userEmail" placeholder="邮箱账号" prefix-icon="el-icon-message"
-                            style="width: 85%;float: right"></el-input>
-                </el-form-item>
-                <el-form-item prop="userSex">
-                  性别：
-                  <div style="width: 85%;float: right">
-                    <el-radio v-model="userBean.userSex" label="男">男</el-radio>
-                    <el-radio v-model="userBean.userSex" label="女">女</el-radio>
-                  </div>
-                </el-form-item>
-                <el-form-item prop="userInfo">
-                  简介：
-                  <el-input type="textarea" :rows="4" v-model="userBean.userInfo" placeholder="简介"
-                            prefix-icon="el-icon-message" style="width: 85%;float: right"></el-input>
-                </el-form-item>
-                <div class="right-item">
-                  <div class="item-label">权限 :</div>
-                  <div class="item-info" v-if="userBean.userRoot === 0">普通用户</div>
-                  <div class="item-info" v-else>管理员</div>
-                </div>
-                <el-button type="danger" @click="reset()">保存修改</el-button>
-              </el-form>
+              <!--              基本信息-->
+              <el-tabs type="card" v-model="activeName">
+                <el-tab-pane label="个人信息" name="first">
+                  <el-form :model="userBean" style="width: 50%;margin: 3em">
+                    <el-form-item prop="userName">
+                      用户名：
+                      <el-input v-model="userBean.userName" placeholder="用户名称" prefix-icon="el-icon-user"
+                                style="width: 85%;float: right"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="userEmail">
+                      邮箱：
+                      <el-input v-model="userBean.userEmail" placeholder="邮箱账号" prefix-icon="el-icon-message"
+                                style="width: 85%;float: right"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="userSex">
+                      <div style="float: left">性别：</div>
+                      <div style="width: 35%;float: left">
+                        <el-radio v-model="userBean.userSex" label="男">男</el-radio>
+                        <el-radio v-model="userBean.userSex" label="女">女</el-radio>
+                      </div>
+                    </el-form-item>
+                    <el-form-item prop="userInfo">
+                      简介：
+                      <el-input type="textarea" :rows="4" v-model="userBean.userInfo" placeholder="简介"
+                                prefix-icon="el-icon-message" style="width: 85%;float: right"></el-input>
+                    </el-form-item>
+                    <div class="right-item">
+                      <div class="item-label">权限 :</div>
+                      <div class="item-info" v-if="userBean.userRoot === 0">普通用户</div>
+                      <div class="item-info" v-else>管理员</div>
+                    </div>
+                    <el-button type="danger" @click="reset()">保存修改</el-button>
+                  </el-form>
+                </el-tab-pane>
+                <!--              修改密码-->
+                <el-tab-pane label="修改密码" name="second">
+                  <el-form :model="resetForm" ref="resetForm" style="width: 50%;margin: 3em" :rules="rules" status-icon>
+                    <el-form-item prop="password">
+                      <el-input type="password" v-model="resetForm.password" placeholder="请输入旧密码"
+                                prefix-icon="el-icon-lock" show-password></el-input>
+                    </el-form-item>
+                    <el-form-item prop="repassword">
+                      <el-input type="password" v-model="resetForm.repassword" placeholder="请输入新密码"
+                                prefix-icon="el-icon-lock" show-password></el-input>
+                    </el-form-item>
+                    <el-button type="danger" @click="repassword()">修改密码</el-button>
+                  </el-form>
+                </el-tab-pane>
+              </el-tabs>
             </div>
             <!--            历史订单展示-->
             <div class="history-order" v-show="menuTab[1].isActive">
@@ -264,16 +284,32 @@
 </template>
 <script>
 import Menu from "@/components/Menu";
+
 export default {
   components: {
     Menu,
   },
   data() {
+    //检测规则
+    let validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入密码'))
+      } else {
+        callback()
+      }
+    }
+    let validatePass2 = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入密码'))
+      } else {
+        callback()
+      }
+    }
     return {
       commType: '',
       fileList: [],
       headers: {
-        Authorization: window.sessionStorage.getItem('token')
+        Authorization: this.$store.state.token
       },
       token: '',
       userBean: {
@@ -312,6 +348,7 @@ export default {
           isActive: false
         }
       ],
+      activeName: 'first',
       historyOrder: [],
       myCommodity: [],
       pendingOrder: [],
@@ -325,7 +362,20 @@ export default {
       imageUrl: '',
       imageFile: '',
       profilePhotoAction: '/apis/user/updateUserInfo',
-      socket: null
+      socket: null,
+      //  更改密码
+      resetForm: {
+        password: '',
+        repassword: '',
+      },
+      rules: {
+        repassword: [
+          {validator: validatePass, trigger: 'blur'}
+        ],
+        password: [
+          {validator: validatePass2, trigger: 'blur'}
+        ],
+      }
     }
   },
   mounted() {
@@ -457,8 +507,12 @@ export default {
       data.isActive = true
     },
     // element-ui 上传图片的方法 头像的！！！！
-    handleProfilePhotoSuccess(res) {
-      this.userBean.profileUrl = res.data
+    handleProfilePhotoSuccess() {
+      this.$notify({
+        title: '成功',
+        message: '上传成功！',
+        type: 'success'
+      })
     },
     // 上传前 头像的！！！！
     beforeProfilePhotoUpload(file) {
@@ -634,6 +688,10 @@ export default {
         }
       })
     },
+    //修改密码
+    repassword(){
+
+    }
   },
   computed: {
     // totalPrice: function () {

@@ -1,4 +1,5 @@
 <template>
+  <div class="menu">
     <el-dropdown @command="handleCommand">
           <span class="el-dropdown-link">
             快捷菜单<i class="el-icon-arrow-down el-icon--right"></i>
@@ -10,6 +11,7 @@
         <el-dropdown-item command="4">退出登入</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
+  </div>
 </template>
 
 <script>
@@ -59,7 +61,6 @@ export default {
 
 <style lang="scss">
 .menu {
-  background-color: black;
 }
 
 .el-dropdown-link {
