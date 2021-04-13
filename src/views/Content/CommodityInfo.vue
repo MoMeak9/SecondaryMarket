@@ -4,31 +4,31 @@
     <div class="content">
       <div class="detail">
         <div class="detail-left">
-          <span><img :src="data.photoUrl" alt=""></span>
+          <span><img :src="data.commPicList[0]" alt=""></span>
         </div>
         <div class="detail-right">
           <div class="rt-item rt-title"><h1>{{ data.name }}</h1></div>
           <div class="rt-item rt-description">
             <div class="rt-tag">描述</div>
-            <p>{{ data.description }}</p>
+            <p>{{ data.commodity.commDesc }}</p>
           </div>
           <div class="rt-item rt-price">
             <div class="rt-tag">价格</div>
-            <p>￥{{ data.price }}</p>
+            <p>￥{{ data.commodity.commPrice }}</p>
           </div>
           <div class="rt-item rt-quantity">
             <div class="rt-tag">数量</div>
             <el-input-number v-model="order.num" :min="1" :max="data.quantity" size="small"></el-input-number>
             <div class="rt-tag" style="width:70px;margin-left:20px">剩余数量:</div>
-            <div class="rt-tag">{{ data.quantity }}</div>
+            <div class="rt-tag">{{ data.commodity.commStock }}</div>
           </div>
           <div class="rt-item rt-note">
-            <div class="rt-tag">备注</div>
+            <div class="rt-tag">地址及备注</div>
             <el-input type="textarea" :rows="3" placeholder="请输入备注信息，如交易地点等" v-model="order.note"></el-input>
           </div>
           <div class="rt-item rt-total">
             <div class="rt-tag">总价</div>
-            <p>￥{{ totalPrice(data.price * order.num, 1) }}</p>
+            <p>￥{{ totalPrice(data.commodity.commPrice * order.num, 1) }}</p>
           </div>
           <div class="rt-item rt-bottom">
             <el-button type="danger" @click="dialogVisible = true">立即购买</el-button>
@@ -47,37 +47,37 @@
         </div>
       </div>
     </div>
-    <div class="comment">
-      <div class="comment-container">
-        <div class="comment-title">
-          <p>商品评论</p>
-        </div>
-        <div class="comment-content" v-if="commentList.length !== 0">
-          <div class="comment-wrap" v-for="item in commentList" :key="item.id">
-            <div class="item-top">
-              <p>评价时间: {{ item.createdOn }}</p>
-              <el-rate :value="item.rating" disabled show-score text-color="#ff9900" score-template="{value}"></el-rate>
-            </div>
-            <div class="item-middle">
-              <div class="middle-left">{{ item.reviewerName }}:</div>
-              <div class="middle-right">{{ item.comment }}</div>
-            </div>
-            <div class="resp-wrap" v-for="resp in item.commentRespList" :key="resp.id">
-              <div class="resp-name">{{ resp.reviewerName }}:</div>
-              <div class="resp-content">{{ resp.comment }}</div>
-            </div>
-          </div>
-        </div>
-        <div class="comment-content" v-else>
-          暂时没有评论！
-        </div>
-        <div class="comment-bottom">
-          <el-button type="primary" size="mini" @click="evaluate()">评价</el-button>
-          <el-rate v-model="cmList.rating" :colors="['#99A9BF', '#F7BA2A', '#FF9900']"></el-rate>
-          <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="cmList.comment"></el-input>
-        </div>
-      </div>
-    </div>
+<!--    <div class="comment">-->
+<!--      <div class="comment-container">-->
+<!--        <div class="comment-title">-->
+<!--          <p>商品评论</p>-->
+<!--        </div>-->
+<!--        <div class="comment-content" v-if="commentList.length !== 0">-->
+<!--          <div class="comment-wrap" v-for="item in commentList" :key="item.id">-->
+<!--            <div class="item-top">-->
+<!--              <p>评价时间: {{ item.createdOn }}</p>-->
+<!--              <el-rate :value="item.rating" disabled show-score text-color="#ff9900" score-template="{value}"></el-rate>-->
+<!--            </div>-->
+<!--            <div class="item-middle">-->
+<!--              <div class="middle-left">{{ item.reviewerName }}:</div>-->
+<!--              <div class="middle-right">{{ item.comment }}</div>-->
+<!--            </div>-->
+<!--            <div class="resp-wrap" v-for="resp in item.commentRespList" :key="resp.id">-->
+<!--              <div class="resp-name">{{ resp.reviewerName }}:</div>-->
+<!--              <div class="resp-content">{{ resp.comment }}</div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="comment-content" v-else>-->
+<!--          暂时没有评论！-->
+<!--        </div>-->
+<!--        <div class="comment-bottom">-->
+<!--          <el-button type="primary" size="mini" @click="evaluate()">评价</el-button>-->
+<!--          <el-rate v-model="cmList.rating" :colors="['#99A9BF', '#F7BA2A', '#FF9900']"></el-rate>-->
+<!--          <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="cmList.comment"></el-input>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
   </div>
 </template>
 <script>
@@ -123,24 +123,30 @@ export default {
   },
   mounted() {
     this.data = this.$store.state.commodity
-    this.order.commodityId = this.$store.state.commodity.id
+    this.order.commNo  = this.date.commodity.commNo
     this.order.buyerId = this.$store.state.user.id
-    this.initData()
+    // this.initData()
   },
   components: {
     Nav
   },
   methods: {
-    initData() {
-      this.$axios.get('/apis/commodities/' + this.order.commodityId + '/comments').then(resp => {
-        if (resp.status === 200) {
-          var res = resp.data
-          if (res.code === 200) {
-            this.commentList = res.data
-          }
-        }
-      })
-    },
+    //初始化
+    // initData() {
+    //   //获取商品信息
+    //   this.$axios.get('/apis/commodity/queryCommByNo',{
+    //     params:{
+    //       commNo:this.data.commodity.commNo
+    //     }
+    //   }).then(resp => {
+    //     if (resp.code === 1) {
+    //       var res = resp.data
+    //       if (res.code === 200) {
+    //         this.commentList = res.data
+    //       }
+    //     }
+    //   })
+    // },
     evaluate() {
       this.$axios.post('/apis/comments', this.cmList).then(resp => {
         if (resp.status === 200) {
@@ -154,13 +160,13 @@ export default {
         console.log(error)
       })
     },
-    handleClose(done) {
-      this.$confirm('确认关闭？')
-          .then(_ => {
-            done()
-          }).catch(_ => {
-      })
-    },
+    // handleClose(done) {
+    //   this.$confirm('确认关闭？')
+    //       .then(_ => {
+    //         done()
+    //       }).catch(_ => {
+    //   })
+    // },
     settlement() {
       this.dialogVisible = false
       this.$axios.post('/apis/orders', this.order).then(resp => {

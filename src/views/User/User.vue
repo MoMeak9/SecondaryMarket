@@ -417,7 +417,18 @@ export default {
     },
     //下架商品commNo
     deleteComm() {
-
+      this.$axios.get('/apis/commodity/deleteComm', {
+        headers: {
+          Authorization: this.token
+        }
+      }).then(resp => {
+        var data = resp.data
+        if (data.code === 1) {
+          this.pendingOrder = data.obj
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
     },
     // 切换左侧菜单
     toggleMenuItem(data) {

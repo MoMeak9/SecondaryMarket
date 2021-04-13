@@ -6,6 +6,7 @@ import Login from "@/views/Login/Login";
 import Home from "@/views/Home/Home";
 import AdminHome from "@/views/Home/AdminHome";
 import User from "@/views/User/User";
+import CommodityInfo from "@/views/Content/CommodityInfo";
 
 Vue.use(VueRouter)
 const routes = [
@@ -52,7 +53,16 @@ const routes = [
         meta: {
             title: '个人主页'
         }
+    },
+    {
+        path: '/CommodityInfo',
+        name: 'CommodityInfo',
+        component: CommodityInfo,
+        meta: {
+            title: '商品信息'
+        }
     }
+
 ]
 
 const router = new VueRouter({

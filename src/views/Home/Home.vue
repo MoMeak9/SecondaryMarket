@@ -1,40 +1,51 @@
 <template>
   <div>
-    <Nav> </Nav>
+    <Nav></Nav>
     <div id="header">
       <div class="search">
         <div class="input-wrap">
+          <el-select v-model="commTag " clearable placeholder="类型" style="width: 25%">
+            <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+            </el-option>
+          </el-select>
           <el-autocomplete v-model="searchText" placeholder="搜索 校内二手市场 商品/用户" class="search-input"
-                           :fetch-suggestions="querySearchAsync" @select="handSelect"></el-autocomplete>
+                           :fetch-suggestions="querySearchAsync" @select="handSelect" style="width: 75%;"></el-autocomplete>
           <el-button icon="el-icon-search">搜索</el-button>
         </div>
       </div>
     </div>
     <div id="content" style="overflow:auto">
+      <!--      轮播图-->
       <div class="banner-slider">
         <el-carousel indicator-position="outside">
           <el-carousel-item v-for="item in bannerList" :key="item.id">
-            <el-image :src=item.photoUrl fit="fit" @click="getCommodityInfo(item)" class="banner-img"></el-image>
+            <el-image :src=item.commPicList[0] fit="fit" @click="getCommodityInfo(item)" class="banner-img"></el-image>
           </el-carousel-item>
         </el-carousel>
       </div>
+      <!--      热表-->
       <div class="hot-list">
         <div class="hot-wrap" v-for="item in hotList" :key="item.id" @click="getCommodityInfo(item)">
           <div class="hot-item-tag"></div>
-          <el-image el-image :src="item.photoUrl" fit="fit" class="hot-item-img"></el-image>
-          <div class="hot-item-title">{{ item.name }}</div>
-          <div class="hot-item-price">￥{{ item.price }}</div>
+          <el-image el-image :src="item.commPicList[0]" fit="fit" class="hot-item-img"></el-image>
+          <div class="hot-item-title">{{ item.commodity.commName }}</div>
+          <div class="hot-item-price">￥{{ item.commodity.commPrice }}</div>
         </div>
       </div>
-      <div class="common-list" v-infinite-scroll="load" infinite-scroll-disabled="disabled">
-        <div class="common-wrap" v-for="item in commonList" :key="item.id">
-          <div class="common-item">
-            <el-image :src="item.photoUrl" fit="fit" class="common-item-img"></el-image>
-          </div>
-        </div>
-        <p v-if="loading">加载中...</p>
-        <p v-if="noMore">没有更多了</p>
-      </div>
+      <!--      商品列表-->
+<!--      <div class="common-list" v-infinite-scroll="load" infinite-scroll-disabled="disabled">-->
+<!--        <div class="common-wrap" v-for="item in commonList" :key="item.id">-->
+<!--          <div class="common-item">-->
+<!--            <el-image :src="item.commPicList[0]" fit="fit" class="common-item-img"></el-image>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <p v-if="loading">加载中...</p>-->
+<!--        <p v-if="noMore">没有更多了</p>-->
+<!--      </div>-->
     </div>
   </div>
 </template>
@@ -54,9 +65,32 @@ export default {
       timeout: null,
       loading: false,
       noMore: false,
-      userBean:{
-        userName:'',
-      }
+      userBean: {
+        userName: '',
+      },
+    //  商品类型选择
+      options: [{
+        value: 0,
+        label: '衣物'
+      }, {
+        value: 1,
+        label: '数码'
+      }, {
+        value: 2,
+        label: '食品'
+      }, {
+        value: 3,
+        label: '图书'
+      }, {
+        value: 4,
+        label: '化妆品'
+      },{
+        value: 5,
+        label: '文具'
+      },{
+        value: 6,
+        label: '居家'
+      }],
     }
   },
   mounted() {
@@ -65,27 +99,34 @@ export default {
   methods: {
     initData() {
       this.userBean = this.$store.state.userBean
+      //轮播图
       this.$axios.get('/apis/commodity/bannerCommList', {
         params: {
           num: 4,
         }
       }).then((resp) => {
-        this.bannerList = resp.data.bannerList
-        this.hotList = resp.data.hotList
+        var data = resp.data
+        this.bannerList = data.obj
       }).catch(function (error) {
         console.log(error)
       })
+      //初始商品列表
       this.$axios.get('/apis/commodity/initialCommList', {
         params: {
           num: 10,
         }
       }).then(resp => {
-        this.commonList = resp.data.data
+        var data = resp.data
+        this.hotList = data.obj
+        // this.commonList = data.obj
+      }).catch(function (error) {
+        console.log(error)
       })
     },
     getCommodityInfo(data) {
       this.$store.commit('GET_COMMODITY', data)
-      this.$router.push({name: 'Commodity'}) // 跳转至商品页面
+      // 跳转至商品页面
+      this.$router.push({path: '/CommodityInfo'})
     },
     querySearchAsync(queryString, cb) {
       this.$axios.get('/apis/commodities/search', {params: {name: queryString}}).then(resp => {
@@ -114,11 +155,12 @@ export default {
       if (this.commonList.length !== 0) {
         this.loading = true
         setTimeout(() => {
-          this.$axios.get('/apis/commodities/status', {
+          this.$axios.get('/apis/commodity/initialCommList', {
             params: {
-              status: 0,
-              id: this.commonList[this.commonList.length - 1].id,
-              limit: 1
+              // status: 0,
+              // id: this.commonList[this.commonList.length - 1].id,
+              // limit: 1
+              num: 5
             }
           }).then(resp => {
             if (resp.status === 200) {
@@ -152,7 +194,7 @@ export default {
 <style lang="scss">
 
 #header {
-  height: 130px;
+  height: 10em;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -162,7 +204,7 @@ export default {
     border: 2px solid #ff0036;
 
     .el-input__inner {
-      width: 400px;
+      width: 80%;
       border: none;
       border-radius: 0;
     }
