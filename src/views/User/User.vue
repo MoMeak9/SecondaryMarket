@@ -59,10 +59,11 @@
                                 style="width: 85%;float: right"></el-input>
                     </el-form-item>
                     <el-form-item prop="userSex">
-                      <div style="float: left">性别：</div>
-                      <div style="width: 35%;float: left">
+                      性别：
+                      <div style="width: 85%;float: right">
                         <el-radio v-model="userBean.userSex" label="男">男</el-radio>
                         <el-radio v-model="userBean.userSex" label="女">女</el-radio>
+                        <el-radio v-model="userBean.userSex" label="">保密</el-radio>
                       </div>
                     </el-form-item>
                     <el-form-item prop="userInfo">
@@ -99,14 +100,15 @@
               <el-table :data="historyOrder" stripe style="width: 100%">
                 <!--                商品图片-->
                 <el-table-column label="图片">
-                  <!--                  <template slot-scope="scope">-->
-                  <!--                    <el-image :src="scope.row.commPicList[0]" fit='cover' :preview-src-list="scope.row.commPicList"-->
-                  <!--                              style="width: 50px;height: 50px"></el-image>-->
-                  <!--                  </template>-->
+                  <template slot-scope="scope">
+                    <el-image :src="scope.row.commPicList[0]" fit='cover' :preview-src-list="scope.row.commPicList"
+                              style="width: 50px;height: 50px"></el-image>
+                  </template>
                 </el-table-column>
                 <el-table-column prop="createTime" label="下单时间" width="120"></el-table-column>
-                <el-table-column prop="commodityName" label="商品名称"></el-table-column>
+                <el-table-column prop="commName" label="商品名称"></el-table-column>
                 <el-table-column prop="num" label="数量" width="50"></el-table-column>
+                <el-table-column prop="price" label="单价" width="50"></el-table-column>
                 <!--                描述-->
                 <el-table-column prop="note" label="商品描述"></el-table-column>
                 <el-table-column label="状态">
@@ -689,8 +691,25 @@ export default {
       })
     },
     //修改密码
-    repassword(){
-
+    repassword() {
+      this.$axios.post('/apis/user/changePassword', this.$qs.stringify({
+        newPassword:this.resetForm.repassword,
+        oldPassword:this.resetForm.password
+      }), {
+        headers: {
+          Authorization: this.token
+        }
+      }).then(resp => {
+        var data = resp.data
+        console.log(data)
+        if (data.code === 1) {
+          this.$notify({
+            title: '成功',
+            message: '密码修改成功',
+            type: 'success'
+          })
+        }
+      })
     }
   },
   computed: {

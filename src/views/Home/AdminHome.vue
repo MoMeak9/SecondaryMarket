@@ -40,7 +40,15 @@
               <el-table-column prop="commodity.createUser" label="创建者" width="180" sortable></el-table-column>
               <el-table-column prop="commodity.auditStatus" label="审核状态" sortable
                                :filters="[{text: '待审核', value: 0},{text: '审核通过', value: 1},{text: '驳回', value: 2}]"
-                               :filter-method="filterHandler"></el-table-column>
+                               :filter-method="filterHandler">
+                <div slot-scope="scope">
+                  <div v-if="scope.row.orderStatus === 0">待处理</div>
+                  <div v-else-if="scope.row.orderStatus === 1">发货中</div>
+                  <div v-else-if="scope.row.orderStatus === 2">待确认</div>
+                  <div v-else-if="scope.row.orderStatus === 3">申请取消</div>
+                  <div v-else>已取消</div>
+                </div>
+              </el-table-column>
               <el-table-column label="商品操作" width="250">
                 <template slot-scope="scope">
                   <el-button type="primary" @click="allowCommo(scope.row.commodity.commNo)" size="small"
