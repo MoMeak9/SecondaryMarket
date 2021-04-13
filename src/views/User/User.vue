@@ -1,11 +1,13 @@
 <template>
   <el-container id="user">
     <el-header class="header" style="height:30px">
+
       <div class="header-wrap">
-<!--        <a href="/home">-->
-<!--          <span>首页</span>-->
-<!--        </a>-->
-<!--        网站导航-->
+<!--                <a href="/home">-->
+<!--                  <span>首页</span>-->
+<!--                </a>-->
+<!--                网站导航-->
+        <Menu></Menu>
       </div>
     </el-header>
     <el-container class="nav">
@@ -261,7 +263,11 @@
   </el-container>
 </template>
 <script>
+import Menu from "@/components/Menu";
 export default {
+  components: {
+    Menu,
+  },
   data() {
     return {
       commType: '',
@@ -627,15 +633,15 @@ export default {
           })
         }
       })
-    }
+    },
   },
   computed: {
-    totalPrice: function () {
-      return function (f, digit) {
-        var m = Math.pow(10, digit) // 设置需要乘以的倍数
-        return parseInt(f * m, 10) / m // 先乘再除，解决精度问题
-      }
-    }
+    // totalPrice: function () {
+    //   return function (f, digit) {
+    //     var m = Math.pow(10, digit) // 设置需要乘以的倍数
+    //     return parseInt(f * m, 10) / m // 先乘再除，解决精度问题
+    //   }
+    // }
   }
 }
 </script>
@@ -647,6 +653,7 @@ export default {
 
     .header-wrap {
       margin: 0 auto;
+      padding-left: 10%;
       display: flex;
       align-items: center;
       font-size: 12px;
@@ -661,7 +668,6 @@ export default {
       a:hover {
         color: #ff0036;
       }
-
     }
   }
 
