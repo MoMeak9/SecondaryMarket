@@ -6,8 +6,8 @@ Vue.use(Vuex)
 const state = {
     userBean: window.sessionStorage.getItem('user'),
     commodity: window.sessionStorage.getItem('commodity'),
-    hostServer: '39.105.228.56:8080/shop',
-    token: window.sessionStorage.getItem('token')
+    token: window.sessionStorage.getItem('token'),
+    search: window.sessionStorage.getItem('search'),
 }
 const mutations = {
     SET_TOKEN: (state, token) => {

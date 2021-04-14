@@ -7,6 +7,7 @@ import Home from "@/views/Home/Home";
 import AdminHome from "@/views/Home/AdminHome";
 import User from "@/views/User/User";
 import CommodityInfo from "@/views/Content/CommodityInfo";
+import Search from "@/views/Home/Search";
 
 Vue.use(VueRouter)
 const routes = [
@@ -60,6 +61,14 @@ const routes = [
         component: CommodityInfo,
         meta: {
             title: '商品信息'
+        }
+    },
+    {
+        path: '/search',
+        name: 'search',
+        component: Search,
+        meta: {
+            title: '搜索商品'
         }
     }
 

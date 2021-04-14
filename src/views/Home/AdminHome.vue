@@ -1,7 +1,8 @@
 <template>
   <div id="admin-home">
     <div class="header">
-      <h1 style="color: white">二手交易市场后台管理系统</h1> <Menu></Menu>
+      <h1 style="color: white">二手交易市场后台管理系统</h1>
+      <Menu></Menu>
     </div>
     <div class="content">
       <el-tabs v-model="tabActive">
@@ -12,7 +13,12 @@
               <el-table-column prop="userName" label="用户名" width="180"></el-table-column>
               <el-table-column prop="userEmail" label="邮箱" width="180"></el-table-column>
               <el-table-column prop="userNo" label="编号" width=""></el-table-column>
-              <el-table-column prop="isBan" label="账号状态" width="180"></el-table-column>
+              <el-table-column prop="isBan" label="账号状态" width="180">
+                <div slot-scope="scope">
+                  <div v-if="scope.row.isBan === 0">正常</div>
+                  <div v-else>封禁</div>
+                </div>
+              </el-table-column>
               <el-table-column label="账号操作">
                 <template slot-scope="scope">
                   <el-button type="danger" @click="banUser(scope.row.userNo)" v-show="scope.row.isBan===0">封禁
@@ -42,11 +48,9 @@
                                :filters="[{text: '待审核', value: 0},{text: '审核通过', value: 1},{text: '驳回', value: 2}]"
                                :filter-method="filterHandler">
                 <div slot-scope="scope">
-                  <div v-if="scope.row.orderStatus === 0">待处理</div>
-                  <div v-else-if="scope.row.orderStatus === 1">发货中</div>
-                  <div v-else-if="scope.row.orderStatus === 2">待确认</div>
-                  <div v-else-if="scope.row.orderStatus === 3">申请取消</div>
-                  <div v-else>已取消</div>
+                  <div v-if="scope.row.commodity.auditStatus === 0">待审核</div>
+                  <div v-else-if="scope.row.commodity.auditStatus === 1">审核通过</div>
+                  <div v-else>驳回</div>
                 </div>
               </el-table-column>
               <el-table-column label="商品操作" width="250">
@@ -128,6 +132,30 @@ export default {
         inputPlaceholder: '请输入拒绝原因，不得为空'
       }).then(({value}) => {
         this.auditMsg = value
+        console.log(this.auditMsg)
+        this.$axios.post('/apis/admin/auditComm', this.$qs.stringify({
+          auditMsg: this.auditMsg,
+          auditStatus: 2,
+          auditor: this.userName,
+          commNo: commNo
+        }), {
+          headers: {
+            Authorization: this.token
+          }
+        }).then(resp => {
+          var data = resp.data
+          if (data.code === 1) {
+            this.$notify({
+              title: '成功',
+              message: '处理完成',
+              type: 'success'
+            })
+            this.auditMsg = ''
+            this.getCommList()
+          }
+        }).catch(function (error) {
+          console.log(error)
+        })
       }).catch(() => {
         this.$notify({
           title: '失败',
@@ -135,30 +163,6 @@ export default {
           message: '取消输入'
         });
       });
-      console.log(this.auditMsg)
-      this.$axios.post('/apis/admin/auditComm', this.$qs.stringify({
-        auditMsg: this.auditMsg,
-        auditStatus: 2,
-        auditor: this.userName,
-        commNo: commNo
-      }), {
-        headers: {
-          Authorization: this.token
-        }
-      }).then(resp => {
-        var data = resp.data
-        if (data.code === 1) {
-          this.getCommList()
-          this.$notify({
-            title: '成功',
-            message: '处理完成',
-            type: 'success'
-          })
-          this.auditMsg = ''
-        }
-      }).catch(function (error) {
-        console.log(error)
-      })
     },
     // 删除商品
     deleteCommo(commNo) {

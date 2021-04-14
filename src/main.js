@@ -16,36 +16,41 @@ new Vue({
 }).$mount('#app')
 
 router.beforeEach((to, from, next) => {
-    if(to.path === '/') {
+    if (to.path === '/') {
         next()
-    }else if(to.path === '/login') {
+    } else if (to.path === '/login') {
         document.title = to.meta.title
         next()
-    }else if(to.path === '/repassword') {
+    } else if (to.path === '/repassword') {
         document.title = to.meta.title
         next()
-    }else if(to.path === '/home') {
+    } else if (to.path === '/home') {
         document.title = to.meta.title
         next()
-    }else if(to.path === '/adminHome') {
+    } else if (to.path === '/adminHome') {
         document.title = to.meta.title
         next()
-    }else if(to.path === '/user') {
+    } else if (to.path === '/user') {
         document.title = to.meta.title
         next()
-    }else if(to.path === '/CommodityInfo') {
+    } else if (to.path === '/CommodityInfo') {
         document.title = to.meta.title
         next()
-    }else if(to.path === '/check') {
+    } else if (to.path === '/check') {
         document.title = to.meta.title
         next()
-    }else {
+    } else if (to.path === '/search') {
+        document.title = to.meta.title
+        next()
+    } else {
         next({path: '/'})
     }
 })
 
 import axios from 'axios'
+
 Vue.prototype.$axios = axios;
 
 import qs from 'qs'
+
 Vue.prototype.$qs = qs;

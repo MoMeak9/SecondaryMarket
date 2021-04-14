@@ -80,7 +80,7 @@
                   </el-form>
                 </el-tab-pane>
                 <!--              修改密码-->
-                <el-tab-pane label="修改密码" name="second">
+                <el-tab-pane label="更改密码" name="second">
                   <el-form :model="resetForm" ref="resetForm" style="width: 50%;margin: 3em" :rules="rules" status-icon>
                     <el-form-item prop="password">
                       <el-input type="password" v-model="resetForm.password" placeholder="请输入旧密码"
@@ -90,7 +90,7 @@
                       <el-input type="password" v-model="resetForm.repassword" placeholder="请输入新密码"
                                 prefix-icon="el-icon-lock" show-password></el-input>
                     </el-form-item>
-                    <el-button type="danger" @click="repassword()">修改密码</el-button>
+                    <el-button type="danger" @click="repassword()">更改密码</el-button>
                   </el-form>
                 </el-tab-pane>
               </el-tabs>
@@ -147,16 +147,22 @@
               <el-table :data="myCommodity" stripe style="width: 100%">
                 <!--                商品图片-->
                 <el-table-column label="图片">
-                  <!--                  <template slot-scope="scope">-->
-                  <!--                    <el-image :src="scope.row.commPicList[0]" fit='cover' :preview-src-list="scope.row.commPicList"-->
-                  <!--                              style="width: 50px;height: 50px"></el-image>-->
-                  <!--                  </template>-->
+                  <template slot-scope="scope">
+                    <el-image :src="scope.row.commPicList[0]" fit='cover' :preview-src-list="scope.row.commPicList"
+                              style="width: 50px;height: 50px"></el-image>
+                  </template>
                 </el-table-column>
                 <el-table-column prop="commodity.commName" label="商品名称"></el-table-column>
                 <el-table-column prop="commodity.commDesc" label="商品描述"></el-table-column>
                 <el-table-column prop="commodity.commSale" label="卖出" width="50"></el-table-column>
                 <el-table-column prop="commodity.commStock" label="数量" width="50"></el-table-column>
-                <el-table-column prop="commodity.auditStatus" label="审核状态"></el-table-column>
+                <el-table-column prop="commodity.auditStatus" label="审核状态">
+                  <div slot-scope="scope">
+                    <div v-if="scope.row.commodity.auditStatus === 0">待审核</div>
+                    <div v-else-if="scope.row.commodity.auditStatus === 1">审核通过</div>
+                    <div v-else>驳回</div>
+                  </div>
+                </el-table-column>
                 <el-table-column label="商品操作">
                   <div slot-scope="scope">
                     <el-button type="danger" size="small" @click="deleteComm(scope.row.commodity.commNo)">下架商品
@@ -238,11 +244,12 @@
             <!--            卖家订单管理-->
             <div class="pending-order" v-show="menuTab[4].isActive">
               <el-table :data="pendingOrder" stripe style="width: 100%">
-                <el-table-column prop="commNo" label="订单号" width="70"></el-table-column>
-                <el-table-column prop="createTime" label="下单时间" width="160"></el-table-column>
-                <el-table-column prop="commodityName" label="商品名称"></el-table-column>
+                <el-table-column prop="createTime" label="下单时间" width="100"></el-table-column>
+                <el-table-column prop="commName" label="商品名称"></el-table-column>
                 <el-table-column prop="num" label="商品数量"></el-table-column>
-                <el-table-column prop="note" label="备注信息"></el-table-column>
+                <el-table-column prop="consignee" label="收货人"></el-table-column>
+                <el-table-column prop="phone" label="联系电话"></el-table-column>
+                <el-table-column prop="address" label="收货地址" width="180"></el-table-column>
                 <el-table-column label="状态">
                   <div slot-scope="scope">
                     <div v-if="scope.row.orderStatus === 0">待处理</div>
@@ -254,25 +261,22 @@
                 </el-table-column>
                 <el-table-column label="处理" width="180">
                   <div slot-scope="scope">
-                    <div v-if="scope.row.status === 0">
-                      <el-button type="primary" size="small" @click="changeStatus(scope.row, true)">发货</el-button>
-                      <el-button type="danger" size="small" @click="changeStatus(scope.row, false)">取消</el-button>
+                    <div v-if="scope.row.orderStatus === 0">
+                      <el-button type="danger" size="small" @click="changeStatus(scope.row, 2)">发货</el-button>
+                      <el-button type="danger" size="small" @click="changeStatus(scope.row, 4)">取消订单</el-button>
                     </div>
-                    <div v-else-if="scope.row.status === 1">
-                      <el-button type="primary" size="small" @click="changeStatus(scope.row, true)">已完成</el-button>
+                    <div v-else-if="scope.row.orderStatus === 1">
+                      <el-button type="primary" size="small" @click="changeStatus(scope.row,3)">送达</el-button>
+                      <el-button type="primary" size="small" @click="changeStatus(scope.row,4)">取消订单</el-button>
                     </div>
-                    <div v-if="scope.row.status === -2">
-                      <el-button type="primary" size="small" @click="changeStatus(scope.row, true)">同意</el-button>
-                      <el-button type="danger" size="small" @click="changeStatus(scope.row, false)">取消</el-button>
+                    <div v-if="scope.row.orderStatus === 2">
+                      <el-button type="danger" size="small" @click="changeStatus(scope.row, 4)">取消订单</el-button>
                     </div>
-                    <div v-else-if="scope.row.status === 2">
-                      <el-tag>等待确认</el-tag>
+                    <div v-else-if="scope.row.orderStatus === 3">
+                      <el-button type="danger" size="small" @click="changeStatus(scope.row,4 )">确认取消</el-button>
                     </div>
-                    <div v-else-if="scope.row.status === 3">
-                      <el-tag type="success">已完成！</el-tag>
-                    </div>
-                    <div v-else-if="scope.row.status === -1">
-                      <el-tag type="danger">已取消！</el-tag>
+                    <div v-else-if="scope.row.orderStatus === 4">
+                      <el-tag type="success">订单已取消！</el-tag>
                     </div>
                   </div>
                 </el-table-column>
@@ -455,12 +459,19 @@ export default {
     //   }
     // },
     //更改订单状态
-    changeStatus(item, isOk) {
-      if (isOk) {
-        this.$axios.put('/apis/pending-orders/' + item.id + '?status=' + (item.status + 1)).then(resp => {
+    changeStatus(row, orderStatus) {
+      if (orderStatus === 2) {
+        this.$axios.post('/apis/order/updateOrderStatus', this.$qs.stringify({
+          orderNo: row.orderNo,
+          orderStatus: orderStatus
+        }),{
+          headers: {
+            Authorization: this.token
+          }
+        }).then(resp => {
           var data = resp.data
-          if (data.code === 200) {
-            item.status += 1
+          if (data.code === 1) {
+            row.orderStatus += 1
             this.$notify({
               title: '成功',
               message: '发货成功！请及时发货！',
@@ -470,15 +481,43 @@ export default {
         }).catch(function (error) {
           console.log(error)
         })
-      } else {
-        this.$axios.put('/apis/pending-orders/' + item.id + '?status=' + -1).then(resp => {
+      } else if (orderStatus === 4) {
+        this.$axios.post('/apis/order/updateOrderStatus', this.$qs.stringify({
+          orderNo: row.orderNo,
+          orderStatus: orderStatus
+        }),{
+          headers: {
+            Authorization: this.token
+          }
+        }).then(resp => {
           var data = resp.data
-          if (data.code === 200) {
-            item.status = -1
+          if (data.code === 1) {
+            row.orderStatus += 1
             this.$notify({
-              title: '取消',
-              message: '已取消此订单！',
-              type: 'waring'
+              title: '成功',
+              message: '已取消订单',
+              type: 'success'
+            })
+          }
+        }).catch(function (error) {
+          console.log(error)
+        })
+      }else{
+        this.$axios.post('/apis/order/updateOrderStatus', this.$qs.stringify({
+          orderNo: row.orderNo,
+          orderStatus: orderStatus
+        }),{
+          headers: {
+            Authorization: this.token
+          }
+        }).then(resp => {
+          var data = resp.data
+          if (data.code === 1) {
+            row.orderStatus += 1
+            this.$notify({
+              title: '成功',
+              message: '订单已送达，请及时通知买家',
+              type: 'success'
             })
           }
         }).catch(function (error) {
@@ -693,8 +732,8 @@ export default {
     //修改密码
     repassword() {
       this.$axios.post('/apis/user/changePassword', this.$qs.stringify({
-        newPassword:this.resetForm.repassword,
-        oldPassword:this.resetForm.password
+        newPassword: this.resetForm.repassword,
+        oldPassword: this.resetForm.password
       }), {
         headers: {
           Authorization: this.token
