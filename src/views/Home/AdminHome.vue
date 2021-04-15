@@ -246,6 +246,9 @@ export default {
         console.log(data)
         if (data.code === 1) {
           this.userList = data.obj
+          for (let i = 0; i < this.userList.length; i++) {
+            this.userList[i].lastLoginTime = this.rTime(this.userList[i].lastLoginTime);
+          }
         }
       })
     },
@@ -267,6 +270,11 @@ export default {
     filterHandler(value, row, column) {
       const property = column['property'];
       return row[property] === value;
+    },
+    //  数据格式化
+    rTime: function (date) {
+      var date1 = new Date(date).toJSON();
+      return new Date(+new Date(date1) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
     },
   },
   mounted() {

@@ -262,12 +262,12 @@
                 <el-table-column label="处理" width="180">
                   <div slot-scope="scope">
                     <div v-if="scope.row.orderStatus === 0">
-                      <el-button type="danger" size="small" @click="changeStatus(scope.row, 2)">发货</el-button>
+                      <el-button type="primary" size="small" @click="changeStatus(scope.row, 2)">发货</el-button>
                       <el-button type="danger" size="small" @click="changeStatus(scope.row, 4)">取消订单</el-button>
                     </div>
                     <div v-else-if="scope.row.orderStatus === 1">
                       <el-button type="primary" size="small" @click="changeStatus(scope.row,3)">送达</el-button>
-                      <el-button type="primary" size="small" @click="changeStatus(scope.row,4)">取消订单</el-button>
+                      <el-button type="danger" size="small" @click="changeStatus(scope.row,4)">取消订单</el-button>
                     </div>
                     <div v-if="scope.row.orderStatus === 2">
                       <el-button type="danger" size="small" @click="changeStatus(scope.row, 4)">取消订单</el-button>
