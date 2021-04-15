@@ -176,15 +176,13 @@
                 <div class="item-label">图片</div>
                 <div class="item-info">
                   <el-upload
-                      class="upload-demo"
-                      action=""
-                      :show-file-list="true"
-                      :list-type="picture"
-                      limit="5"
-                      :file-list="fileList"
+                      class="avatar-uploader"
+                      :headers="headers"
+                      :action=profilePhotoAction
+                      :show-file-list="false"
+                      name=""
                       :on-success="handleAvatarSuccess"
                       :before-upload="beforeAvatarUpload">
-                    <el-button size="small" type="primary">点击上传</el-button>
                     <img v-if="imageUrl" :src="imageUrl" class="avatar">
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                   </el-upload>
@@ -414,6 +412,9 @@ export default {
         var data = resp.data
         if (data.code === 1) {
           this.historyOrder = data.obj
+          for (let i = 0; i < this.historyOrder.length; i++) {
+            this.historyOrder[i].createTime = this.rTime(this.historyOrder[i].createTime)
+          }
         }
       }).catch(function (error) {
         console.log(error)
@@ -464,7 +465,7 @@ export default {
         this.$axios.post('/apis/order/updateOrderStatus', this.$qs.stringify({
           orderNo: row.orderNo,
           orderStatus: orderStatus
-        }),{
+        }), {
           headers: {
             Authorization: this.token
           }
@@ -485,7 +486,7 @@ export default {
         this.$axios.post('/apis/order/updateOrderStatus', this.$qs.stringify({
           orderNo: row.orderNo,
           orderStatus: orderStatus
-        }),{
+        }), {
           headers: {
             Authorization: this.token
           }
@@ -502,11 +503,11 @@ export default {
         }).catch(function (error) {
           console.log(error)
         })
-      }else{
+      } else {
         this.$axios.post('/apis/order/updateOrderStatus', this.$qs.stringify({
           orderNo: row.orderNo,
           orderStatus: orderStatus
-        }),{
+        }), {
           headers: {
             Authorization: this.token
           }
@@ -598,8 +599,9 @@ export default {
       var windowURL = window.URL || window.webkitURL
       this.imageUrl = windowURL.createObjectURL(file)
       // 重新写一个表单上传的方法
-      this.imageFile = new FormData()
-      this.imageFile.append('file', file, file.name)
+      var commImages = new FormData()
+      commImages.append('file', file, file.name)
+      this.imageFile = commImages
       return false
     },
     //商品标签转换
@@ -623,88 +625,45 @@ export default {
       console.log(this.commodity)
     },
     publish() {
-      const config = {
-        headers: this.headers,
+      let config = {
+        headers: {
+          Authorization: this.token,
+          'Content-Type': 'multipart/form-data'
+        }
       }
-      this.$axios.post('/apis/commodity/releaseComm', this.$qs.stringify({
-        commDesc: this.commodity.description,
-        commName: this.commodity.name,
-        commPrice: this.commodity.price,
-        commStock: this.commodity.quantity,
-        commTag: this.commodity.commTag
-        //更改为一同上传
-      }), config).then(resp => {
+      let param = this.imageFile;
+      param.append('commDesc',this.commodity.description)
+      param.append('commName',this.commodity.name)
+      param.append('commPrice',this.commodity.price)
+      param.append('commStock',this.commodity.quantity)
+      param.append('commTag',this.commodity.commTag)
+      this.$axios.post('/apis/commodity/releaseComm', param, config).then(resp => {
         var data = resp.data
+        var commodity = data.data
         if (data.code === 1) {
-          var commodity = data.data
-          this.$axios.post('/apis/commodities/' + commodity.id + '/images', this.$qs.stringify({}), config).then(resp => {
-            var data = resp.data
-            if (data.code === 1) {
-              this.$notify({
-                title: '成功',
-                message: '创建商品成功，请等待审核',
-                type: 'success'
-              })
-              commodity.url = data.data
-              this.myCommodity.push(commodity)
-              this.commodity = []
-              this.menuTab[3].isActive = false
-              this.menuTab[2].isActive = true
-            } else {
-              this.$notify({
-                title: '警告',
-                message: '创建商品成功，但是图片上传失败，请等待审核',
-                type: 'waring'
-              })
-            }
-          }).catch(function (error) {
-            this.$notify.error({
-              title: '错误',
-              message: '发布失败'
-            })
-            console.log(error)
+          this.$notify({
+            title: '成功',
+            message: '创建商品成功，请等待审核',
+            type: 'success'
+          })
+          commodity.url = data.data
+          this.myCommodity.push(commodity)
+          this.commodity = []
+          this.menuTab[3].isActive = false
+          this.menuTab[2].isActive = true
+        } else {
+          this.$notify({
+            title: '警告',
+            message: '商品上传失败',
+            type: 'waring'
           })
         }
+
       }).catch(function (error) {
         this.$notify.error({
           title: '错误',
           message: '发布失败'
         })
-        console.log(error)
-      })
-    },
-    confirm(item) {
-      this.$axios.put('/apis/pending-orders/' + item.id + '?status=3').then(resp => {
-        if (resp.status === 200) {
-          var res = resp.data
-          if (res.code === 200) {
-            console.log(res)
-            item.status = res.data
-            this.$notify({
-              title: '成功',
-              message: '确认收货成功！',
-              type: 'success'
-            })
-          }
-        }
-      }).catch(function (error) {
-        console.log(error)
-      })
-    },
-    cancelOrder(item) {
-      this.$axios.put('/apis/pending-orders/' + item.id + '?status=-2').then(resp => {
-        if (resp.status === 200) {
-          var res = resp.data
-          if (res.code === 200) {
-            item.status = res.data
-            this.$notify({
-              title: '成功',
-              message: '已申请取消！请等待',
-              type: 'success'
-            })
-          }
-        }
-      }).catch(function (error) {
         console.log(error)
       })
     },
@@ -749,7 +708,12 @@ export default {
           })
         }
       })
-    }
+    },
+    //  数据格式化
+    rTime: function (date) {
+      var date1 = new Date(date).toJSON();
+      return new Date(+new Date(date1) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
+    },
   },
   computed: {
     // totalPrice: function () {

@@ -288,7 +288,6 @@ export default {
         height: 40px;
         color: #333;
         font-size: 14px;
-
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
