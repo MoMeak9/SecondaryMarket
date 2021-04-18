@@ -4,16 +4,9 @@
     <div id="header">
       <div class="search">
         <div class="input-wrap">
-          <el-select v-model="commTag " clearable placeholder="类型" style="width: 25%">
-            <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-            </el-option>
-          </el-select>
           <el-autocomplete v-model="searchText" placeholder="搜索 校内二手市场 商品/用户" class="search-input"
-                           :fetch-suggestions="querySearchAsync" @select="handSelect" style="width: 75%;"></el-autocomplete>
+                           :fetch-suggestions="querySearchAsync" @select="handSelect"
+                           style="width: 14rem;"></el-autocomplete>
           <el-button icon="el-icon-search">搜索</el-button>
         </div>
       </div>
@@ -23,13 +16,14 @@
       <div class="banner-slider">
         <el-carousel indicator-position="outside">
           <el-carousel-item v-for="item in bannerList" :key="item.id">
-            <el-image :src=item.commPicList[0] fit="fit" @click="getCommodityInfo(item)" class="banner-img"></el-image>
+            <el-image :src=item.commPicList[0] fit="fit" @click="getCommodityInfo(item.commNo)"
+                      class="banner-img"></el-image>
           </el-carousel-item>
         </el-carousel>
       </div>
       <!--      热表-->
       <div class="hot-list">
-        <div class="hot-wrap" v-for="item in hotList" :key="item.id" @click="getCommodityInfo(item)">
+        <div class="hot-wrap" v-for="item in hotList" :key="item.id" @click="getCommodityInfo(item.commNo)">
           <div class="hot-item-tag"></div>
           <el-image el-image :src="item.commPicList[0]" fit="fit" class="hot-item-img"></el-image>
           <div class="hot-item-title">{{ item.commodity.commName }}</div>
@@ -37,15 +31,15 @@
         </div>
       </div>
       <!--      商品列表-->
-<!--      <div class="common-list" v-infinite-scroll="load" infinite-scroll-disabled="disabled">-->
-<!--        <div class="common-wrap" v-for="item in commonList" :key="item.id">-->
-<!--          <div class="common-item">-->
-<!--            <el-image :src="item.commPicList[0]" fit="fit" class="common-item-img"></el-image>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <p v-if="loading">加载中...</p>-->
-<!--        <p v-if="noMore">没有更多了</p>-->
-<!--      </div>-->
+      <!--      <div class="common-list" v-infinite-scroll="load" infinite-scroll-disabled="disabled">-->
+      <!--        <div class="common-wrap" v-for="item in commonList" :key="item.id">-->
+      <!--          <div class="common-item">-->
+      <!--            <el-image :src="item.commPicList[0]" fit="fit" class="common-item-img"></el-image>-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--        <p v-if="loading">加载中...</p>-->
+      <!--        <p v-if="noMore">没有更多了</p>-->
+      <!--      </div>-->
     </div>
   </div>
 </template>
@@ -68,7 +62,7 @@ export default {
       userBean: {
         userName: '',
       },
-    //  商品类型选择
+      //  商品类型选择
       options: [{
         value: 0,
         label: '衣物'
@@ -84,10 +78,10 @@ export default {
       }, {
         value: 4,
         label: '化妆品'
-      },{
+      }, {
         value: 5,
         label: '文具'
-      },{
+      }, {
         value: 6,
         label: '居家'
       }],
@@ -123,21 +117,20 @@ export default {
         console.log(error)
       })
     },
-    getCommodityInfo(data) {
-      this.$store.commit('GET_COMMODITY', data)
+    getCommodityInfo(commNo) {
+      this.$store.commit('GET_COMM', commNo)
       // 跳转至商品页面
       this.$router.push({path: '/CommodityInfo'})
     },
     querySearchAsync(queryString, cb) {
-      this.$axios.get('/apis/commodities/search', {params: {name: queryString}}).then(resp => {
+      this.$axios.get('/apis/commodity/preSearchComm', {params: {keyName: queryString, num: 6}}).then(resp => {
         var respData = resp.data
-        if (respData.code === 200) {
-          var data = respData.data
+        if (respData.code === 1) {
+          var data = respData.obj
           var results = []
           data.forEach(element => {
             results.push({
-              value: element.name,
-              content: element
+              value: element,
             })
           })
           clearTimeout(this.timeout)
@@ -147,8 +140,8 @@ export default {
         }
       })
     },
-    handSelect(item) {
-      this.getCommodityInfo(item.content)
+    handSelect(commNo) {
+      this.getCommodityInfo(commNo)
     },
     // 普通商品的加载
     load() {
@@ -204,7 +197,7 @@ export default {
     border: 2px solid #ff0036;
 
     .el-input__inner {
-      width: 80%;
+      width: 100%;
       border: none;
       border-radius: 0;
     }
@@ -214,7 +207,7 @@ export default {
     }
 
     .el-button {
-      width: 10vw;
+      width: 8vw;
       color: #fff;
       font-size: 1rem;
       border: none;
