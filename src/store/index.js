@@ -8,6 +8,7 @@ const state = {
     commodity: window.sessionStorage.getItem('commodity'),
     token: window.sessionStorage.getItem('token'),
     search: window.sessionStorage.getItem('search'),
+    commNo:window.sessionStorage.getItem('commNo')
 }
 const mutations = {
     SET_TOKEN: (state, token) => {
@@ -32,6 +33,10 @@ const mutations = {
         // 把商品存起来
         state.commodity = data
         window.sessionStorage.setItem('commodity', data)
+    },
+    GET_COMM:(state, commNo) => {
+        state.commNo = commNo
+        window.sessionStorage.commNo = commNo
     }
 }
 export default new Vuex.Store({

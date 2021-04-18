@@ -5,7 +5,7 @@
 </template>
 <script>
 export default {
-  created () {
+  created() {
     // 在页面加载时读取sessionStorage
     if (sessionStorage.getItem('store')) {
       this.$store.replaceState(Object.assign({}, this.$store.state, JSON.parse(sessionStorage.getItem('store'))))

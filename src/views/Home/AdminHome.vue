@@ -1,8 +1,9 @@
 <template>
   <div id="admin-home">
+    <el-page-header @back="goBack" content="管理系统">
+    </el-page-header>
     <div class="header">
       <h1 style="color: white">二手交易市场后台管理系统</h1>
-      <Menu></Menu>
     </div>
     <div class="content">
       <el-tabs v-model="tabActive">
@@ -53,8 +54,10 @@
                   <div v-else>驳回</div>
                 </div>
               </el-table-column>
-              <el-table-column label="商品操作" width="250">
+              <el-table-column label="商品操作" width="300">
                 <template slot-scope="scope">
+                  <el-button type="primary" @click="checkCommo(scope.row.commodity.commNo)" size="small">查看
+                  </el-button>
                   <el-button type="primary" @click="allowCommo(scope.row.commodity.commNo)" size="small"
                              v-show="scope.row.commodity.auditStatus===0||scope.row.commodity.auditStatus===2">通过
                   </el-button>
@@ -66,11 +69,6 @@
                 </template>
               </el-table-column>
             </el-table>
-            <!--            补充数据分页-->
-            <!--            <el-pagination-->
-            <!--                layout="prev, pager, next"-->
-            <!--                :total="50">-->
-            <!--            </el-pagination>-->
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -78,12 +76,8 @@
   </div>
 </template>
 <script>
-import Menu from "@/components/Menu";
-
 export default {
-  comments: {
-    Menu
-  },
+  comments: {},
   data() {
     return {
       userName: '',
@@ -276,6 +270,16 @@ export default {
       var date1 = new Date(date).toJSON();
       return new Date(+new Date(date1) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
     },
+    //  查看商品详情
+    checkCommo(commNo) {
+
+      this.$store.commit('GET_COMM', commNo)
+      this.$router.push({path: '/check'})
+    },
+    //  返回个人主页
+    goBack() {
+      this.$router.push({path: '/user'})
+    }
   },
   mounted() {
     this.token = this.$store.state.token
