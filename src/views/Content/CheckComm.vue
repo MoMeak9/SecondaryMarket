@@ -9,19 +9,20 @@
         </el-carousel-item>
       </el-carousel>
       <div class="data-content">
+        <el-divider><i class="el-icon-tickets"></i>基本信息</el-divider>
         <div class="text-data">
           商品编号：{{ obj.commodity.commNo }}
         </div>
         <div class="text-data">
-          商品名称：{{ obj.commodity.commNo }}
+          商品名称：{{ obj.commodity.commName }}
         </div>
         <div class="text-data">
-          商品描述：{{ obj.commodity.commNo }}
+          商品描述：{{ obj.commodity.commDesc }}
         </div>
         <div class="text-data">
           创建时间：{{ obj.commodity.createTime }}
         </div>
-        <el-divider><i class="el-icon-mobile-phone"></i></el-divider>
+        <el-divider><i class="el-icon-shopping-cart-full"></i>销售情况</el-divider>
         <div class="text-data">
           商品类型：{{ obj.commodity.commTag }}
         </div>
@@ -32,17 +33,19 @@
           商品销售：{{ obj.commodity.commSale }}
         </div>
         <div class="text-data">
-          商品存量：{{ obj.commodity.commStock - obj.commodity.commSale }}
+          商品库存：{{ obj.commodity.commStock - obj.commodity.commSale }}
         </div>
         <div class="text-data">
           商品总量：{{ obj.commodity.commStock }}
         </div>
-        <el-divider><i class="el-icon-mobile-phone"></i></el-divider>
+        <el-divider><i class="el-icon-edit-outline
+"></i>审核情况
+        </el-divider>
         <div class="text-data">
           审核状态：{{ obj.commodity.auditStatus }}
         </div>
         <div class="text-data">
-          审核人：{{ obj.commodity.auditor }}
+          审核人员：{{ obj.commodity.auditor }}
         </div>
         <div class="text-data">
           审核时间：{{ obj.commodity.auditTime }}
@@ -78,15 +81,17 @@ export default {
           this.obj = data.obj
           console.log(this.obj)
           this.obj.commodity.createTime = this.rTime(this.obj.commodity.createTime)
+          this.obj.commodity.auditTime = this.rTime(this.obj.commodity.auditTime)
           this.obj.commodity.auditStatus = this.rAuditStatus(this.obj.commodity.auditStatus)
+          this.obj.commodity.commTag = this.rCommTag(this.obj.commodity.commTag)
         }
       })
     },
-    rTime: function (date) {
+    rTime(date) {
       var date1 = new Date(date).toJSON();
       return new Date(+new Date(date1) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
     },
-    rAuditStatus: function (data) {
+    rAuditStatus(data) {
       if (data === 0) {
         return "待审核"
       } else if (data === 1) {
@@ -94,7 +99,23 @@ export default {
       } else {
         return "审核拒绝"
       }
-
+    },
+    rCommTag(data) {
+      if (data === 0) {
+        return "衣物"
+      } else if (data === 1) {
+        return "数码"
+      } else if (data === 2) {
+        return "食品"
+      } else if (data === 3) {
+        return "图书"
+      } else if (data === 4) {
+        return "化妆品"
+      } else if (data === 5) {
+        return "文具"
+      } else {
+        return "居家"
+      }
     },
     goBack() {
       this.$router.push({path: '/adminHome'})
