@@ -6,7 +6,7 @@
         <div class="input-wrap">
           <el-autocomplete v-model="searchText" placeholder="搜索 校内二手市场 商品/用户" class="search-input"
                            :fetch-suggestions="querySearchAsync" @select="handSelect"
-                           style="width: 14rem;"></el-autocomplete>
+                           style="width: 16rem;"></el-autocomplete>
           <el-button icon="el-icon-search">搜索</el-button>
         </div>
       </div>
@@ -16,14 +16,14 @@
       <div class="banner-slider">
         <el-carousel indicator-position="outside">
           <el-carousel-item v-for="item in bannerList" :key="item.id">
-            <el-image :src=item.commPicList[0] fit="fit" @click="getCommodityInfo(item.commNo)"
+            <el-image :src=item.commPicList[0] fit="fit" @click="getCommodityInfo(item.commodity.commNo)"
                       class="banner-img"></el-image>
           </el-carousel-item>
         </el-carousel>
       </div>
       <!--      热表-->
       <div class="hot-list">
-        <div class="hot-wrap" v-for="item in hotList" :key="item.id" @click="getCommodityInfo(item.commNo)">
+        <div class="hot-wrap" v-for="item in hotList" :key="item.id" @click="getCommodityInfo(item.commodity.commNo)">
           <div class="hot-item-tag"></div>
           <el-image el-image :src="item.commPicList[0]" fit="fit" class="hot-item-img"></el-image>
           <div class="hot-item-title">{{ item.commodity.commName }}</div>
