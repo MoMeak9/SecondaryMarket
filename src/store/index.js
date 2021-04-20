@@ -7,10 +7,11 @@ const state = {
     userBean: window.sessionStorage.getItem('user'),
     commodity: window.sessionStorage.getItem('commodity'),
     token: window.sessionStorage.getItem('token'),
-    search: window.sessionStorage.getItem('search'),
+    searchText: window.sessionStorage.getItem('searchText'),
     commNo: window.sessionStorage.getItem('commNo')
 }
 const mutations = {
+    //用户Token
     SET_TOKEN: (state, token) => {
         state.token = token
         window.sessionStorage.token = token
@@ -19,6 +20,7 @@ const mutations = {
         state.token = ''
         window.sessionStorage.removeItem('token')
     },
+    //用户信息
     GET_USER: (state, data) => {
         // 把用户信息存起来
         state.userBean = data
@@ -29,6 +31,7 @@ const mutations = {
         state.userBean = null
         window.sessionStorage.removeItem('user')
     },
+    //商品编码
     GET_COMM: (state, commNo) => {
         state.commNo = commNo
         window.sessionStorage.commNo = commNo
@@ -36,7 +39,17 @@ const mutations = {
     DEL_COMM: (state) => {
         state.commNo = ''
         window.sessionStorage.removeItem('commNo')
-    }
+    },
+    //    搜索信息
+    GET_SEARCH: (state, searchText) => {
+        state.searchText = searchText
+        window.sessionStorage.searchText = searchText
+    },
+    DEL_SEARCH: (state) => {
+        state.searchText = ''
+        window.sessionStorage.removeItem('searchText')
+    },
+
 }
 export default new Vuex.Store({
     state,

@@ -4,8 +4,8 @@
     <div id="header">
       <div class="search">
         <div class="input-wrap">
-          <el-autocomplete v-model="searchText" placeholder="搜索 校内二手市场 商品/用户" class="search-input"
-                           :fetch-suggestions="querySearchAsync" @select="handSelect"
+          <el-autocomplete v-model="this.searchText" placeholder="搜索 校内二手市场 商品/用户" class="search-input"
+                           :fetch-suggestions="querySearchAsync" @select="handSelect(this.searchText)"
                            style="width: 16rem;"></el-autocomplete>
           <el-button icon="el-icon-search" @click="searchComm(this.searchText)">搜索</el-button>
         </div>
@@ -140,8 +140,8 @@ export default {
         }
       })
     },
-    handSelect(commNo) {
-      this.getCommodityInfo(commNo)
+    handSelect() {
+      this.searchComm()
     },
     // 普通商品的加载
     load() {
@@ -163,7 +163,6 @@ export default {
                 this.noMore = true
               }
             } else {
-              // 说明没有了，无法加载
               this.noMore = true
             }
             this.loading = false
@@ -175,7 +174,8 @@ export default {
     },
   //  搜索商品
     searchComm(text){
-
+      this.$store.commit('GET_SEARCH',text)
+      this.$router.push({path: '/search'})
     }
   },
   computed: {

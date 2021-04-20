@@ -1,13 +1,28 @@
 <template>
-
+<div id="search"></div>
 </template>
 
 <script>
 export default {
-  name: "Search"
+  name: "Search",
+  data() {
+    return {
+      searchText: '',
+
+    }
+  },
+  mounted() {
+    this.initData()
+  },
+  methods: {
+    initData() {
+      this.searchText = this.$store.state.searchText
+
+    },
+  }
 }
 </script>
 
-<style scoped>
+<style lang="scss">
 
 </style>
