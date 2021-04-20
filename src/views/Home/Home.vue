@@ -7,7 +7,7 @@
           <el-autocomplete v-model="searchText" placeholder="搜索 校内二手市场 商品/用户" class="search-input"
                            :fetch-suggestions="querySearchAsync" @select="handSelect"
                            style="width: 16rem;"></el-autocomplete>
-          <el-button icon="el-icon-search">搜索</el-button>
+          <el-button icon="el-icon-search" @click="searchComm(this.searchText)">搜索</el-button>
         </div>
       </div>
     </div>
@@ -150,9 +150,6 @@ export default {
         setTimeout(() => {
           this.$axios.get('/apis/commodity/initialCommList', {
             params: {
-              // status: 0,
-              // id: this.commonList[this.commonList.length - 1].id,
-              // limit: 1
               num: 5
             }
           }).then(resp => {
@@ -175,6 +172,10 @@ export default {
           })
         }, 2000)
       }
+    },
+  //  搜索商品
+    searchComm(text){
+
     }
   },
   computed: {

@@ -8,7 +8,7 @@ const state = {
     commodity: window.sessionStorage.getItem('commodity'),
     token: window.sessionStorage.getItem('token'),
     search: window.sessionStorage.getItem('search'),
-    commNo:window.sessionStorage.getItem('commNo')
+    commNo: window.sessionStorage.getItem('commNo')
 }
 const mutations = {
     SET_TOKEN: (state, token) => {
@@ -29,14 +29,13 @@ const mutations = {
         state.userBean = null
         window.sessionStorage.removeItem('user')
     },
-    GET_COMMODITY: (state, data) => {
-        // 把商品存起来
-        state.commodity = data
-        window.sessionStorage.setItem('commodity', data)
-    },
-    GET_COMM:(state, commNo) => {
+    GET_COMM: (state, commNo) => {
         state.commNo = commNo
         window.sessionStorage.commNo = commNo
+    },
+    DEL_COMM: (state) => {
+        state.commNo = ''
+        window.sessionStorage.removeItem('commNo')
     }
 }
 export default new Vuex.Store({

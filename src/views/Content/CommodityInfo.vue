@@ -180,6 +180,7 @@ export default {
     },
     goBack() {
       this.$router.push({path: '/home'})
+      this.$store.state.DEL_COMM()
       console.log('go back');
     },
   },
