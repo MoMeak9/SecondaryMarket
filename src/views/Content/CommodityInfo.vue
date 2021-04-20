@@ -64,26 +64,26 @@ export default {
       },
       rules: {
         consignee: [
-          { required: true, message: '请输入收件人', trigger: 'blur' },
-          { min: 1, max: 5, message: '长度在 1 到 8 个字符', trigger: 'blur' }
+          {required: true, message: '请输入收件人', trigger: 'blur'},
+          {min: 1, max: 5, message: '长度在 1 到 8 个字符', trigger: 'blur'}
         ],
         region: [
-          { required: true, message: '请选择活动区域', trigger: 'change' }
+          {required: true, message: '请选择活动区域', trigger: 'change'}
         ],
         date1: [
-          { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
+          {type: 'date', required: true, message: '请选择日期', trigger: 'change'}
         ],
         date2: [
-          { type: 'date', required: true, message: '请选择时间', trigger: 'change' }
+          {type: 'date', required: true, message: '请选择时间', trigger: 'change'}
         ],
         type: [
-          { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
+          {type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change'}
         ],
         resource: [
-          { required: true, message: '请选择活动资源', trigger: 'change' }
+          {required: true, message: '请选择活动资源', trigger: 'change'}
         ],
         desc: [
-          { required: true, message: '请填写活动形式', trigger: 'blur' }
+          {required: true, message: '请填写活动形式', trigger: 'blur'}
         ]
       }
     }
@@ -112,7 +112,41 @@ export default {
       this.show = !this.show;
     },
     submit() {
-
+      if (this.token === null || this.token === '') {
+        this.$notify({
+          title: '错误',
+          message: '尚未登入，即将前往登入',
+          type: 'error'
+        })
+        this.$router.push({path: '/login'})
+      } else {
+        this.$axios.post('/apis/order/submitOrder', this.$qs.stringify({
+          address: this.buyForm.address,
+          commNo: this.commNo,
+          consignee: this.buyForm.consignee,
+          num: this.buyForm.num,
+          phone: this.buyForm.phone
+        }), {
+          headers: {
+            Authorization: this.token
+          }
+        }).then(resp => {
+          var data = resp.data
+          if (data.code === 1) {
+            this.$notify({
+              title: '成功',
+              message: '下单成功，请在个人中心查看',
+              type: 'success'
+            })
+          }
+        }).catch(function (error) {
+          this.$notify.error({
+            title: '错误',
+            message: '下单失败'
+          })
+          console.log(error)
+        })
+      }
     },
     rTime(date) {
       var date1 = new Date(date).toJSON();

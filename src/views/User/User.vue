@@ -658,7 +658,6 @@ export default {
             type: 'waring'
           })
         }
-
       }).catch(function (error) {
         this.$notify.error({
           title: '错误',
