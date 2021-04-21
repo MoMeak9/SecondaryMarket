@@ -3,10 +3,6 @@
     <el-header class="header" style="height:30px">
 
       <div class="header-wrap">
-        <!--                <a href="/home">-->
-        <!--                  <span>首页</span>-->
-        <!--                </a>-->
-        <!--                网站导航-->
         <Menu></Menu>
       </div>
     </el-header>
@@ -91,6 +87,31 @@
                                 prefix-icon="el-icon-lock" show-password></el-input>
                     </el-form-item>
                     <el-button type="danger" @click="repassword()">更改密码</el-button>
+                  </el-form>
+                </el-tab-pane>
+                <el-tab-pane label="身份认证" name="third" v-if="userBean.authentication===0||userBean.authentication===3">
+                  <el-form :model="authenticationForm" status-icon :rules="rules" ref="ruleForm" label-width="80px"
+                           class="demo-ruleForm" style="width: 50%;margin: 3em">
+                    <el-form-item label="学院" prop="college" wi>
+                      <el-input type="password" v-model="authenticationForm.college" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="真实姓名" prop="userRealName">
+                      <el-input v-model="authenticationForm.userRealName"></el-input>
+                    </el-form-item>
+                    <el-form-item label="学号" prop="sno">
+                      <el-input type="password" v-model="authenticationForm.sno" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-upload
+                        class="avatar-uploader"
+                        :headers="headers"
+                        :action=profilePhotoAction
+                        :show-file-list="false"
+                        name="profile"
+                        :before-upload="beforeAuthenticationPhotoUpload">
+                      <img v-if="authenticationForm.profileUrl" :src="authenticationForm.profileUrl" class="avatar">
+                      <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
+                    <el-button type="primary" @click="submitAuthentication()">提交审核</el-button>
                   </el-form>
                 </el-tab-pane>
               </el-tabs>
@@ -323,7 +344,14 @@ export default {
         userInfo: '',
         userSex: '',
         profileUrl: '',
-        userEmail: ''
+        userEmail: '',
+        authentication: '',
+      },
+      authenticationForm: {
+        college: '',
+        sno: '',
+        userRealName: '',
+        profileUrl: ''
       },
       menuTab: [
         {
@@ -365,6 +393,7 @@ export default {
       },
       imageUrl: '',
       imageFile: '',
+      AuthenticationImageFile: '',
       profilePhotoAction: '/apis/user/updateUserInfo',
       socket: null,
       //  更改密码
@@ -575,7 +604,27 @@ export default {
       this.userBean.profileUrl = windowURL.createObjectURL(file)
       return true
     },
+    //证件上传
+    beforeAuthenticationPhotoUpload(file) {
+      const isJPG = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png'
+      const isLt10M = file.size / 1024 / 1024 < 10
 
+      if (!isJPG) {
+        this.$message.error('上传的证件图片只能是 JPG/PNG/JPEG 格式!')
+        return false
+      }
+      if (!isLt10M) {
+        this.$message.error('上传的证件图片大小不能超过 10MB!')
+        return false
+      }
+      var windowURL = window.URL || window.webkitURL
+      this.authenticationForm.profileUrl = windowURL.createObjectURL(file)
+      //设置图片表单
+      var commImages = new FormData()
+      commImages.append('file', file, file.name)
+      this.AuthenticationImageFile = commImages
+      return false
+    },
     // element-ui 上传图片的方法 商品的！！！！！
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
@@ -632,11 +681,11 @@ export default {
         }
       }
       let param = this.imageFile;
-      param.append('commDesc',this.commodity.description)
-      param.append('commName',this.commodity.name)
-      param.append('commPrice',this.commodity.price)
-      param.append('commStock',this.commodity.quantity)
-      param.append('commTag',this.commodity.commTag)
+      param.append('commDesc', this.commodity.description)
+      param.append('commName', this.commodity.name)
+      param.append('commPrice', this.commodity.price)
+      param.append('commStock', this.commodity.quantity)
+      param.append('commTag', this.commodity.commTag)
       this.$axios.post('/apis/commodity/releaseComm', param, config).then(resp => {
         var data = resp.data
         var commodity = data.data
@@ -703,6 +752,30 @@ export default {
           this.$notify({
             title: '成功',
             message: '密码修改成功',
+            type: 'success'
+          })
+        }
+      })
+    },
+    //提交审核内容
+    submitAuthentication() {
+      let config = {
+        headers: {
+          Authorization: this.token,
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+      let param = this.AuthenticationImageFile;
+      param.append('college', this.authenticationForm.college)
+      param.append('sno', this.authenticationForm.sno)
+      param.append('userRealName', this.authenticationForm.userRealName)
+      this.$axios.post('/apis/user/uploadAuthenticationInfo', param, config).then(resp => {
+        var data = resp.data
+        console.log(data)
+        if (data.code === 1) {
+          this.$notify({
+            title: '成功',
+            message: '提交审核成功',
             type: 'success'
           })
         }

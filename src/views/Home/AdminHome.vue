@@ -72,19 +72,19 @@
           </div>
         </el-tab-pane>
         <!--        学院信息审核-->
-        <el-tab-pane label="信息审核" name="third">
+        <el-tab-pane label="认证审核" name="third">
           <div class="item-reg">
             <el-table :data="userList" style="width: 100%">
               <el-table-column prop="userName" label="用户名" width="180"></el-table-column>
-              <el-table-column prop="userNo" label="学生证照片"></el-table-column>
-              <el-table-column prop="userEmail" label="真实姓名" width="180"></el-table-column>
-              <el-table-column prop="userNo" label="学院" width=""></el-table-column>
-              <el-table-column prop="userNo" label="学号" width=""></el-table-column>
-              <el-table-column prop="userNo" label="认证状态" width="">
+              <el-table-column prop="photoUrl" label="学生证照片"></el-table-column>
+              <el-table-column prop="userRealName" label="真实姓名" width="180"></el-table-column>
+              <el-table-column prop="college" label="学院" width=""></el-table-column>
+              <el-table-column prop="sno" label="学号" width=""></el-table-column>
+              <el-table-column prop="authentication" label="认证状态" width="">
                 <div slot-scope="scope">
-                  <div v-if="scope.row.commodity.auditStatus === 0">未认证</div>
-                  <div v-else-if="scope.row.commodity.auditStatus === 1">认证中</div>
-                  <div v-else-if="scope.row.commodity.auditStatus === 2">审核通过</div>
+                  <div v-if="scope.row.auditStatus === 0">未认证</div>
+                  <div v-else-if="scope.row.auditStatus === 1">认证中</div>
+                  <div v-else-if="scope.row.auditStatus === 2">审核通过</div>
                   <div v-else>认证失败</div>
                 </div>
               </el-table-column>
