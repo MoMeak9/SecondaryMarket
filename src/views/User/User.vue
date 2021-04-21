@@ -111,8 +111,8 @@
                       <img v-if="authenticationForm.profileUrl" :src="authenticationForm.profileUrl" class="avatar">
                       <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
-                    <el-button type="primary" @click="submitAuthentication()">提交审核</el-button>
                   </el-form>
+                  <el-button type="primary" @click="submitAuthentication()">提交审核</el-button>
                 </el-tab-pane>
               </el-tabs>
             </div>
@@ -475,19 +475,6 @@ export default {
         console.log(error)
       })
     },
-    // websocketLink () {
-    //   this.socket = new WebSocket('ws://localhost:8082/websocket/' + this.$store.state.userBean.id)
-    //   this.socket.onopen = () => {
-    //     console.log('socket 已经打开！')
-    //     this.socket.send('hello!')
-    //   }
-    //   this.socket.onmessage = function (msg) {
-    //     console.log(msg.data)
-    //   }
-    //   this.socket.onclose = function () {
-    //     console.log('Socket已关闭')
-    //   }
-    // },
     //更改订单状态
     changeStatus(row, orderStatus) {
       if (orderStatus === 2) {
@@ -649,7 +636,7 @@ export default {
       this.imageUrl = windowURL.createObjectURL(file)
       // 重新写一个表单上传的方法
       var commImages = new FormData()
-      commImages.append('file', file, file.name)
+      commImages.append('commPicList', file, file.name)
       this.imageFile = commImages
       return false
     },
@@ -777,6 +764,12 @@ export default {
             title: '成功',
             message: '提交审核成功',
             type: 'success'
+          })
+        } else {
+          this.$notify({
+            title: '错误',
+            message: '提交失败',
+            type: 'error'
           })
         }
       })

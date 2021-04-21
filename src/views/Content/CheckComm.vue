@@ -54,6 +54,8 @@
           退回反馈：{{ obj.commodity.auditMsg }}
         </div>
       </div>
+      <el-button type="danger" @click="setCommRec(1)" v-if="obj.commodity.recommend===0">推荐商品</el-button>
+      <el-button type="danger" @click="setCommRec(0)" v-if="obj.commodity.recommend===1">停止推荐商品</el-button>
     </div>
   </div>
 </template>
@@ -121,6 +123,25 @@ export default {
       this.$router.push({path: '/adminHome'})
       console.log('go back');
     },
+    setCommRec(recommend) {
+      this.$axios.post('/apis/admin/setCommRec', this.$qs.stringify({
+        commNo: this.commNo,
+        recommend: recommend,
+      }), {
+        headers: {
+          Authorization: this.token,
+        }
+      }).then(resp => {
+        var data = resp.data
+        console.log(data)
+        if (data.code === 1) {
+          this.$notify.success({
+            title: '成功',
+            message: '已设置推荐',
+          })
+        }
+      })
+    }
   },
   mounted() {
     this.token = this.$store.state.token
@@ -137,10 +158,9 @@ export default {
     width: 45rem;
     margin: 0 auto;
     padding: 2rem;
+    border: 2px solid red;
     border-radius: 10px;
     background: white;
-    box-shadow: 16px 16px 32px #408bb6,
-    -16px -16px 32px #6ae7ff;
 
     .data-content {
       display: flex;

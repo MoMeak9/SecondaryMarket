@@ -42,29 +42,29 @@
                             style="width: 70px;height: 70px"></el-image>
                 </template>
               </el-table-column>
-              <el-table-column prop="commodity.commName" label="名称" sortable></el-table-column>
-              <el-table-column prop="commodity.commDesc" label="简述"></el-table-column>
-              <el-table-column prop="commodity.createUser" label="创建者" width="180" sortable></el-table-column>
-              <el-table-column prop="commodity.auditStatus" label="审核状态" sortable
+              <el-table-column prop="commName" label="名称" sortable></el-table-column>
+              <el-table-column prop="commDesc" label="简述"></el-table-column>
+              <el-table-column prop="createUser" label="创建者" width="180" sortable></el-table-column>
+              <el-table-column prop="auditStatus" label="审核状态" sortable
                                :filters="[{text: '待审核', value: 0},{text: '审核通过', value: 1},{text: '驳回', value: 2}]"
                                :filter-method="filterHandler">
                 <div slot-scope="scope">
-                  <div v-if="scope.row.commodity.auditStatus === 0">待审核</div>
-                  <div v-else-if="scope.row.commodity.auditStatus === 1">审核通过</div>
+                  <div v-if="scope.row.auditStatus === 0">待审核</div>
+                  <div v-else-if="scope.row.auditStatus === 1">审核通过</div>
                   <div v-else>驳回</div>
                 </div>
               </el-table-column>
               <el-table-column label="商品操作" width="300">
                 <template slot-scope="scope">
-                  <el-button type="primary" @click="checkCommo(scope.row.commodity.commNo)" size="small">查看
+                  <el-button type="primary" @click="checkCommo(scope.row.commNo)" size="small">查看
                   </el-button>
-                  <el-button type="primary" @click="allowCommo(scope.row.commodity.commNo)" size="small"
-                             v-show="scope.row.commodity.auditStatus===0||scope.row.commodity.auditStatus===2">通过
+                  <el-button type="primary" @click="allowCommo(scope.row.commNo)" size="small"
+                             v-show="scope.row.auditStatus===0||scope.row.auditStatus===2">通过
                   </el-button>
-                  <el-button type="danger" @click="refuseCommo(scope.row.commodity.commNo)" size="small"
-                             v-show="scope.row.commodity.auditStatus===0||scope.row.commodity.auditStatus===1">拒绝
+                  <el-button type="danger" @click="refuseCommo(scope.row.commNo)" size="small"
+                             v-show="scope.row.auditStatus===0||scope.row.auditStatus===1">拒绝
                   </el-button>
-                  <el-button type="danger" @click="deleteCommo(scope.row.commodity.commNo)" size="small">删除
+                  <el-button type="danger" @click="deleteCommo(scope.row.commNo)" size="small">删除
                   </el-button>
                 </template>
               </el-table-column>
@@ -191,7 +191,7 @@ export default {
     },
     // 删除商品
     deleteCommo(commNo) {
-      this.$axios.post('/apis/admin/auditComm', this.$qs.stringify({
+      this.$axios.post('/apis/commodity/deleteComm', this.$qs.stringify({
         commNo: commNo
       }), {
         headers: {
@@ -204,6 +204,12 @@ export default {
             title: '成功',
             message: '处理完成',
             type: 'success'
+          })
+        } else {
+          this.$notify({
+            title: '错误',
+            message: '处理失败',
+            type: 'error'
           })
         }
       }).catch(function (error) {
