@@ -21,6 +21,16 @@
           </el-carousel-item>
         </el-carousel>
       </div>
+      <!--      分类栏-->
+      <div class="commTag">
+        <el-button><i class="iconfont" @click="getCommTag(0)">&#xe621;</i></el-button>
+        <el-button><i class="iconfont" @click="getCommTag(1)">&#xe61f;</i></el-button>
+        <el-button><i class="iconfont" @click="getCommTag(2)">&#xe622;</i></el-button>
+        <el-button><i class="iconfont" @click="getCommTag(3)">&#xe648;</i></el-button>
+        <el-button><i class="iconfont" @click="getCommTag(4)">&#xe625;</i></el-button>
+        <el-button><i class="iconfont" @click="getCommTag(5)">&#xe624;</i></el-button>
+        <el-button><i class="iconfont" @click="getCommTag(6)">&#xe620;</i></el-button>
+      </div>
       <!--      热表-->
       <div class="hot-list">
         <div class="hot-wrap" v-for="item in hotList" :key="item.id" @click="getCommodityInfo(item.commodity.commNo)">
@@ -30,16 +40,6 @@
           <div class="hot-item-price">￥{{ item.commodity.commPrice }}</div>
         </div>
       </div>
-      <!--      商品列表-->
-      <!--      <div class="common-list" v-infinite-scroll="load" infinite-scroll-disabled="disabled">-->
-      <!--        <div class="common-wrap" v-for="item in commonList" :key="item.id">-->
-      <!--          <div class="common-item">-->
-      <!--            <el-image :src="item.commPicList[0]" fit="fit" class="common-item-img"></el-image>-->
-      <!--          </div>-->
-      <!--        </div>-->
-      <!--        <p v-if="loading">加载中...</p>-->
-      <!--        <p v-if="noMore">没有更多了</p>-->
-      <!--      </div>-->
     </div>
   </div>
 </template>
@@ -172,9 +172,13 @@ export default {
         }, 2000)
       }
     },
-  //  搜索商品
-    searchComm(text){
-      this.$store.commit('GET_SEARCH',text)
+    //  搜索商品
+    searchComm(text) {
+      this.$store.commit('GET_SEARCH', text)
+      this.$router.push({path: '/search'})
+    },
+    // 前往分区
+    getCommTag() {
       this.$router.push({path: '/search'})
     }
   },
@@ -186,7 +190,6 @@ export default {
 }
 </script>
 <style lang="scss">
-
 #header {
   height: 10em;
   display: flex;

@@ -305,8 +305,8 @@ export default {
     position: relative;
 
     .login-banner-wrap {
-      background-size: cover;
-      background: url("~@/assets/image/68128465.png") fixed no-repeat top;
+      background-size: contain;
+      background: url("~@/assets/image/背景.png") fixed no-repeat top;
       height: 100vh;
       width: 100vw;
     }

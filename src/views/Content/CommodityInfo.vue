@@ -84,7 +84,7 @@ export default {
           {min: 1, max: 5, message: '长度在 1 到 8 个字符', trigger: 'blur'}
         ],
         phone: [
-          {validator: validatePass, trigger: 'blur'}
+          {required: true, validator: validatePass, trigger: 'blur'}
         ],
         address: [
           {required: true, message: '请填写详细地址', trigger: 'blur'}

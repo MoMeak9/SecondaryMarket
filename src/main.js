@@ -5,6 +5,7 @@ import store from './store'
 import ElementUI from 'element-ui'
 import VueParticles from 'vue-particles'
 import 'element-ui/lib/theme-chalk/index.css'
+import './styles/main.scss'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)

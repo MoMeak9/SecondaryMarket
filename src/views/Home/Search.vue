@@ -38,7 +38,6 @@ export default {
     return {
       searchText: '',
       commList: [],
-
     }
   },
   mounted() {
