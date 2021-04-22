@@ -1,5 +1,34 @@
 <template>
-  <div id="search"></div>
+  <div id="search">
+    <div class="content">
+      <div class="header">
+        <el-input v-model="searchText" placeholder="搜索 校内二手市场 商品/用户" class="search-input"
+                  :fetch-suggestions="querySearchAsync" @select="handSelect(searchText)"
+                  style="width: 24rem;"></el-input>
+        <el-button icon="el-icon-search" @click="searchComm">搜索</el-button>
+      </div>
+      <div class="commInfo">
+        <el-table :data="commList" stripe style="width: 100%">
+          <!--                商品图片-->
+          <el-table-column label="图片">
+            <template slot-scope="scope">
+              <el-image :src="scope.row.commPicList[0]" fit='cover' :preview-src-list="scope.row.commPicList"
+                        style="width: 50px;height: 50px"></el-image>
+            </template>
+          </el-table-column>
+          <el-table-column prop="commodity.commName" label="商品名称"></el-table-column>
+          <el-table-column prop="commodity.commDesc" label="商品描述"></el-table-column>
+          <el-table-column prop="commodity.commSale" label="销量" width="50"></el-table-column>
+          <el-table-column label="商品操作">
+            <div slot-scope="scope">
+              <el-button type="danger" size="small" @click="getCommodityInfo(scope.row.commodity.commNo)">查看商品
+              </el-button>
+            </div>
+          </el-table-column>
+        </el-table>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -20,7 +49,9 @@ export default {
       this.searchText = this.$store.state.searchText
       // 获取搜索列表
       this.$axios.get('/apis/commodity/searchComm', {
-        keyName: this.searchText,
+        params: {
+          keyName: this.searchText,
+        }
       }).then(resp => {
         var data = resp.data
         if (data.code === 1) {
@@ -35,10 +66,53 @@ export default {
       // 跳转至商品页面
       this.$router.push({path: '/CommodityInfo'})
     },
+    searchComm() {
+      this.$axios.get('/apis/commodity/searchComm', {
+        params: {
+          keyName: this.searchText,
+        }
+      }).then(resp => {
+        var data = resp.data
+        if (data.code === 1) {
+          this.commList = data.obj
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    querySearchAsync(queryString, cb) {
+      this.$axios.get('/apis/commodity/preSearchComm', {params: {keyName: queryString, num: 6}}).then(resp => {
+        var respData = resp.data
+        if (respData.code === 1) {
+          var data = respData.obj
+          var results = []
+          data.forEach(element => {
+            results.push({
+              value: element,
+            })
+          })
+          clearTimeout(this.timeout)
+          this.timeout = setTimeout(() => {
+            cb(results)
+          }, 3000 * Math.random())
+        }
+      })
+    },
+    handSelect() {
+    },
   }
 }
 </script>
 
 <style lang="scss">
+#search {
+  .content {
+    width: 70%;
+    margin: 0 auto;
+  }
+  .commInfo{
+    margin-top: 5rem;
+  }
+}
 
 </style>
