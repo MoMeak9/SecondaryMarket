@@ -183,7 +183,7 @@ export default {
       }
     },
     goBack() {
-      this.$router.push({path: '/home'})
+      this.$router.go(-1)
       this.$store.state.DEL_COMM()
       console.log('go back');
     },

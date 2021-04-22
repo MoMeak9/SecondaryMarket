@@ -4,9 +4,9 @@
     <div id="header">
       <div class="search">
         <div class="input-wrap">
-          <el-autocomplete v-model="this.searchText" placeholder="搜索 校内二手市场 商品/用户" class="search-input"
-                           :fetch-suggestions="querySearchAsync" @select="handSelect(this.searchText)"
-                           style="width: 16rem;"></el-autocomplete>
+          <el-autocomplete v-model="searchText" placeholder="搜索 校内二手市场 商品/用户" class="search-input"
+                           :fetch-suggestions="querySearchAsync" @select="handSelect"
+                           style="width: 20rem;"></el-autocomplete>
           <el-button icon="el-icon-search" @click="searchComm(this.searchText)">搜索</el-button>
         </div>
       </div>
@@ -130,7 +130,8 @@ export default {
           var results = []
           data.forEach(element => {
             results.push({
-              value: element,
+              value: element.commName,
+              content: element.commNo
             })
           })
           clearTimeout(this.timeout)
@@ -140,8 +141,8 @@ export default {
         }
       })
     },
-    handSelect() {
-      this.searchComm()
+    handSelect(item) {
+      this.getCommodityInfo(item.content)
     },
     // 普通商品的加载
     load() {
