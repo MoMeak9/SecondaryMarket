@@ -1,5 +1,7 @@
 <template>
   <div id="search">
+    <el-page-header @back="goBack()" content="商品搜索">
+    </el-page-header>
     <div class="content">
       <div class="header">
         <el-input v-model="searchText" placeholder="搜索 校内二手市场 商品/用户" class="search-input"
@@ -38,6 +40,7 @@ export default {
     return {
       searchText: '',
       commList: [],
+      commTag: ''
     }
   },
   mounted() {
@@ -46,19 +49,35 @@ export default {
   methods: {
     initData() {
       this.searchText = this.$store.state.searchText
+      this.commTag = this.$store.state.commTag
       // 获取搜索列表
-      this.$axios.get('/apis/commodity/searchComm', {
-        params: {
-          keyName: this.searchText,
-        }
-      }).then(resp => {
-        var data = resp.data
-        if (data.code === 1) {
-          this.commList = data.obj
-        }
-      }).catch(function (error) {
-        console.log(error)
-      })
+      if (this.searchText !== '' && this.searchText !== null) {
+        this.$axios.get('/apis/commodity/searchComm', {
+          params: {
+            keyName: this.searchText,
+          }
+        }).then(resp => {
+          var data = resp.data
+          if (data.code === 1) {
+            this.commList = data.obj
+          }
+        }).catch(function (error) {
+          console.log(error)
+        })
+      } else if (this.commTag !== '' && this.commTag !== null) {
+        this.$axios.get('/apis/commodity/queryCommByTag', {
+          params: {
+            commTag: this.commTag,
+          }
+        }).then(resp => {
+          var data = resp.data
+          if (data.code === 1) {
+            this.commList = data.obj
+          }
+        }).catch(function (error) {
+          console.log(error)
+        })
+      }
     },
     getCommodityInfo(commNo) {
       this.$store.commit('GET_COMM', commNo)
@@ -98,7 +117,17 @@ export default {
       })
     },
     handSelect() {
+
     },
+    goBack() {
+      this.$router.push({path: '/home'})
+      this.$store.state.DEL_COMM()
+      console.log('go back');
+    }
+  },
+  beforeDestroy() {
+    this.$store.commit("DEL_SEARCH")
+    this.$store.commit("DEL_COMMTAG")
   }
 }
 </script>
@@ -109,7 +138,8 @@ export default {
     width: 70%;
     margin: 0 auto;
   }
-  .commInfo{
+
+  .commInfo {
     margin-top: 5rem;
   }
 }

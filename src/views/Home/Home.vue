@@ -7,7 +7,7 @@
           <el-autocomplete v-model="searchText" placeholder="搜索 校内二手市场 商品/用户" class="search-input"
                            :fetch-suggestions="querySearchAsync" @select="handSelect"
                            style="width: 20rem;"></el-autocomplete>
-          <el-button icon="el-icon-search" @click="searchComm(this.searchText)">搜索</el-button>
+          <el-button icon="el-icon-search" @click="searchComm(searchText)">搜索</el-button>
         </div>
       </div>
     </div>
@@ -179,7 +179,8 @@ export default {
       this.$router.push({path: '/search'})
     },
     // 前往分区
-    getCommTag() {
+    getCommTag(commTag) {
+      this.$store.commit("GET_COMMTAG", commTag)
       this.$router.push({path: '/search'})
     }
   },

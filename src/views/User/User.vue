@@ -8,9 +8,6 @@
     </el-header>
     <el-container class="nav">
       <div class="nav-wrap">
-        <a href="/home">
-          <i class="iconfont icon-B"></i>
-        </a>
       </div>
     </el-container>
     <el-container class="content">

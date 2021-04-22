@@ -49,7 +49,15 @@ const mutations = {
         state.searchText = ''
         window.sessionStorage.removeItem('searchText')
     },
-
+//    商品类型详细
+    GET_COMMTAG:(state,commTag)=>{
+        state.commTag = commTag
+        window.sessionStorage.searchText = commTag
+    },
+    DEL_COMMTAG:(state) =>{
+        state.commTag = ''
+        window.sessionStorage.removeItem('commTag')
+    }
 }
 export default new Vuex.Store({
     state,

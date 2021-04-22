@@ -12,7 +12,7 @@
         <div class="data-content">
           <h2>{{ obj.commodity.commName }}</h2>
           <el-divider><i class="el-icon-tickets"></i></el-divider>
-          <h3>￥{{ obj.commodity.commPrice }}.00 RMB</h3>
+          <h3>￥{{ obj.commodity.commPrice }} RMB</h3>
           <h4>库存：{{ obj.commodity.commStock - obj.commodity.commSale }}</h4>
           <h4>类别：{{ obj.commodity.commTag }}</h4>
           <h4>卖家：{{ obj.commodity.commTag }}</h4>
