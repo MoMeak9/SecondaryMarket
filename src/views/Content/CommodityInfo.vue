@@ -21,35 +21,51 @@
           <el-button type="danger" @click="changShow" style="margin-top: 12rem">购买商品</el-button>
         </div>
       </div>
-      <transition name="el-zoom-in-top">
-        <div style="display: flex; margin-top: 20px;" v-show="show">
-          <el-form label-width="120px" :model="buyForm" :rules="rules">
+      <el-dialog
+          title="购买商品"
+          :visible.sync="show"
+          width="35%"
+          center>
+        <span>
+          <el-form label-width="80px" :model="buyForm" :rules="rules">
             <el-form-item label="收件人" prop="consignee">
-              <el-input v-model="buyForm.consignee" style="width: 20rem;"></el-input>
+              <el-input v-model="buyForm.consignee" style="width: 100%;"></el-input>
             </el-form-item>
-            <el-form-item label="联系电话">
+            <el-form-item label="联系电话" prop="phone">
               <el-input v-model="buyForm.phone" style="width: 100%;"></el-input>
             </el-form-item>
             <el-form-item label="购买数量" style="text-align: left">
               <el-input-number v-model="buyForm.num" size="small" :min="1"
                                :max="obj.commodity.commStock - obj.commodity.commSale"></el-input-number>
             </el-form-item>
-            <el-form-item label="收件地址">
+            <el-form-item label="收件地址" prop="address">
               <el-input v-model="buyForm.address" type="textarea" style="width: 100%;"
                         :autosize="{ minRows: 3, maxRows: 6}"></el-input>
             </el-form-item>
-            <el-button type="danger" @click="submit">确认下单</el-button>
           </el-form>
-        </div>
-      </transition>
+        </span>
+        <span slot="footer" class="dialog-footer">
+    <el-button @click="show=false">取 消</el-button>
+    <el-button type="danger" @click="submit">确认下单</el-button>
+  </span>
+      </el-dialog>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "CheckComm",
   data() {
+    let validatePass = (rule, value, callback) => {
+      const reg = '^[0-9]{11}$'
+      if (value === '') {
+        callback(new Error('请输入电话号码'))
+      } else if (value.search(reg)) {
+        callback(new Error('请输入正确手机格式'))
+      } else {
+        callback()
+      }
+    }
     return {
       commNo: '',
       token: '',
@@ -67,23 +83,11 @@ export default {
           {required: true, message: '请输入收件人', trigger: 'blur'},
           {min: 1, max: 5, message: '长度在 1 到 8 个字符', trigger: 'blur'}
         ],
-        region: [
-          {required: true, message: '请选择活动区域', trigger: 'change'}
+        phone: [
+          {validator: validatePass, trigger: 'blur'}
         ],
-        date1: [
-          {type: 'date', required: true, message: '请选择日期', trigger: 'change'}
-        ],
-        date2: [
-          {type: 'date', required: true, message: '请选择时间', trigger: 'change'}
-        ],
-        type: [
-          {type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change'}
-        ],
-        resource: [
-          {required: true, message: '请选择活动资源', trigger: 'change'}
-        ],
-        desc: [
-          {required: true, message: '请填写活动形式', trigger: 'blur'}
+        address: [
+          {required: true, message: '请填写详细地址', trigger: 'blur'}
         ]
       }
     }
