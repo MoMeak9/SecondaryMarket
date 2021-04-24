@@ -53,9 +53,9 @@
         <div class="text-data">
           退回反馈：{{ obj.commodity.auditMsg }}
         </div>
+        <el-button type="danger" @click="setCommRec(1)" v-if="obj.commodity.recommend===0">推荐商品</el-button>
+        <el-button type="danger" @click="setCommRec(0)" v-if="obj.commodity.recommend===1">停止推荐商品</el-button>
       </div>
-      <el-button type="danger" @click="setCommRec(1)" v-if="obj.commodity.recommend===0">推荐商品</el-button>
-      <el-button type="danger" @click="setCommRec(0)" v-if="obj.commodity.recommend===1">停止推荐商品</el-button>
     </div>
   </div>
 </template>
@@ -72,7 +72,7 @@ export default {
   },
   methods: {
     initDate() {
-      this.$axios.get('/apis/commodity/queryCommByNo', {
+      this.$axios.get('/shop/commodity/queryCommByNo', {
         params: {
           commNo: this.commNo,
         }
@@ -124,7 +124,7 @@ export default {
       console.log('go back');
     },
     setCommRec(recommend) {
-      this.$axios.post('/apis/admin/setCommRec', this.$qs.stringify({
+      this.$axios.post('/shop/admin/setCommRec', this.$qs.stringify({
         commNo: this.commNo,
         recommend: recommend,
       }), {

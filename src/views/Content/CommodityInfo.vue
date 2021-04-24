@@ -94,7 +94,7 @@ export default {
   },
   methods: {
     initDate() {
-      this.$axios.get('/apis/commodity/queryCommByNo', {
+      this.$axios.get('/shop/commodity/queryCommByNo', {
         params: {
           commNo: this.commNo,
         }
@@ -124,7 +124,7 @@ export default {
         })
         this.$router.push({path: '/login'})
       } else {
-        this.$axios.post('/apis/order/submitOrder', this.$qs.stringify({
+        this.$axios.post('/shop/order/submitOrder', this.$qs.stringify({
           address: this.buyForm.address,
           commNo: this.commNo,
           consignee: this.buyForm.consignee,

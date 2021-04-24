@@ -124,7 +124,7 @@ export default {
   methods: {
     //审核通过
     allowCommo(commNo) {
-      this.$axios.post('/apis/admin/auditComm', this.$qs.stringify({
+      this.$axios.post('/shop/admin/auditComm', this.$qs.stringify({
             auditStatus: 1,
             auditor: this.userName,
             commNo: commNo
@@ -158,7 +158,7 @@ export default {
       }).then(({value}) => {
         this.auditMsg = value
         console.log(this.auditMsg)
-        this.$axios.post('/apis/admin/auditComm', this.$qs.stringify({
+        this.$axios.post('/shop/admin/auditComm', this.$qs.stringify({
           auditMsg: this.auditMsg,
           auditStatus: 2,
           auditor: this.userName,
@@ -191,7 +191,7 @@ export default {
     },
     // 删除商品
     deleteCommo(commNo) {
-      this.$axios.post('/apis/commodity/deleteComm', this.$qs.stringify({
+      this.$axios.post('/shop/commodity/deleteComm', this.$qs.stringify({
         commNo: commNo
       }), {
         headers: {
@@ -219,7 +219,7 @@ export default {
     },
     banUser(userNo) {
       console.log(userNo)
-      this.$axios.post('/apis/admin/setUserIsBan', this.$qs.stringify({
+      this.$axios.post('/shop/admin/setUserIsBan', this.$qs.stringify({
         isBan: 1,
         userNo: userNo
       }), {
@@ -241,7 +241,7 @@ export default {
     },
     unBanUser(userNo) {
       console.log(userNo)
-      this.$axios.post('/apis/admin/setUserIsBan', this.$qs.stringify({
+      this.$axios.post('/shop/admin/setUserIsBan', this.$qs.stringify({
         isBan: 0,
         userNo: userNo
       }), {
@@ -262,7 +262,7 @@ export default {
       this.getUserList()
     },
     changeAuthentication(userNo, authentication) {
-      this.$axios.post('/apis/admin/setUserIsBan', this.$qs.stringify({
+      this.$axios.post('/shop/admin/setUserIsBan', this.$qs.stringify({
         authentication: authentication,
         userNo: userNo
       }), {
@@ -289,7 +289,7 @@ export default {
     },
     //用户列表
     getUserList() {
-      this.$axios.post('/apis/admin/userList', {}, {
+      this.$axios.post('/shop/admin/userList', {}, {
         headers: {
           Authorization: this.token
         }
@@ -306,7 +306,7 @@ export default {
     },
     getCommList() {
       //  商品列表
-      this.$axios.get('/apis/admin/commList', {
+      this.$axios.get('/shop/admin/commList', {
         headers: {
           Authorization: this.token
         }

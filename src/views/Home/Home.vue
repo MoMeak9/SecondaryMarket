@@ -94,7 +94,7 @@ export default {
     initData() {
       this.userBean = this.$store.state.userBean
       //轮播图
-      this.$axios.get('/apis/commodity/bannerCommList', {
+      this.$axios.get('/shop/commodity/bannerCommList', {
         params: {
           num: 4,
         }
@@ -105,7 +105,7 @@ export default {
         console.log(error)
       })
       //初始商品列表
-      this.$axios.get('/apis/commodity/initialCommList', {
+      this.$axios.get('/shop/commodity/initialCommList', {
         params: {
           num: 10,
         }
@@ -123,7 +123,7 @@ export default {
       this.$router.push({path: '/CommodityInfo'})
     },
     querySearchAsync(queryString, cb) {
-      this.$axios.get('/apis/commodity/preSearchComm', {params: {keyName: queryString, num: 6}}).then(resp => {
+      this.$axios.get('/shop/commodity/preSearchComm', {params: {keyName: queryString, num: 6}}).then(resp => {
         var respData = resp.data
         if (respData.code === 1) {
           var data = respData.obj
@@ -149,7 +149,7 @@ export default {
       if (this.commonList.length !== 0) {
         this.loading = true
         setTimeout(() => {
-          this.$axios.get('/apis/commodity/initialCommList', {
+          this.$axios.get('/shop/commodity/initialCommList', {
             params: {
               num: 5
             }

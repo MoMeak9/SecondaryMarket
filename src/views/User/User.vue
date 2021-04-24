@@ -391,7 +391,7 @@ export default {
       imageUrl: '',
       imageFile: '',
       AuthenticationImageFile: '',
-      profilePhotoAction: '/apis/user/updateUserInfo',
+      profilePhotoAction: '/shop/user/updateUserInfo',
       socket: null,
       //  更改密码
       resetForm: {
@@ -430,7 +430,7 @@ export default {
     //初始化方法
     initData() {
       // 获取购买历史(用户提交的订单列表接口)
-      this.$axios.get('/apis/order/queryUserSubmitOrderList', {
+      this.$axios.get('/shop/order/queryUserSubmitOrderList', {
         headers: {
           Authorization: this.token
         }
@@ -446,7 +446,7 @@ export default {
         console.log(error)
       })
       // 获取用户在售卖的商品
-      this.$axios.get('/apis/commodity/queryUserComm', {
+      this.$axios.get('/shop/commodity/queryUserComm', {
         headers: {
           Authorization: this.token
         }
@@ -459,7 +459,7 @@ export default {
         console.log(error)
       })
       // 获取用户已卖出的商品
-      this.$axios.get('/apis/order/queryUserReceiveOrderList', {
+      this.$axios.get('/shop/order/queryUserReceiveOrderList', {
         headers: {
           Authorization: this.token
         }
@@ -475,7 +475,7 @@ export default {
     //更改订单状态
     changeStatus(row, orderStatus) {
       if (orderStatus === 2) {
-        this.$axios.post('/apis/order/updateOrderStatus', this.$qs.stringify({
+        this.$axios.post('/shop/order/updateOrderStatus', this.$qs.stringify({
           orderNo: row.orderNo,
           orderStatus: orderStatus
         }), {
@@ -496,7 +496,7 @@ export default {
           console.log(error)
         })
       } else if (orderStatus === 4) {
-        this.$axios.post('/apis/order/updateOrderStatus', this.$qs.stringify({
+        this.$axios.post('/shop/order/updateOrderStatus', this.$qs.stringify({
           orderNo: row.orderNo,
           orderStatus: orderStatus
         }), {
@@ -517,7 +517,7 @@ export default {
           console.log(error)
         })
       } else {
-        this.$axios.post('/apis/order/updateOrderStatus', this.$qs.stringify({
+        this.$axios.post('/shop/order/updateOrderStatus', this.$qs.stringify({
           orderNo: row.orderNo,
           orderStatus: orderStatus
         }), {
@@ -541,7 +541,7 @@ export default {
     },
     //下架商品commNo
     deleteComm() {
-      this.$axios.get('/apis/commodity/deleteComm', {
+      this.$axios.get('/shop/commodity/deleteComm', {
         headers: {
           Authorization: this.token
         }
@@ -670,7 +670,7 @@ export default {
       param.append('commPrice', this.commodity.price)
       param.append('commStock', this.commodity.quantity)
       param.append('commTag', this.commodity.commTag)
-      this.$axios.post('/apis/commodity/releaseComm', param, config).then(resp => {
+      this.$axios.post('/shop/commodity/releaseComm', param, config).then(resp => {
         var data = resp.data
         var commodity = data.data
         if (data.code === 1) {
@@ -700,7 +700,7 @@ export default {
       })
     },
     reset() {
-      this.$axios.post('/apis/user/updateUserInfo', this.$qs.stringify({
+      this.$axios.post('/shop/user/updateUserInfo', this.$qs.stringify({
         userInfo: this.userBean.userInfo,
         userName: this.userBean.userName,
         userSex: this.userBean.userSex
@@ -722,7 +722,7 @@ export default {
     },
     //修改密码
     repassword() {
-      this.$axios.post('/apis/user/changePassword', this.$qs.stringify({
+      this.$axios.post('/shop/user/changePassword', this.$qs.stringify({
         newPassword: this.resetForm.repassword,
         oldPassword: this.resetForm.password
       }), {
@@ -753,7 +753,7 @@ export default {
       param.append('college', this.authenticationForm.college)
       param.append('sno', this.authenticationForm.sno)
       param.append('userRealName', this.authenticationForm.userRealName)
-      this.$axios.post('/apis/user/uploadAuthenticationInfo', param, config).then(resp => {
+      this.$axios.post('/shop/user/uploadAuthenticationInfo', param, config).then(resp => {
         var data = resp.data
         console.log(data)
         if (data.code === 1) {

@@ -99,7 +99,7 @@ export default {
   },
   methods: {
     validation() {
-      this.$axios.get('/apis/message/sendEmail', {
+      this.$axios.get('/shop/message/sendEmail', {
         params: {
           userEmail: this.resetForm.userEmail,
         }
@@ -132,7 +132,7 @@ export default {
           type: 'error'
         })
       } else {
-        this.$axios.post('/apis/user/forgetPassword', this.$qs.stringify({
+        this.$axios.post('/shop/user/forgetPassword', this.$qs.stringify({
           code: this.resetForm.code,
           encryptionCode: this.resetForm.encryptionCode,
           time: this.resetForm.time,

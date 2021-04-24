@@ -14,16 +14,17 @@ module.exports = {
   },
   // webpack-dev-server 相关配置
   // 测试服务启动时显示的ip,端口,代理配置
+
   devServer: {
     open: false,
     port: 8080,
     proxy: {
-      '/apis': {
+      '/shop': {
         target: 'http://39.105.228.56:8080/shop', // target host
         ws: true, // proxy websockets
         changeOrigin: true, // needed for virtual hosted sites
         pathRewrite: {
-          '^/apis': '' // rewrite path
+          '^/shop': '' // rewrite path
         }
       }
     }

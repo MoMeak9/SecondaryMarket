@@ -173,7 +173,7 @@ export default {
           type: 'error'
         })
       } else {
-        this.$axios.post('/apis/user/login', this.$qs.stringify({
+        this.$axios.post('/shop/user/login', this.$qs.stringify({
           userEmail: this.loginForm.email,
           userPassword: this.loginForm.password,
         })).then((resp) => {
@@ -224,7 +224,7 @@ export default {
           type: 'error',
         })
       } else {
-        this.$axios.post('/apis/user/register', this.$qs.stringify({
+        this.$axios.post('/shop/user/register', this.$qs.stringify({
           code: this.code,
           encryptionCode: this.encryptionCode,
           time: this.time,
@@ -253,7 +253,7 @@ export default {
       }
     },
     validation() {
-      this.$axios.get('/apis/message/sendEmail', {
+      this.$axios.get('/shop/message/sendEmail', {
         params: {
           userEmail: this.registerForm.email,
         }

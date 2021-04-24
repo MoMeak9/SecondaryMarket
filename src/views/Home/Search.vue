@@ -52,7 +52,7 @@ export default {
       this.commTag = this.$store.state.commTag
       // 获取搜索列表
       if (this.searchText !== '' && this.searchText !== null) {
-        this.$axios.get('/apis/commodity/searchComm', {
+        this.$axios.get('/shop/commodity/searchComm', {
           params: {
             keyName: this.searchText,
           }
@@ -65,7 +65,7 @@ export default {
           console.log(error)
         })
       } else if (this.commTag !== '' && this.commTag !== null) {
-        this.$axios.get('/apis/commodity/queryCommByTag', {
+        this.$axios.get('/shop/commodity/queryCommByTag', {
           params: {
             commTag: this.commTag,
           }
@@ -85,7 +85,7 @@ export default {
       this.$router.push({path: '/CommodityInfo'})
     },
     searchComm() {
-      this.$axios.get('/apis/commodity/searchComm', {
+      this.$axios.get('/shop/commodity/searchComm', {
         params: {
           keyName: this.searchText,
         }
@@ -99,7 +99,7 @@ export default {
       })
     },
     querySearchAsync(queryString, cb) {
-      this.$axios.get('/apis/commodity/preSearchComm', {params: {keyName: queryString, num: 6}}).then(resp => {
+      this.$axios.get('/shop/commodity/preSearchComm', {params: {keyName: queryString, num: 6}}).then(resp => {
         var respData = resp.data
         if (respData.code === 1) {
           var data = respData.obj
