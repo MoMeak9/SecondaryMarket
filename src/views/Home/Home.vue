@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="isLoadDom">
     <Nav></Nav>
     <div id="header">
       <div class="search">
@@ -62,6 +62,7 @@ export default {
       userBean: {
         userName: '',
       },
+      isLoadDom:false,
       //  商品类型选择
       options: [{
         value: 0,
@@ -88,10 +89,8 @@ export default {
     }
   },
   mounted() {
-    this.initData()
-  },
-  methods: {
-    initData() {
+    this.$nextTick(function () {
+      console.log("执行")
       this.userBean = this.$store.state.userBean
       //轮播图
       this.$axios.get('/shop/commodity/bannerCommList', {
@@ -99,8 +98,10 @@ export default {
           num: 4,
         }
       }).then((resp) => {
+        console.log("执行")
         var data = resp.data
         this.bannerList = data.obj
+        this.isLoadDom = true
       }).catch(function (error) {
         console.log(error)
       })
@@ -116,7 +117,9 @@ export default {
       }).catch(function (error) {
         console.log(error)
       })
-    },
+    })
+  },
+  methods: {
     getCommodityInfo(commNo) {
       this.$store.commit('GET_COMM', commNo)
       // 跳转至商品页面

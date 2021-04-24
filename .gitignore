@@ -1,6 +1,7 @@
 .DS_Store
 node_modules
 /dist
+cloudbaserc.json
 
 
 # local env files
