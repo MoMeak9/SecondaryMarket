@@ -3,8 +3,8 @@
     <el-menu default-active="/" class="el-menu-demo" mode="horizontal" router="true" style="border: none">
       <el-menu-item index="/" style="border:none !important">首页</el-menu-item>
       <el-menu-item index="/search">搜索</el-menu-item>
-      <el-menu-item index="/adminHome" v-if="userBean.userRoot!==0">管理中心</el-menu-item>
-      <el-menu-item index="/user">个人中心</el-menu-item>
+      <el-menu-item index="/user" v-if="this.userBean">个人中心</el-menu-item>
+      <el-menu-item index="/login" v-if="!this.userBean">用户登入</el-menu-item>
     </el-menu>
     <div id="header">
       <div class="input-wrap">
@@ -87,9 +87,9 @@ export default {
     }
   },
   mounted() {
+    this.userBean = this.$store.state.userBean
     this.$nextTick(function () {
       console.log("执行")
-      this.userBean = this.$store.state.userBean
       //轮播图
       this.$axios.get('/shop/commodity/bannerCommList', {
         params: {
@@ -200,7 +200,7 @@ export default {
 
   .input-wrap {
     display: flex;
-    border: 2px solid #ff0036;
+    border: 2px solid #409EFF;
 
     .el-input__inner {
       width: 100%;
@@ -209,7 +209,7 @@ export default {
     }
 
     .el-input__inner::placeholder {
-      color: rgb(250, 68, 108);
+      color: #409EFF;
     }
 
     .el-button {
@@ -218,7 +218,7 @@ export default {
       font-size: 1rem;
       border: none;
       border-radius: 0;
-      background-color: #FF0036;
+      background-color: #409EFF;
     }
   }
 }
@@ -294,14 +294,14 @@ export default {
       }
 
       .hot-item-price {
-        color: #FF0036;
+        color: #409EFF;
         font-size: 18px;
         margin: 5px auto;
       }
     }
 
     .hot-wrap:hover {
-      border: 1px solid #FF0036;
+      border: 1px solid #409EFF;
     }
   }
 

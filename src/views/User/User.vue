@@ -122,7 +122,7 @@
                               style="width: 50px;height: 50px"></el-image>
                   </template>
                 </el-table-column>
-                <el-table-column prop="createTime" label="下单时间" width="120"></el-table-column>
+                <el-table-column prop="createTime" label="下单时间" width="180"></el-table-column>
                 <el-table-column prop="commName" label="商品名称"></el-table-column>
                 <el-table-column prop="num" label="数量" width="50"></el-table-column>
                 <el-table-column prop="price" label="单价" width="50"></el-table-column>
@@ -163,14 +163,14 @@
             <div class="my-commodity" v-show="menuTab[2].isActive">
               <el-table :data="myCommodity" stripe style="width: 100%">
                 <!--                商品图片-->
-                <el-table-column label="图片">
+                <el-table-column label="图片" width="100">
                   <template slot-scope="scope">
                     <el-image :src="scope.row.commPicList[0]" fit='cover' :preview-src-list="scope.row.commPicList"
                               style="width: 50px;height: 50px"></el-image>
                   </template>
                 </el-table-column>
-                <el-table-column prop="commodity.commName" label="商品名称"></el-table-column>
-                <el-table-column prop="commodity.commDesc" label="商品描述"></el-table-column>
+                <el-table-column prop="commodity.commName" label="商品名称" width="100"></el-table-column>
+                <el-table-column prop="commodity.commDesc" label="商品描述" width="200"></el-table-column>
                 <el-table-column prop="commodity.commSale" label="卖出" width="50"></el-table-column>
                 <el-table-column prop="commodity.commStock" label="数量" width="50"></el-table-column>
                 <el-table-column prop="commodity.auditStatus" label="审核状态">
@@ -183,6 +183,8 @@
                 <el-table-column label="商品操作">
                   <div slot-scope="scope">
                     <el-button type="danger" size="small" @click="deleteComm(scope.row.commodity.commNo)">下架商品
+                    </el-button>
+                    <el-button type="danger" size="small" @click="getCommInfo(scope.row.commodity.commNo)">查看
                     </el-button>
                   </div>
                 </el-table-column>
@@ -407,20 +409,20 @@ export default {
   mounted() {
     this.userBean = this.$store.state.userBean
     this.token = this.$store.state.token
-    console.log(this.token)
-    if (this.token === null || this.token === '') {
-      this.$notify({
-        title: '未登入',
-        message: '即将前往登入页',
-        type: 'error'
-      })
-      clearTimeout(this.timer);
-      this.timer = setTimeout(() => {
-        this.$router.push({path: '/login'});
-      }, 1500);
-    }
-    this.initData()
-    // this.websocketLink()
+    this.$nextTick(function () {
+      if (this.token === null || this.token === '') {
+        this.$notify({
+          title: '未登入',
+          message: '即将前往登入页',
+          type: 'error'
+        })
+        clearTimeout(this.timer);
+        this.timer = setTimeout(() => {
+          this.$router.push({path: '/login'});
+        }, 1500);
+      }
+      this.initData()
+    })
   },
   methods: {
     //初始化方法
@@ -688,15 +690,13 @@ export default {
         param.append('commTag', this.commodity.commTag)
         this.$axios.post('/shop/commodity/releaseComm', param, config).then(resp => {
           var data = resp.data
-          var commodity = data.data
           if (data.code === 1) {
             this.$notify({
               title: '成功',
               message: '创建商品成功，请等待审核',
               type: 'success'
             })
-            commodity.url = data.data
-            this.myCommodity.push(commodity)
+            this.initData()
             this.commodity = []
             this.menuTab[3].isActive = false
             this.menuTab[2].isActive = true
@@ -901,6 +901,7 @@ export default {
       min-height: 1000px;
       background: #fff;
       border-radius: 4px;
+      box-shadow: 10px 5px 30px #99a9bf;
 
       .ct-left {
         height: 92%;

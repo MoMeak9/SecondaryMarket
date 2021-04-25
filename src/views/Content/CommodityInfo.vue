@@ -15,7 +15,7 @@
           <h3>￥{{ obj.commodity.commPrice }} RMB</h3>
           <h4>库存：{{ obj.commodity.commStock - obj.commodity.commSale }}</h4>
           <h4>类别：{{ obj.commodity.commTag }}</h4>
-          <h4>卖家：{{ obj.commodity.createUser}}</h4>
+          <h4>卖家：{{ obj.commodity.createUser }}</h4>
           <el-divider><i class="el-icon-shopping-cart-full"></i></el-divider>
           <h4>描述：{{ obj.commodity.commDesc }}</h4>
           <el-button type="danger" @click="changShow" style="margin-top: 12rem">购买商品</el-button>
@@ -112,44 +112,45 @@ export default {
       })
     },
     changShow() {
-      if(this.token ===null || this.token ===''){
-          this.$notify({
-            title: '错误',
-            message: '尚未登入，即将前往登入',
-            type: 'error'
-          })
-          this.$router.push({path: '/login'})
+      if (this.token === null || this.token === '') {
+        this.$notify({
+          title: '错误',
+          message: '请登入后继续',
+          type: 'error'
+        })
+        this.$router.push({path: '/login'})
       } else {
         this.show = !this.show;
       }
     },
     submit() {
-        this.$axios.post('/shop/order/submitOrder', this.$qs.stringify({
-          address: this.buyForm.address,
-          commNo: this.commNo,
-          consignee: this.buyForm.consignee,
-          num: this.buyForm.num,
-          phone: this.buyForm.phone
-        }), {
-          headers: {
-            Authorization: this.token
-          }
-        }).then(resp => {
-          var data = resp.data
-          if (data.code === 1) {
-            this.$notify({
-              title: '成功',
-              message: '下单成功，请在个人中心查看',
-              type: 'success'
-            })
-          }
-        }).catch(function (error) {
-          this.$notify.error({
-            title: '错误',
-            message: '下单失败'
+      this.$axios.post('/shop/order/submitOrder', this.$qs.stringify({
+        address: this.buyForm.address,
+        commNo: this.commNo,
+        consignee: this.buyForm.consignee,
+        num: this.buyForm.num,
+        phone: this.buyForm.phone
+      }), {
+        headers: {
+          Authorization: this.token
+        }
+      }).then(resp => {
+        var data = resp.data
+        if (data.code === 1) {
+          this.$notify({
+            title: '成功',
+            message: '下单成功，请在个人中心查看',
+            type: 'success'
           })
-          console.log(error)
+          this.show = !this.show
+        }
+      }).catch(function (error) {
+        this.$notify.error({
+          title: '错误',
+          message: '下单失败'
         })
+        console.log(error)
+      })
     },
     rTime(date) {
       var date1 = new Date(date).toJSON();
@@ -199,14 +200,18 @@ export default {
 
 <style lang="scss">
 #Commodity {
-
+  background-color: rgba(153, 169, 191, 0.19);
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
   .in {
+    background-color: white;
     margin: 1rem auto;
     width: 60%;
-    border: 1px solid red;
+    border-radius: 5px;
     padding: 2rem;
     position: relative;
-    box-shadow: #475669;
+    box-shadow: 10px 5px 30px #99a9bf;
 
     .information {
       width: 100%;
