@@ -15,7 +15,7 @@
           <h3>￥{{ obj.commodity.commPrice }} RMB</h3>
           <h4>库存：{{ obj.commodity.commStock - obj.commodity.commSale }}</h4>
           <h4>类别：{{ obj.commodity.commTag }}</h4>
-          <h4>卖家：{{ obj.commodity.commTag }}</h4>
+          <h4>卖家：{{ obj.commodity.createUser}}</h4>
           <el-divider><i class="el-icon-shopping-cart-full"></i></el-divider>
           <h4>描述：{{ obj.commodity.commDesc }}</h4>
           <el-button type="danger" @click="changShow" style="margin-top: 12rem">购买商品</el-button>
@@ -112,18 +112,18 @@ export default {
       })
     },
     changShow() {
-      console.log(this.show)
-      this.show = !this.show;
+      if(this.token ===null || this.token ===''){
+          this.$notify({
+            title: '错误',
+            message: '尚未登入，即将前往登入',
+            type: 'error'
+          })
+          this.$router.push({path: '/login'})
+      } else {
+        this.show = !this.show;
+      }
     },
     submit() {
-      if (this.token === null || this.token === '') {
-        this.$notify({
-          title: '错误',
-          message: '尚未登入，即将前往登入',
-          type: 'error'
-        })
-        this.$router.push({path: '/login'})
-      } else {
         this.$axios.post('/shop/order/submitOrder', this.$qs.stringify({
           address: this.buyForm.address,
           commNo: this.commNo,
@@ -150,7 +150,6 @@ export default {
           })
           console.log(error)
         })
-      }
     },
     rTime(date) {
       var date1 = new Date(date).toJSON();
@@ -191,8 +190,9 @@ export default {
   mounted() {
     this.token = this.$store.state.token
     this.commNo = this.$store.state.commNo
-    console.log(this.token + "\n" + this.commNo)
-    this.initDate()
+    this.$nextTick(function () {
+      this.initDate()
+    })
   }
 }
 </script>

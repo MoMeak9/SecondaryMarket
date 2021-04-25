@@ -64,8 +64,6 @@
                   <el-button type="danger" @click="refuseCommo(scope.row.commNo)" size="small"
                              v-show="scope.row.auditStatus===0||scope.row.auditStatus===1">拒绝
                   </el-button>
-                  <el-button type="danger" @click="deleteCommo(scope.row.commNo)" size="small">删除
-                  </el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -92,10 +90,10 @@
                 <template slot-scope="scope">
                   <el-button type="danger" @click="changeAuthentication(scope.row.userNo,2)"
                              v-show="scope.row.isBan===0">
-                    认证通过
+                    通过
                   </el-button>
                   <el-button type="success" @click="changeAuthentication(scope.row.userNo,3)"
-                             v-show="scope.row.isBan===1">认证失败
+                             v-show="scope.row.isBan===1">驳回
                   </el-button>
                 </template>
               </el-table-column>
@@ -189,34 +187,6 @@ export default {
         });
       });
     },
-    // 删除商品
-    deleteCommo(commNo) {
-      this.$axios.post('/shop/commodity/deleteComm', this.$qs.stringify({
-        commNo: commNo
-      }), {
-        headers: {
-          Authorization: this.token
-        }
-      }).then(resp => {
-        var data = resp.data
-        if (data.code === 1) {
-          this.$notify({
-            title: '成功',
-            message: '处理完成',
-            type: 'success'
-          })
-        } else {
-          this.$notify({
-            title: '错误',
-            message: '处理失败',
-            type: 'error'
-          })
-        }
-      }).catch(function (error) {
-        console.log(error)
-      })
-      this.getCommList()
-    },
     banUser(userNo) {
       console.log(userNo)
       this.$axios.post('/shop/admin/setUserIsBan', this.$qs.stringify({
@@ -262,7 +232,7 @@ export default {
       this.getUserList()
     },
     changeAuthentication(userNo, authentication) {
-      this.$axios.post('/shop/admin/setUserIsBan', this.$qs.stringify({
+      this.$axios.post('/shop/admin/auditUserAuthentication', this.$qs.stringify({
         authentication: authentication,
         userNo: userNo
       }), {
@@ -342,17 +312,19 @@ export default {
   mounted() {
     this.token = this.$store.state.token
     console.log(this.token)
-    if (this.token === '') {
-      this.$message({
-        message: '用户未登录！即将返回登录页面',
-        type: 'error'
-      });
-      clearTimeout(this.timer);
-      this.timer = setTimeout(() => {
-        this.$router.push({path: '/login'});
-      }, 1500);
-    }
-    this.initDate()
+    this.$nextTick(function () {
+      if (this.token === '') {
+        this.$message({
+          message: '用户未登录！即将返回登录页面',
+          type: 'error'
+        });
+        clearTimeout(this.timer);
+        this.timer = setTimeout(() => {
+          this.$router.push({path: '/login'});
+        }, 1500);
+      }
+      this.initDate()
+    })
   }
 }
 </script>

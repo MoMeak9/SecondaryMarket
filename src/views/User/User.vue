@@ -42,7 +42,7 @@
                 <el-tab-pane label="个人信息" name="first">
                   <el-form :model="userBean" style="width: 50%;margin: 3em">
                     <el-form-item prop="userName">
-                      用户名：
+                      用户：
                       <el-input v-model="userBean.userName" placeholder="用户名称" prefix-icon="el-icon-user"
                                 style="width: 85%;float: right"></el-input>
                     </el-form-item>
@@ -86,17 +86,17 @@
                     <el-button type="danger" @click="repassword()">更改密码</el-button>
                   </el-form>
                 </el-tab-pane>
-                <el-tab-pane label="身份认证" name="third" v-if="userBean.authentication===0||userBean.authentication===3">
+                <el-tab-pane label="身份认证" name="third" v-if="userBean.authentication!==2">
                   <el-form :model="authenticationForm" status-icon :rules="rules" ref="ruleForm" label-width="80px"
                            class="demo-ruleForm" style="width: 50%;margin: 3em">
                     <el-form-item label="学院" prop="college" wi>
-                      <el-input type="password" v-model="authenticationForm.college" autocomplete="off"></el-input>
+                      <el-input v-model="authenticationForm.college" autocomplete="off"></el-input>
                     </el-form-item>
                     <el-form-item label="真实姓名" prop="userRealName">
                       <el-input v-model="authenticationForm.userRealName"></el-input>
                     </el-form-item>
                     <el-form-item label="学号" prop="sno">
-                      <el-input type="password" v-model="authenticationForm.sno" autocomplete="off"></el-input>
+                      <el-input v-model.number="authenticationForm.sno" autocomplete="off"></el-input>
                     </el-form-item>
                     <el-upload
                         class="avatar-uploader"
@@ -229,7 +229,7 @@
               <div class="right-item">
                 <div class="item-label">数量</div>
                 <div class="item-info">
-                  <el-input-number v-model="commodity.quantity" :min="1" :max="99" size="small"></el-input-number>
+                  <el-input-number v-model="commodity.quantity" :min="1" size="small"></el-input-number>
                 </div>
               </div>
               <div class="right-item">
@@ -253,7 +253,7 @@
               <div class="right-item">
                 <div class="item-label"></div>
                 <div class="item-info">
-                  <el-button type="danger" @click="publish()">发布</el-button>
+                  <el-button type="danger" @click="publish()">发布商品</el-button>
                 </div>
               </div>
             </div>
@@ -540,15 +540,24 @@ export default {
       }
     },
     //下架商品commNo
-    deleteComm() {
-      this.$axios.get('/shop/commodity/deleteComm', {
+    deleteComm(commNo) {
+      this.$axios.post('/shop/commodity/deleteComm',this.$qs.stringify({
+        commNo: commNo,
+      }), {
         headers: {
           Authorization: this.token
         }
       }).then(resp => {
         var data = resp.data
         if (data.code === 1) {
-          this.pendingOrder = data.obj
+          this.$notify({
+            title: '成功',
+            message: '操作成功！',
+            type: 'success'
+          })
+          this.initDate()
+        }else{
+
         }
       }).catch(function (error) {
         console.log(error)
@@ -605,7 +614,7 @@ export default {
       this.authenticationForm.profileUrl = windowURL.createObjectURL(file)
       //设置图片表单
       var commImages = new FormData()
-      commImages.append('file', file, file.name)
+      commImages.append('photo', file, file.name)
       this.AuthenticationImageFile = commImages
       return false
     },
@@ -658,46 +667,54 @@ export default {
       console.log(this.commodity)
     },
     publish() {
-      let config = {
-        headers: {
-          Authorization: this.token,
-          'Content-Type': 'multipart/form-data'
-        }
-      }
-      let param = this.imageFile;
-      param.append('commDesc', this.commodity.description)
-      param.append('commName', this.commodity.name)
-      param.append('commPrice', this.commodity.price)
-      param.append('commStock', this.commodity.quantity)
-      param.append('commTag', this.commodity.commTag)
-      this.$axios.post('/shop/commodity/releaseComm', param, config).then(resp => {
-        var data = resp.data
-        var commodity = data.data
-        if (data.code === 1) {
-          this.$notify({
-            title: '成功',
-            message: '创建商品成功，请等待审核',
-            type: 'success'
-          })
-          commodity.url = data.data
-          this.myCommodity.push(commodity)
-          this.commodity = []
-          this.menuTab[3].isActive = false
-          this.menuTab[2].isActive = true
-        } else {
-          this.$notify({
-            title: '警告',
-            message: '商品上传失败',
-            type: 'waring'
-          })
-        }
-      }).catch(function (error) {
-        this.$notify.error({
+      if (this.userBean.authentication !== 2) {
+        this.$notify({
           title: '错误',
-          message: '发布失败'
+          message: '尚未认证卖家身份',
+          type: 'error'
         })
-        console.log(error)
-      })
+      } else {
+        let config = {
+          headers: {
+            Authorization: this.token,
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+        let param = this.imageFile;
+        param.append('commDesc', this.commodity.description)
+        param.append('commName', this.commodity.name)
+        param.append('commPrice', this.commodity.price)
+        param.append('commStock', this.commodity.quantity)
+        param.append('commTag', this.commodity.commTag)
+        this.$axios.post('/shop/commodity/releaseComm', param, config).then(resp => {
+          var data = resp.data
+          var commodity = data.data
+          if (data.code === 1) {
+            this.$notify({
+              title: '成功',
+              message: '创建商品成功，请等待审核',
+              type: 'success'
+            })
+            commodity.url = data.data
+            this.myCommodity.push(commodity)
+            this.commodity = []
+            this.menuTab[3].isActive = false
+            this.menuTab[2].isActive = true
+          } else {
+            this.$notify({
+              title: '失败',
+              message: '商品上传失败',
+              type: 'error'
+            })
+          }
+        }).catch(function (error) {
+          this.$notify.error({
+            title: '错误',
+            message: '发布失败'
+          })
+          console.log(error)
+        })
+      }
     },
     reset() {
       this.$axios.post('/shop/user/updateUserInfo', this.$qs.stringify({
@@ -778,12 +795,6 @@ export default {
     },
   },
   computed: {
-    // totalPrice: function () {
-    //   return function (f, digit) {
-    //     var m = Math.pow(10, digit) // 设置需要乘以的倍数
-    //     return parseInt(f * m, 10) / m // 先乘再除，解决精度问题
-    //   }
-    // }
   }
 }
 </script>

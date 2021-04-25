@@ -90,6 +90,9 @@ export default {
       })
     },
     rTime(date) {
+      if (date === null || date === '') {
+        return null
+      }
       var date1 = new Date(date).toJSON();
       return new Date(+new Date(date1) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
     },

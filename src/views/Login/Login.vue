@@ -40,7 +40,7 @@
                         prefix-icon="el-icon-lock" show-password></el-input>
             </el-form-item>
             <div class="form-bottom">
-              <a href="/#/repassword">忘记密码</a>
+              <a href="shop/repassword">忘记密码</a>
             </div>
             <el-button type="danger" @click="login()">登录</el-button>
           </el-form>
@@ -50,11 +50,14 @@
             </el-form-item>
             <el-form-item prop="email">
               <el-input v-model="registerForm.email" placeholder="用户邮箱" prefix-icon="el-icon-message"
-                        style="width: 70%;float: left"></el-input>
+                        style="width: 70%;float: left" :rules="[
+      { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+      { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+    ]"></el-input>
               <el-button type="primary" icon="el-icon-s-promotion" @click="validation()">验证</el-button>
             </el-form-item>
             <el-form-item prop="code">
-              <el-input v-model="code" placeholder="验证码" prefix-icon="el-icon-chat-line-round"></el-input>
+              <el-input v-model.number="code" placeholder="验证码" prefix-icon="el-icon-chat-line-round"></el-input>
             </el-form-item>
             <el-form-item prop="password">
               <el-input type="password" v-model="registerForm.password" placeholder="请输入登录密码"
