@@ -21,22 +21,24 @@
     >
     </vue-particles>
     <div class="reset-content">
-      <h2>邮箱找回</h2>
-      <el-form :model="resetForm" status-icon :rules="rules" ref="registerForm">
-        <el-form-item prop="email">
-          <el-input v-model="resetForm.userEmail" placeholder="用户邮箱" prefix-icon="el-icon-message"
-                    style="width: 70%;float: left"></el-input>
+      <h3 style="margin-bottom: 2rem">邮箱找回</h3>
+      <el-form :model="resetForm" status-icon ref="registerForm">
+        <el-form-item prop="userEmail" :rules="[
+      { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+      { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+    ]">
+          <el-input v-model="resetForm.userEmail" placeholder="用户邮箱" prefix-icon="el-icon-message" style="width: 70%;float: left"></el-input>
           <el-button type="primary" icon="el-icon-s-promotion" @click="validation()">验证</el-button>
         </el-form-item>
-        <el-form-item prop="code">
+        <el-form-item prop="code" :rules="rules.code">
           <el-input v-model="resetForm.code" placeholder="验证码"
                     prefix-icon="el-icon-paperclip"></el-input>
         </el-form-item>
-        <el-form-item prop="password">
+        <el-form-item prop="password" :rules="rules.password">
           <el-input type="password" v-model="resetForm.password" placeholder="请输入登录密码"
                     prefix-icon="el-icon-lock" show-password></el-input>
         </el-form-item>
-        <el-form-item prop="checkPassword">
+        <el-form-item prop="checkPassword" :rules="rules.checkPassword">
           <el-input type="password" v-model="resetForm.checkPassword" placeholder="请再次输入密码"
                     prefix-icon="el-icon-lock" show-password></el-input>
         </el-form-item>
@@ -178,8 +180,11 @@ export default {
   width: 20em;
   padding: 2em;
   position: absolute;
-  left: 0; top: 5vh; right: 0;
+  left: 0;
+  top: 5vh;
+  right: 0;
   margin: auto;
   box-shadow: black 0 0 2em;
+  z-index: 1;
 }
 </style>
