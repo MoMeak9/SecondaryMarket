@@ -40,7 +40,7 @@
                         prefix-icon="el-icon-lock" show-password></el-input>
             </el-form-item>
             <div class="form-bottom">
-              <a href="shop/repassword">忘记密码</a>
+              <el-link @click="goRepassword">忘记密码</el-link>
             </div>
             <el-button type="danger" @click="login()">登录</el-button>
           </el-form>
@@ -280,6 +280,9 @@ export default {
           })
         }
       })
+    },
+    goRepassword() {
+      this.$router.push({path: '/repassword'})
     }
   }
 }

@@ -1,7 +1,11 @@
 <template>
   <div id="admin-home">
-    <el-page-header @back="goBack" content="管理系统">
-    </el-page-header>
+    <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" router="true">
+      <el-menu-item index="/">首页</el-menu-item>
+      <el-menu-item index="/search">搜索</el-menu-item>
+      <el-menu-item index="/adminHome">管理中心</el-menu-item>
+      <el-menu-item index="/user">个人中心</el-menu-item>
+    </el-menu>
     <div class="header">
       <h1 style="color: white">二手交易市场后台管理系统</h1>
     </div>
@@ -116,7 +120,8 @@ export default {
       userList: [],
       commList: [],
       token: this.$store.state.token,
-      auditMsg: ''
+      auditMsg: '',
+      activeIndex: '3'
     }
   },
   methods: {
