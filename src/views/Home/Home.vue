@@ -10,14 +10,14 @@
       <div class="input-wrap">
         <el-autocomplete v-model="searchText" placeholder="搜索 校内二手市场 商品/用户" class="search-input"
                          :fetch-suggestions="querySearchAsync" @select="handSelect"
-                         style="width: 20rem;"></el-autocomplete>
+                         style="width: 20rem;" :trigger-on-focus="false"></el-autocomplete>
         <el-button icon="el-icon-search" @click="searchComm(searchText)">搜索</el-button>
       </div>
     </div>
     <div id="content" style="overflow:auto">
       <!--      轮播图-->
       <div class="banner-slider">
-        <el-carousel indicator-position="outside">
+        <el-carousel indicator-position="outside" height="27vw" style="width: 48vw;margin: 0 auto">
           <el-carousel-item v-for="item in bannerList" :key="item.id">
             <el-image :src=item.commPicList[0] fit="fit" @click="getCommodityInfo(item.commodity.commNo)"
                       class="banner-img"></el-image>
@@ -135,10 +135,7 @@ export default {
               content: element.commNo
             })
           })
-          clearTimeout(this.timeout)
-          this.timeout = setTimeout(() => {
-            cb(results)
-          }, 3000 * Math.random())
+          cb(results)
         }
       })
     },
@@ -199,7 +196,6 @@ export default {
   align-items: center;
 
   .input-wrap {
-    display: flex;
     border: 2px solid #409EFF;
 
     .el-input__inner {
