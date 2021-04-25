@@ -1,8 +1,5 @@
 <template>
   <div id="login">
-    <!--    <div class="header">-->
-    <!--      <a href="/"><i class="iconfont icon-B"></i></a>-->
-    <!--    </div>-->
     <div class="content">
       <div class="login-banner-wrap">
         <vue-particles
@@ -23,7 +20,6 @@
             clickMode="push"
         >
         </vue-particles>
-        <!--          <img src="~@/assets/image/68128465.png">-->
       </div>
       <div class="login-form">
         <div class="form-wrap">
@@ -292,21 +288,10 @@ export default {
 
 #login {
   width: 100%;
-  padding: 22px 0;
   align-items: center;
-
-  .header {
-    margin: 0 18vw;
-    height: 44px;
-
-    .icon-B {
-      font-size: 35px;
-    }
-  }
 
   .content {
     background-color: rgb(198, 235, 253);
-    margin-top: 25px;
     display: flex;
     position: relative;
 

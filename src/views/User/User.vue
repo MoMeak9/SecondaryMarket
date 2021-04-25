@@ -1,15 +1,13 @@
 <template>
   <el-container id="user">
-    <el-header class="header" style="height:30px">
-
-      <div class="header-wrap">
-        <Menu></Menu>
-      </div>
+    <el-header>
+      <el-menu default-active="/user" class="el-menu-demo" mode="horizontal" router="true">
+        <el-menu-item index="/">首页</el-menu-item>
+        <el-menu-item index="/search">搜索</el-menu-item>
+        <el-menu-item index="/adminHome" v-if="userBean.userRoot!==0">管理中心</el-menu-item>
+        <el-menu-item index="/user">个人中心</el-menu-item>
+      </el-menu>
     </el-header>
-    <el-container class="nav">
-      <div class="nav-wrap">
-      </div>
-    </el-container>
     <el-container class="content">
       <div class="container">
         <el-col :span="4" class="ct-left">
@@ -69,7 +67,8 @@
                       <div class="item-info" v-if="userBean.userRoot === 0">普通用户</div>
                       <div class="item-info" v-else>管理员</div>
                     </div>
-                    <el-button type="danger" @click="reset()">保存修改</el-button>
+                    <el-button type="primary" @click="reset()">保存修改</el-button>
+                    <el-button type="danger" @click="logout()">登出账号</el-button>
                   </el-form>
                 </el-tab-pane>
                 <!--              修改密码-->
@@ -305,11 +304,8 @@
   </el-container>
 </template>
 <script>
-import Menu from "@/components/Menu";
-
 export default {
   components: {
-    Menu,
   },
   data() {
     //检测规则
@@ -557,7 +553,11 @@ export default {
           })
           this.initDate()
         }else{
-
+          this.$notify({
+            title: '失败',
+            message: '系统错误！',
+            type: 'error'
+          })
         }
       }).catch(function (error) {
         console.log(error)
@@ -758,6 +758,17 @@ export default {
         }
       })
     },
+    //登出
+    logout() {
+      this.$store.commit('DEL_TOKEN', this.userBean)
+      this.$store.commit('LOGOUT', this.token)
+      this.$router.push({path: '/login'});
+      this.$notify({
+        title: '登出',
+        message: '退出登入',
+        type: 'error'
+      })
+    },
     //提交审核内容
     submitAuthentication() {
       let config = {
@@ -801,48 +812,12 @@ export default {
 <style lang="scss">
 #user {
   .header {
-    background: #e3e4e5;
-    line-height: 30px;
 
-    .header-wrap {
-      margin: 0 auto;
-      padding-left: 10%;
-      display: flex;
-      align-items: center;
-      font-size: 12px;
-
-      a {
-        color: black;
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-      }
-
-      a:hover {
-        color: #ff0036;
-      }
-    }
   }
 
   .nav {
     background: #e2231a;
     height: 80px;
-
-    .nav-wrap {
-      width: 1210px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-
-      a {
-        color: #fff;
-        cursor: pointer;
-
-        .icon-B {
-          font-size: 50px;
-        }
-      }
-    }
   }
 
   .content {

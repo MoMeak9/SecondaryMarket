@@ -53,7 +53,7 @@ const routes = [
         name: 'User',
         component: User,
         meta: {
-            title: '个人主页'
+            title: '个人中心'
         }
     },
     {

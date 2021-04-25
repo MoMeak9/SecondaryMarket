@@ -1,14 +1,13 @@
 <template>
   <div id="admin-home">
-    <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" router="true">
-      <el-menu-item index="/">首页</el-menu-item>
-      <el-menu-item index="/search">搜索</el-menu-item>
-      <el-menu-item index="/adminHome">管理中心</el-menu-item>
-      <el-menu-item index="/user">个人中心</el-menu-item>
-    </el-menu>
-    <div class="header">
-      <h1 style="color: white">二手交易市场后台管理系统</h1>
-    </div>
+    <el-header>
+      <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" router="true">
+        <el-menu-item index="/">首页</el-menu-item>
+        <el-menu-item index="/search">搜索</el-menu-item>
+        <el-menu-item index="/adminHome">管理中心</el-menu-item>
+        <el-menu-item index="/user">个人中心</el-menu-item>
+      </el-menu>
+    </el-header>
     <div class="content">
       <el-tabs v-model="tabActive">
         <el-tab-pane label="账号管理" name="first">
@@ -121,7 +120,7 @@ export default {
       commList: [],
       token: this.$store.state.token,
       auditMsg: '',
-      activeIndex: '3'
+      activeIndex: '/adminHome'
     }
   },
   methods: {
@@ -336,12 +335,6 @@ export default {
 <style lang="scss" scoped>
 #admin-home {
   position: relative;
-
-  .header {
-    height: 60px;
-    background: rgb(70, 70, 70);
-    margin: 0.5em auto;
-  }
 
   .content {
     width: 90%;

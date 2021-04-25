@@ -1,14 +1,17 @@
 <template>
-  <div v-if="isLoadDom">
-    <Nav></Nav>
+  <div>
+    <el-menu default-active="/" class="el-menu-demo" mode="horizontal" router="true" style="border: none">
+      <el-menu-item index="/" style="border:none !important">首页</el-menu-item>
+      <el-menu-item index="/search">搜索</el-menu-item>
+      <el-menu-item index="/adminHome" v-if="userBean.userRoot!==0">管理中心</el-menu-item>
+      <el-menu-item index="/user">个人中心</el-menu-item>
+    </el-menu>
     <div id="header">
-      <div class="search">
-        <div class="input-wrap">
-          <el-autocomplete v-model="searchText" placeholder="搜索 校内二手市场 商品/用户" class="search-input"
-                           :fetch-suggestions="querySearchAsync" @select="handSelect"
-                           style="width: 20rem;"></el-autocomplete>
-          <el-button icon="el-icon-search" @click="searchComm(searchText)">搜索</el-button>
-        </div>
+      <div class="input-wrap">
+        <el-autocomplete v-model="searchText" placeholder="搜索 校内二手市场 商品/用户" class="search-input"
+                         :fetch-suggestions="querySearchAsync" @select="handSelect"
+                         style="width: 20rem;"></el-autocomplete>
+        <el-button icon="el-icon-search" @click="searchComm(searchText)">搜索</el-button>
       </div>
     </div>
     <div id="content" style="overflow:auto">
@@ -44,12 +47,8 @@
   </div>
 </template>
 <script>
-import Nav from '../../components/Nav'
-
 export default {
-  components: {
-    Nav
-  },
+  components: {},
   data() {
     return {
       bannerList: [],
@@ -62,7 +61,6 @@ export default {
       userBean: {
         userName: '',
       },
-      isLoadDom:false,
       //  商品类型选择
       options: [{
         value: 0,
@@ -196,7 +194,6 @@ export default {
 </script>
 <style lang="scss">
 #header {
-  height: 10em;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -227,12 +224,13 @@ export default {
 }
 
 #content {
-  margin-top: 40px;
+  margin-top: 30px;
   padding-bottom: 40px;
   background-color: #f5f5f5;
   overflow: hidden;
 
   .banner-slider {
+    margin-top: 30px;
     margin-left: 22vw;
     margin-right: 22vw;
   }

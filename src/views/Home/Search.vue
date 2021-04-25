@@ -1,7 +1,11 @@
 <template>
   <div id="search">
-    <el-page-header @back="goBack()" content="商品搜索">
-    </el-page-header>
+    <el-menu default-active="/" class="el-menu-demo" mode="horizontal" router="true" >
+      <el-menu-item index="/">首页</el-menu-item>
+      <el-menu-item index="/search">搜索</el-menu-item>
+      <el-menu-item index="/search" v-if="userRoot!==0">管理中心</el-menu-item>
+      <el-menu-item index="/user">个人中心</el-menu-item>
+    </el-menu>
     <div class="content">
       <div class="header">
         <el-input v-model="searchText" placeholder="搜索 校内二手市场 商品/用户" class="search-input"
@@ -40,10 +44,12 @@ export default {
     return {
       searchText: '',
       commList: [],
-      commTag: ''
+      commTag: '',
+      userRoot:''
     }
   },
   mounted() {
+    this.userRoot = this.$store.state.userBean.userRoot;
     this.initData()
   },
   methods: {
@@ -118,11 +124,6 @@ export default {
     },
     handSelect() {
 
-    },
-    goBack() {
-      this.$router.push({path: '/home'})
-      this.$store.state.DEL_COMM()
-      console.log('go back');
     }
   },
   beforeDestroy() {
