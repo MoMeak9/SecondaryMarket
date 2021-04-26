@@ -46,8 +46,9 @@
                 </template>
               </el-table-column>
               <el-table-column prop="commName" label="名称" sortable></el-table-column>
+              <el-table-column prop="commNo" label="单号"></el-table-column>
               <el-table-column prop="commDesc" label="简述"></el-table-column>
-              <el-table-column prop="createUser" label="创建者" width="180" sortable></el-table-column>
+              <el-table-column prop="userName" label="创建者" width="180" sortable></el-table-column>
               <el-table-column prop="auditStatus" label="审核状态" sortable
                                :filters="[{text: '待审核', value: 0},{text: '审核通过', value: 1},{text: '驳回', value: 2}]"
                                :filter-method="filterHandler">
