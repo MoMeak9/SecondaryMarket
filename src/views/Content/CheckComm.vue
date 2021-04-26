@@ -53,8 +53,10 @@
         <div class="text-data">
           退回反馈：{{ obj.commodity.auditMsg }}
         </div>
-        <el-button type="danger" @click="setCommRec(1)" v-if="obj.commodity.recommend===0">推荐商品</el-button>
-        <el-button type="danger" @click="setCommRec(0)" v-if="obj.commodity.recommend===1">停止推荐商品</el-button>
+        <div v-if="userBean.userRoot===1">
+          <el-button type="danger" @click="setCommRec(1)" v-if="obj.commodity.recommend===0">推荐商品</el-button>
+          <el-button type="danger" @click="setCommRec(0)" v-if="obj.commodity.recommend===1">停止推荐商品</el-button>
+        </div>
       </div>
     </div>
   </div>
@@ -68,6 +70,7 @@ export default {
       commNo: '',
       token: '',
       obj: {},
+      userBean: ''
     }
   },
   methods: {
@@ -123,7 +126,8 @@ export default {
       }
     },
     goBack() {
-      this.$router.push({path: '/adminHome'})
+      this.$router.go(-1)
+      this.$store.state.DEL_COMM()
       console.log('go back');
     },
     setCommRec(recommend) {
@@ -147,10 +151,12 @@ export default {
     }
   },
   mounted() {
+    this.userBean = this.$store.state.userBean
     this.token = this.$store.state.token
     this.commNo = this.$store.state.commNo
-    console.log(this.token + "\n" + this.commNo)
-    this.initDate()
+    this.$nextTick(function () {
+      this.initDate()
+    })
   }
 }
 </script>

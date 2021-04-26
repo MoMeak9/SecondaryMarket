@@ -131,7 +131,7 @@
                 <el-table-column label="状态">
                   <div slot-scope="scope">
                     <div v-if="scope.row.orderStatus === 0">待处理</div>
-                    <div v-else-if="scope.row.orderStatus === 1">发货中</div>
+                    <div v-else-if="scope.row.orderStatus === 1">已发货</div>
                     <div v-else-if="scope.row.orderStatus === 2">待确认</div>
                     <div v-else-if="scope.row.orderStatus === 3">申请取消</div>
                     <div v-else>已取消</div>
@@ -140,14 +140,14 @@
                 <el-table-column label="操作" width="180">
                   <div slot-scope="scope">
                     <div v-if="scope.row.orderStatus === 0">
-                      <el-button type="danger" size="small" @click="changeStatus(scope.row, false)">取消订单</el-button>
+                      <el-button type="danger" size="small" @click="changeStatus(scope.row, 3)">取消订单</el-button>
                     </div>
                     <div v-else-if="scope.row.orderStatus === 1">
-                      <el-button type="primary" size="small" @click="changeStatus(scope.row, true)">取消订单</el-button>
+                      <el-button type="primary" size="small" @click="changeStatus(scope.row, 2)">确认</el-button>
+                      <el-button type="danger" size="small" @click="changeStatus(scope.row, 3)">取消订单</el-button>
                     </div>
                     <div v-if="scope.row.orderStatus === 2">
-                      <el-button type="primary" size="small" @click="changeStatus(scope.row, true)">确认收货</el-button>
-                      <el-button type="danger" size="small" @click="changeStatus(scope.row, false)">取消</el-button>
+                      <el-button type="danger" size="small" @click="changeStatus(scope.row, 3)">取消</el-button>
                     </div>
                     <div v-else-if="scope.row.orderStatus === 3">
                       <el-tag>等待确认</el-tag>
@@ -182,9 +182,9 @@
                 </el-table-column>
                 <el-table-column label="商品操作">
                   <div slot-scope="scope">
-                    <el-button type="danger" size="small" @click="deleteComm(scope.row.commodity.commNo)">下架商品
+                    <el-button type="primary" size="small" @click="getCommodityInfo(scope.row.commodity.commNo)">查看
                     </el-button>
-                    <el-button type="danger" size="small" @click="getCommInfo(scope.row.commodity.commNo)">查看
+                    <el-button type="danger" size="small" @click="deleteComm(scope.row.commodity.commNo)">下架商品
                     </el-button>
                   </div>
                 </el-table-column>
@@ -261,17 +261,17 @@
             <!--            卖家订单管理-->
             <div class="pending-order" v-show="menuTab[4].isActive">
               <el-table :data="pendingOrder" stripe style="width: 100%">
-                <el-table-column prop="createTime" label="下单时间" width="100"></el-table-column>
-                <el-table-column prop="commName" label="商品名称"></el-table-column>
-                <el-table-column prop="num" label="商品数量"></el-table-column>
+                <el-table-column prop="createTime" label="下单时间"></el-table-column>
+                <el-table-column prop="commName" label="名称"></el-table-column>
+                <el-table-column prop="num" label="数量"></el-table-column>
                 <el-table-column prop="consignee" label="收货人"></el-table-column>
                 <el-table-column prop="phone" label="联系电话"></el-table-column>
                 <el-table-column prop="address" label="收货地址" width="180"></el-table-column>
                 <el-table-column label="状态">
                   <div slot-scope="scope">
                     <div v-if="scope.row.orderStatus === 0">待处理</div>
-                    <div v-else-if="scope.row.orderStatus === 1">发货中</div>
-                    <div v-else-if="scope.row.orderStatus === 2">待确认</div>
+                    <div v-else-if="scope.row.orderStatus === 1">已发货</div>
+                    <div v-else-if="scope.row.orderStatus === 2">已确认收货</div>
                     <div v-else-if="scope.row.orderStatus === 3">申请取消</div>
                     <div v-else>已取消</div>
                   </div>
@@ -279,11 +279,10 @@
                 <el-table-column label="处理" width="180">
                   <div slot-scope="scope">
                     <div v-if="scope.row.orderStatus === 0">
-                      <el-button type="primary" size="small" @click="changeStatus(scope.row, 2)">发货</el-button>
+                      <el-button type="primary" size="small" @click="changeStatus(scope.row, 1)">发货</el-button>
                       <el-button type="danger" size="small" @click="changeStatus(scope.row, 4)">取消订单</el-button>
                     </div>
                     <div v-else-if="scope.row.orderStatus === 1">
-                      <el-button type="primary" size="small" @click="changeStatus(scope.row,3)">送达</el-button>
                       <el-button type="danger" size="small" @click="changeStatus(scope.row,4)">取消订单</el-button>
                     </div>
                     <div v-if="scope.row.orderStatus === 2">
@@ -307,8 +306,7 @@
 </template>
 <script>
 export default {
-  components: {
-  },
+  components: {},
   data() {
     //检测规则
     let validatePass = (rule, value, callback) => {
@@ -465,6 +463,9 @@ export default {
         var data = resp.data
         if (data.code === 1) {
           this.pendingOrder = data.obj
+          for (let i = 0; i < this.pendingOrder.length; i++) {
+            this.pendingOrder[i].createTime = this.rTime(this.pendingOrder[i].createTime)
+          }
         }
       }).catch(function (error) {
         console.log(error)
@@ -472,7 +473,7 @@ export default {
     },
     //更改订单状态
     changeStatus(row, orderStatus) {
-      if (orderStatus === 2) {
+      if (orderStatus === 1) {
         this.$axios.post('/shop/order/updateOrderStatus', this.$qs.stringify({
           orderNo: row.orderNo,
           orderStatus: orderStatus
@@ -504,10 +505,29 @@ export default {
         }).then(resp => {
           var data = resp.data
           if (data.code === 1) {
-            row.orderStatus += 1
             this.$notify({
               title: '成功',
               message: '已取消订单',
+              type: 'success'
+            })
+          }
+        }).catch(function (error) {
+          console.log(error)
+        })
+      } else if (orderStatus === 2) {
+        this.$axios.post('/shop/order/updateOrderStatus', this.$qs.stringify({
+          orderNo: row.orderNo,
+          orderStatus: orderStatus
+        }), {
+          headers: {
+            Authorization: this.token
+          }
+        }).then(resp => {
+          var data = resp.data
+          if (data.code === 1) {
+            this.$notify({
+              title: '成功',
+              message: '已确认收货',
               type: 'success'
             })
           }
@@ -528,7 +548,7 @@ export default {
             row.orderStatus += 1
             this.$notify({
               title: '成功',
-              message: '订单已送达，请及时通知买家',
+              message: '订单申请取消',
               type: 'success'
             })
           }
@@ -539,7 +559,7 @@ export default {
     },
     //下架商品commNo
     deleteComm(commNo) {
-      this.$axios.post('/shop/commodity/deleteComm',this.$qs.stringify({
+      this.$axios.post('/shop/commodity/deleteComm', this.$qs.stringify({
         commNo: commNo,
       }), {
         headers: {
@@ -554,7 +574,7 @@ export default {
             type: 'success'
           })
           this.initDate()
-        }else{
+        } else {
           this.$notify({
             title: '失败',
             message: '系统错误！',
@@ -564,6 +584,11 @@ export default {
       }).catch(function (error) {
         console.log(error)
       })
+    },
+    getCommodityInfo(commNo){
+      this.$store.commit('GET_COMM', commNo)
+      // 跳转至商品页面
+      this.$router.push({path: '/check'})
     },
     // 切换左侧菜单
     toggleMenuItem(data) {
@@ -805,8 +830,7 @@ export default {
       return new Date(+new Date(date1) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
     },
   },
-  computed: {
-  }
+  computed: {}
 }
 </script>
 <style lang="scss">

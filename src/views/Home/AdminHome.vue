@@ -89,9 +89,9 @@
               <el-table-column prop="sno" label="学号" width=""></el-table-column>
               <el-table-column prop="authentication" label="认证状态" width="">
                 <div slot-scope="scope">
-                  <div v-if="scope.row.auditStatus === 0">未认证</div>
-                  <div v-else-if="scope.row.auditStatus === 1">认证中</div>
-                  <div v-else-if="scope.row.auditStatus === 2">审核通过</div>
+                  <div v-if="scope.row.authentication === 0">未认证</div>
+                  <div v-else-if="scope.row.authentication === 1">认证中</div>
+                  <div v-else-if="scope.row.authentication === 2">审核通过</div>
                   <div v-else>认证失败</div>
                 </div>
               </el-table-column>
