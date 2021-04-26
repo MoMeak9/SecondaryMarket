@@ -345,9 +345,12 @@ export default {
   position: relative;
 
   .content {
+    background-color: white;
     width: 90%;
     margin: 30px auto;
+    padding: 1rem;
     border-radius: 5px;
+    box-shadow: 10px 5px 30px #99a9bf;
   }
 }
 </style>

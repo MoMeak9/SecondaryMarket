@@ -163,12 +163,16 @@ export default {
 
 <style lang="scss">
 #check {
+  background-color: #f5f5f5;
+  padding-top: 1rem;
+  padding-bottom: 3rem;
+
   .information {
     width: 45rem;
-    margin: 0 auto;
+    margin: 1rem auto;
     padding: 2rem;
-    border: 2px solid red;
-    border-radius: 10px;
+    border-radius: 5px;
+    box-shadow: 10px 5px 30px #99a9bf;
     background: white;
 
     .data-content {

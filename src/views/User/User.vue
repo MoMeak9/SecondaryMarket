@@ -573,7 +573,7 @@ export default {
             message: '操作成功！',
             type: 'success'
           })
-          this.initDate()
+          this.initData()
         } else {
           this.$notify({
             title: '失败',
@@ -725,6 +725,8 @@ export default {
             this.commodity = []
             this.menuTab[3].isActive = false
             this.menuTab[2].isActive = true
+            this.imageUrl=''
+            this.commType=''
           } else {
             this.$notify({
               title: '失败',
