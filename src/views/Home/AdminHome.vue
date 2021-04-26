@@ -1,7 +1,7 @@
 <template>
   <div id="admin-home">
     <el-header>
-      <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" router="true">
+      <el-menu default-active="/adminHome" class="el-menu-demo" mode="horizontal" router="true">
         <el-menu-item index="/">首页</el-menu-item>
         <el-menu-item index="/search">搜索</el-menu-item>
         <el-menu-item index="/adminHome">管理中心</el-menu-item>
@@ -77,7 +77,13 @@
           <div class="item-reg">
             <el-table :data="userList" style="width: 100%">
               <el-table-column prop="userName" label="用户名" width="180"></el-table-column>
-              <el-table-column prop="photoUrl" label="学生证照片"></el-table-column>
+              <el-table-column label="学生证照片">
+                <template slot-scope="scope">
+                  <el-image :src="scope.row.photoUrl" fit='cover' :preview-src-list="scope.row.photoUrl"
+                            style="width: 70px;height: 70px">
+                  </el-image>
+                </template>
+              </el-table-column>
               <el-table-column prop="userRealName" label="真实姓名" width="180"></el-table-column>
               <el-table-column prop="college" label="学院" width=""></el-table-column>
               <el-table-column prop="sno" label="学号" width=""></el-table-column>
@@ -334,11 +340,14 @@ export default {
 </script>
 <style lang="scss" scoped>
 #admin-home {
+  height: 100vh;
+  background-color: #f5f5f5;
   position: relative;
 
   .content {
     width: 90%;
     margin: 30px auto;
+    border-radius: 5px;
   }
 }
 </style>

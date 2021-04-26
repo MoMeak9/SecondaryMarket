@@ -38,7 +38,7 @@
             <div class="form-bottom">
               <el-link @click="goRepassword">忘记密码</el-link>
             </div>
-            <el-button type="danger" @click="login()">登录</el-button>
+            <el-button type="primary" @click="login()">登录</el-button>
           </el-form>
           <el-form :model="registerForm" status-icon :rules="rules" ref="registerForm" v-show="menuTab[1].isActive">
             <el-form-item prop="name">
@@ -63,7 +63,7 @@
               <el-input type="password" v-model="registerForm.checkPassword" placeholder="请再次输入密码"
                         prefix-icon="el-icon-lock" show-password></el-input>
             </el-form-item>
-            <el-button type="danger" @click="register">注册</el-button>
+            <el-button type="primary" @click="register">注册</el-button>
           </el-form>
         </div>
       </div>
