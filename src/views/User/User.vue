@@ -786,8 +786,8 @@ export default {
     },
     //登出
     logout() {
-      this.$store.commit('DEL_TOKEN', this.userBean)
-      this.$store.commit('LOGOUT', this.token)
+      this.$store.commit('DEL_TOKEN')
+      this.$store.commit('LOGOUT')
       this.$router.push({path: '/login'});
       this.$notify({
         title: '登出',

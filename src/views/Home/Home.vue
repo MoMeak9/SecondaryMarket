@@ -3,7 +3,6 @@
     <el-menu default-active="/" class="el-menu-demo" mode="horizontal" router="true" style="border: none">
       <el-menu-item index="/" style="border:none !important">首页</el-menu-item>
       <el-menu-item index="/search">搜索</el-menu-item>
-      <el-menu-item index="/adminHome" v-if="this.userBean&&this.userBean.userRoot===1">管理中心</el-menu-item>
       <el-menu-item index="/user" v-if="this.userBean">个人中心</el-menu-item>
       <el-menu-item index="/login" v-if="!this.userBean">用户登入</el-menu-item>
     </el-menu>
