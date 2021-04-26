@@ -5,7 +5,7 @@
     <div class="information">
       <el-carousel indicator-position="outside" height="30rem">
         <el-carousel-item v-for="item in obj.commPicList" :key="item">
-          <el-image :src=item fit="scale-down" class="banner-img"></el-image>
+          <el-image :src=item fit="cover" class="banner-img" ></el-image>
         </el-carousel-item>
       </el-carousel>
       <div class="data-content">

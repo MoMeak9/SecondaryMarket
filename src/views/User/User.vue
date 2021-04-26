@@ -20,7 +20,7 @@
                 name="profile"
                 :on-success="handleProfilePhotoSuccess"
                 :before-upload="beforeProfilePhotoUpload">
-              <img v-if="userBean.profileUrl" :src="userBean.profileUrl" class="avatar">
+              <img v-if="userBean.profileUrl" :src="userBean.profileUrl" class="avatar" style="object-fit:cover" alt="">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               <div class="img-bottom">上传头像</div>
             </el-upload>
@@ -39,14 +39,13 @@
               <el-tabs type="card" v-model="activeName">
                 <el-tab-pane label="个人信息" name="first">
                   <el-form :model="userBean" style="width: 50%;margin: 3em">
+                    <div class="right-item">
+                      <div class="item-label">邮箱 :</div>
+                      <div class="item-info">{{ this.userBean.userEmail}}</div>
+                    </div>
                     <el-form-item prop="userName">
                       用户：
                       <el-input v-model="userBean.userName" placeholder="用户名称" prefix-icon="el-icon-user"
-                                style="width: 85%;float: right"></el-input>
-                    </el-form-item>
-                    <el-form-item prop="userEmail">
-                      邮箱：
-                      <el-input v-model="userBean.userEmail" placeholder="邮箱账号" prefix-icon="el-icon-message"
                                 style="width: 85%;float: right"></el-input>
                     </el-form-item>
                     <el-form-item prop="userSex">
@@ -585,7 +584,7 @@ export default {
         console.log(error)
       })
     },
-    getCommodityInfo(commNo){
+    getCommodityInfo(commNo) {
       this.$store.commit('GET_COMM', commNo)
       // 跳转至商品页面
       this.$router.push({path: '/check'})
@@ -725,8 +724,8 @@ export default {
             this.commodity = []
             this.menuTab[3].isActive = false
             this.menuTab[2].isActive = true
-            this.imageUrl=''
-            this.commType=''
+            this.imageUrl = ''
+            this.commType = ''
           } else {
             this.$notify({
               title: '失败',

@@ -3,7 +3,7 @@
     <el-menu default-active="/" class="el-menu-demo" mode="horizontal" router="true" style="border: none">
       <el-menu-item index="/" style="border:none !important">首页</el-menu-item>
       <el-menu-item index="/search">搜索</el-menu-item>
-      <el-menu-item index="/adminHome" v-if="this.userBean.userRoot===1">管理中心</el-menu-item>
+      <el-menu-item index="/adminHome" v-if="this.userBean&&this.userBean.userRoot===1">管理中心</el-menu-item>
       <el-menu-item index="/user" v-if="this.userBean">个人中心</el-menu-item>
       <el-menu-item index="/login" v-if="!this.userBean">用户登入</el-menu-item>
     </el-menu>
@@ -20,7 +20,7 @@
       <div class="banner-slider">
         <el-carousel indicator-position="outside" height="27vw" style="width: 48vw;margin: 0 auto">
           <el-carousel-item v-for="item in bannerList" :key="item.id">
-            <el-image :src=item.commPicList[0] fit="fit" @click="getCommodityInfo(item.commodity.commNo)"
+            <el-image :src=item.commPicList[0] fit="cover" @click="getCommodityInfo(item.commodity.commNo)"
                       class="banner-img"></el-image>
           </el-carousel-item>
         </el-carousel>
@@ -39,7 +39,7 @@
       <div class="hot-list">
         <div class="hot-wrap" v-for="item in hotList" :key="item.id" @click="getCommodityInfo(item.commodity.commNo)">
           <div class="hot-item-tag"></div>
-          <el-image el-image :src="item.commPicList[0]" fit="fit" class="hot-item-img"></el-image>
+          <el-image el-image :src="item.commPicList[0]" fit="cover" class="hot-item-img"></el-image>
           <div class="hot-item-title">{{ item.commodity.commName }}</div>
           <div class="hot-item-price">￥{{ item.commodity.commPrice }}</div>
         </div>
@@ -61,6 +61,7 @@ export default {
       noMore: false,
       userBean: {
         userName: '',
+        userRoot:0,
       },
       //  商品类型选择
       options: [{

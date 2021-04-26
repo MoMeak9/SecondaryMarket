@@ -53,7 +53,7 @@
               <el-button type="primary" icon="el-icon-s-promotion" @click="validation()">验证</el-button>
             </el-form-item>
             <el-form-item prop="code">
-              <el-input v-model.number="code" placeholder="验证码" prefix-icon="el-icon-chat-line-round"></el-input>
+              <el-input v-model="code" placeholder="验证码" prefix-icon="el-icon-chat-line-round"></el-input>
             </el-form-item>
             <el-form-item prop="password">
               <el-input type="password" v-model="registerForm.password" placeholder="请输入登录密码"

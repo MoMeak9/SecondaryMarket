@@ -98,12 +98,11 @@
               </el-table-column>
               <el-table-column label="账号操作">
                 <template slot-scope="scope">
-                  <el-button type="danger" @click="changeAuthentication(scope.row.userNo,2)"
-                             v-show="scope.row.isBan===0">
+                  <el-button type="success" @click="changeAuthentication(scope.row.userNo,2)" v-if="scope.row.authentication!==2&&scope.row.authentication!==0">
                     通过
                   </el-button>
-                  <el-button type="success" @click="changeAuthentication(scope.row.userNo,3)"
-                             v-show="scope.row.isBan===1">驳回
+                  <el-button type="danger" @click="changeAuthentication(scope.row.userNo,3)"
+                             v-if="scope.row.authentication===2">驳回
                   </el-button>
                 </template>
               </el-table-column>

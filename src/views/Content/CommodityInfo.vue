@@ -6,7 +6,7 @@
       <div class="information">
         <el-carousel indicator-position="outside" height="30rem" style="width: 30rem;padding: 15px">
           <el-carousel-item v-for="item in obj.commPicList" :key="item">
-            <el-image :src=item fit="cover" class="banner-img"></el-image>
+            <el-image :src=item class="banner-img" fit="cover"></el-image>
           </el-carousel-item>
         </el-carousel>
         <div class="data-content">
@@ -200,9 +200,10 @@ export default {
 
 <style lang="scss">
 #Commodity {
-  background-color: rgba(153, 169, 191, 0.19);
-  width: 100vw;
+  background-color: #f5f5f5;
   height: 100vh;
+  padding-top: 1rem;
+  padding-bottom: 3rem;
   z-index: -1;
   .in {
     background-color: white;
