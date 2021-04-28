@@ -38,6 +38,15 @@
               <el-input-number v-model="buyForm.num" size="small" :min="1"
                                :max="obj.commodity.commStock - obj.commodity.commSale"></el-input-number>
             </el-form-item>
+            <el-form-item label="送货时间" style="text-align: left">
+              <el-date-picker
+                  v-model="buyForm.arriveDate"
+                  type="datetime"
+                  placeholder="选择日期时间"
+                  align="right"
+                  :picker-options="buyForm.pickerOptions">
+              </el-date-picker>
+            </el-form-item>
             <el-form-item label="收件地址" prop="address">
               <el-input v-model="buyForm.address" type="textarea" style="width: 100%;"
                         :autosize="{ minRows: 3, maxRows: 6}"></el-input>
@@ -77,6 +86,22 @@ export default {
         address: '',
         consignee: '',
         phone: '',
+        arriveDate: '',
+        pickerOptions: {
+          shortcuts: [{
+            text: '今天',
+            onClick(picker) {
+              picker.$emit('pick', new Date());
+            }
+          }, {
+            text: '明天',
+            onClick(picker) {
+              const date = new Date();
+              date.setTime(date.getTime() + 3600 * 1000 * 24);
+              picker.$emit('pick', date);
+            }
+          }]
+        },
       },
       rules: {
         consignee: [
@@ -205,6 +230,7 @@ export default {
   padding-top: 1rem;
   padding-bottom: 3rem;
   z-index: -1;
+
   .in {
     background-color: white;
     margin: 1rem auto;

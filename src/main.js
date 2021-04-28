@@ -49,9 +49,11 @@ router.beforeEach((to, from, next) => {
 })
 
 import axios from 'axios'
-
 Vue.prototype.$axios = axios;
 axios.defaults.baseURL = window.PLATFROM_CONFIG.baseURL
-import qs from 'qs'
 
+import qs from 'qs'
 Vue.prototype.$qs = qs;
+
+import VueCropper from 'vue-cropper'
+Vue.use(VueCropper)
