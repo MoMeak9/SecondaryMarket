@@ -252,25 +252,27 @@
               </div>
               <div class="right-item">
                 <div class="item-label">标签</div>
-                <el-tag
-                    :key="tag"
-                    v-for="tag in commodity.dynamicTags"
-                    closable
-                    :disable-transitions="false"
-                    @close="handleClose(tag)">
-                  {{ tag }}
-                </el-tag>
-                <el-input
-                    class="input-new-tag"
-                    v-if="commodity.inputVisible"
-                    v-model="commodity.inputValue"
-                    ref="saveTagInput"
-                    size="small"
-                    @keyup.enter.native="handleInputConfirm"
-                    @blur="handleInputConfirm"
-                >
-                </el-input>
-                <el-button v-else class="button-new-tag" size="small" @click="showInput">+ 自定义标签</el-button>
+                <div>
+                  <el-tag
+                      :key="tag"
+                      v-for="tag in commodity.dynamicTags"
+                      closable
+                      :disable-transitions="false"
+                      @close="handleClose(tag)">
+                    {{ tag }}
+                  </el-tag>
+                  <el-input
+                      class="input-new-tag"
+                      v-if="commodity.inputVisible"
+                      v-model="commodity.inputValue"
+                      ref="saveTagInput"
+                      size="small"
+                      @keyup.enter.native="handleInputConfirm"
+                      @blur="handleInputConfirm"
+                  >
+                  </el-input>
+                  <el-button v-else class="button-new-tag" size="small" @click="showInput">+ 自定义标签</el-button>
+                </div>
               </div>
               <div class="right-item">
                 <div class="item-label"></div>
@@ -404,7 +406,7 @@ export default {
         quantity: 1,
         price: '',
         commTag: '',
-        dynamicTags: ['99新', '包邮','立即发货'],
+        dynamicTags: ['包邮'],
         inputVisible: false,
         inputValue: ''
       },
