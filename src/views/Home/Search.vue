@@ -14,7 +14,26 @@
         <el-button icon="el-icon-search" @click="searchComm">搜索</el-button>
       </div>
       <div class="commInfo">
+        <el-row>
+          <el-col :span="8" v-for="item in commList" :key="item" :offset="index > 0 ? 2 : 0">
+            <el-card :body-style="{ padding: '0px' }">
+              <el-image :src="item.commPicList[0]" fit="cover" style="height: 150px;width: 150px">
+                <div slot="placeholder" class="image-slot">
+                  加载中<span class="dot">...</span>
+                </div>
+              </el-image>
+              <div style="padding: 14px;">
+                <span>{{ item.commodity.commName }}</span>
+                <div class="bottom clearfix">
+                  <time class="time">{{ currentDate }}</time>
+                  <el-button type="text" class="button">操作按钮</el-button>
+                </div>
+              </div>
+            </el-card>
+          </el-col>
+        </el-row>
 
+        <!--        商品信息-->
         <el-table :data="commList" stripe style="width: 100%">
           <!--                商品图片-->
           <el-table-column label="图片">
@@ -33,21 +52,6 @@
             </div>
           </el-table-column>
         </el-table>
-
-        <el-row>
-          <el-col :span="8" v-for="item in commList" :key="item" :offset="index > 0 ? 2 : 0">
-            <el-card :body-style="{ padding: '0px' }">
-              <img :src="item.commPicList[0]" class="image">
-              <div style="padding: 14px;">
-                <span>{{item.commodity.commName}}</span>
-                <div class="bottom clearfix">
-                  <time class="time">{{ currentDate }}</time>
-                  <el-button type="text" class="button">操作按钮</el-button>
-                </div>
-              </div>
-            </el-card>
-          </el-col>
-        </el-row>
       </div>
     </div>
   </div>
