@@ -157,7 +157,7 @@ export default {
         }
 
         .el-button {
-          width: 8vw;
+          width: 8rem;
           color: #fff;
           font-size: 1rem;
           border: none;
