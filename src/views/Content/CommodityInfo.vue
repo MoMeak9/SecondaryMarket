@@ -154,7 +154,9 @@ export default {
         commNo: this.commNo,
         consignee: this.buyForm.consignee,
         num: this.buyForm.num,
-        phone: this.buyForm.phone
+        phone: this.buyForm.phone,
+        //新增抵达时间
+        arriv:this.buyForm.arriveDate
       }), {
         headers: {
           Authorization: this.token

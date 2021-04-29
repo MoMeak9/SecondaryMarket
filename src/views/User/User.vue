@@ -544,7 +544,7 @@ export default {
         }).then(resp => {
           var data = resp.data
           if (data.code === 1) {
-            row.orderStatus += 1
+            // row.orderStatus += 1
             this.$notify({
               title: '成功',
               message: '订单申请取消',
@@ -607,7 +607,7 @@ export default {
     // 上传前 头像的！！！！
     beforeProfilePhotoUpload(file) {
       const isJPG = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png'
-      const isLt10M = file.size / 1024 / 1024 < 10
+      const isLt10M = file.size / 1024 / 1024 < 5
 
       if (!isJPG) {
         this.$message.error('上传的头像图片只能是 JPG/PNG/JPEG 格式!')
@@ -626,7 +626,7 @@ export default {
     //证件上传
     beforeAuthenticationPhotoUpload(file) {
       const isJPG = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png'
-      const isLt10M = file.size / 1024 / 1024 < 10
+      const isLt10M = file.size / 1024 / 1024 < 5
 
       if (!isJPG) {
         this.$message.error('上传的证件图片只能是 JPG/PNG/JPEG 格式!')
@@ -652,7 +652,7 @@ export default {
     // 上传前 商品的！！！！！
     beforeAvatarUpload(file) {
       const isJPG = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png'
-      const isLt2M = file.size / 1024 / 1024 < 10
+      const isLt2M = file.size / 1024 / 1024 < 5
 
       if (!isJPG) {
         this.$message.error('上传商品图片只能是 JPG/PNG/JPEG 格式!')
