@@ -1,23 +1,25 @@
 <template>
   <div id="search">
-    <el-menu default-active="/search" class="el-menu-demo" mode="horizontal" router="true" >
+    <el-menu default-active="/search" class="el-menu-demo" mode="horizontal" router="true">
       <el-menu-item index="/">首页</el-menu-item>
       <el-menu-item index="/search">搜索</el-menu-item>
-
       <el-menu-item index="/user">个人中心</el-menu-item>
     </el-menu>
     <div class="content">
-      <div class="header">
-        <el-input v-model="searchText" placeholder="搜索 校内二手市场 商品/用户" class="search-input"
-                  :fetch-suggestions="querySearchAsync" @select="handSelect(searchText)"
-                  style="width: 24rem;"></el-input>
-        <el-button icon="el-icon-search" @click="searchComm">搜索</el-button>
+      <div id="header">
+        <div class="input-wrap">
+          <el-autocomplete v-model="searchText" placeholder="搜索 校内二手市场 商品/用户" class="search-input"
+                           :fetch-suggestions="querySearchAsync" @select="handSelect"
+                           style="width: 20rem;" :trigger-on-focus="false"></el-autocomplete>
+          <el-button icon="el-icon-search" @click="searchComm(searchText)">搜索</el-button>
+        </div>
       </div>
       <div class="commInfo">
-        <el-row>
-          <el-col :span="8" v-for="item in commList" :key="item" :offset="index > 0 ? 2 : 0">
-            <el-card :body-style="{ padding: '0px' }">
-              <el-image :src="item.commPicList[0]" fit="cover" style="height: 150px;width: 150px">
+        <el-row :gutter="25" type="flex">
+          <el-col :span="4" v-for="item in commList" :key="item">
+            <el-card :body-style="{padding:0}" shadow="hover">
+              <el-image :src="item.commPicList[0]" fit="cover" style="height: 200px;width: 200px;cursor: pointer"
+                        @click="getCommodityInfo(item.commodity.commNo)">
                 <div slot="placeholder" class="image-slot">
                   加载中<span class="dot">...</span>
                 </div>
@@ -25,33 +27,13 @@
               <div style="padding: 14px;">
                 <span>{{ item.commodity.commName }}</span>
                 <div class="bottom clearfix">
-                  <time class="time">{{ currentDate }}</time>
-                  <el-button type="text" class="button">操作按钮</el-button>
+                  <div class="price">￥{{ item.commodity.commPrice }}</div>
+                  <div class="button">销量 {{ item.commodity.commSale }}</div>
                 </div>
               </div>
             </el-card>
           </el-col>
         </el-row>
-
-        <!--        商品信息-->
-        <el-table :data="commList" stripe style="width: 100%">
-          <!--                商品图片-->
-          <el-table-column label="图片">
-            <template slot-scope="scope">
-              <el-image :src="scope.row.commPicList[0]" fit='cover' :preview-src-list="scope.row.commPicList"
-                        style="width: 50px;height: 50px"></el-image>
-            </template>
-          </el-table-column>
-          <el-table-column prop="commodity.commName" label="商品名称"></el-table-column>
-          <el-table-column prop="commodity.commDesc" label="商品描述"></el-table-column>
-          <el-table-column prop="commodity.commSale" label="销量" width="50"></el-table-column>
-          <el-table-column label="商品操作">
-            <div slot-scope="scope">
-              <el-button type="danger" size="small" @click="getCommodityInfo(scope.row.commodity.commNo)">查看商品
-              </el-button>
-            </div>
-          </el-table-column>
-        </el-table>
       </div>
     </div>
   </div>
@@ -65,12 +47,14 @@ export default {
       searchText: '',
       commList: [],
       commTag: '',
-      userRoot:''
+      userRoot: ''
     }
   },
   mounted() {
     this.userRoot = this.$store.state.userBean.userRoot;
-    this.initData()
+    this.$nextTick(function () {
+      this.initData()
+    })
   },
   methods: {
     initData() {
@@ -132,23 +116,17 @@ export default {
           var results = []
           data.forEach(element => {
             results.push({
-              value: element,
+              value: element.commName,
+              content: element.commNo
             })
           })
-          clearTimeout(this.timeout)
-          this.timeout = setTimeout(() => {
-            cb(results)
-          }, 3000 * Math.random())
+          cb(results)
         }
       })
     },
-    handSelect() {
-
+    handSelect(item) {
+      this.getCommodityInfo(item.content)
     }
-  },
-  beforeDestroy() {
-    this.$store.commit("DEL_SEARCH")
-    this.$store.commit("DEL_COMMTAG")
   }
 }
 </script>
@@ -158,10 +136,72 @@ export default {
   .content {
     width: 70%;
     margin: 0 auto;
+
+    #header {
+      display: flex;
+      justify-content: center;
+      margin-top: 2rem;
+      align-items: center;
+
+      .input-wrap {
+        border: 2px solid #409EFF;
+
+        .el-input__inner {
+          width: 100%;
+          border: none;
+          border-radius: 0;
+        }
+
+        .el-input__inner::placeholder {
+          color: #409EFF;
+        }
+
+        .el-button {
+          width: 8vw;
+          color: #fff;
+          font-size: 1rem;
+          border: none;
+          border-radius: 0;
+          background-color: #409EFF;
+        }
+      }
+    }
   }
 
   .commInfo {
     margin-top: 5rem;
+    //  卡片布局
+    .price {
+      float: left;
+      font-size: 16px;
+      color: #999;
+    }
+
+    .bottom {
+      margin-top: 13px;
+      line-height: 12px;
+    }
+
+    .button {
+      font-size: 14px;
+      padding: 0;
+      float: right;
+    }
+
+    .image {
+      width: 100%;
+      display: block;
+    }
+
+    .clearfix:before,
+    .clearfix:after {
+      display: table;
+      content: "";
+    }
+
+    .clearfix:after {
+      clear: both
+    }
   }
 }
 
