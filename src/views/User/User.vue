@@ -41,7 +41,7 @@
                   <el-form :model="userBean" style="width: 50%;margin: 3em">
                     <div class="right-item">
                       <div class="item-label">邮箱 :</div>
-                      <div class="item-info">{{ this.userBean.userEmail}}</div>
+                      <div class="item-info">{{ this.userBean.userEmail }}</div>
                     </div>
                     <el-form-item prop="userName">
                       用户：
@@ -239,7 +239,7 @@
                 </div>
               </div>
               <div class="right-item">
-                <div class="item-label">标签</div>
+                <div class="item-label">类别</div>
                 <el-radio-group v-model="commType" @change="select(commType)">
                   <el-radio-button label="衣物"></el-radio-button>
                   <el-radio-button label="数码"></el-radio-button>
@@ -249,6 +249,28 @@
                   <el-radio-button label="文具"></el-radio-button>
                   <el-radio-button label="居家"></el-radio-button>
                 </el-radio-group>
+              </div>
+              <div class="right-item">
+                <div class="item-label">标签</div>
+                <el-tag
+                    :key="tag"
+                    v-for="tag in commodity.dynamicTags"
+                    closable
+                    :disable-transitions="false"
+                    @close="handleClose(tag)">
+                  {{ tag }}
+                </el-tag>
+                <el-input
+                    class="input-new-tag"
+                    v-if="commodity.inputVisible"
+                    v-model="commodity.inputValue"
+                    ref="saveTagInput"
+                    size="small"
+                    @keyup.enter.native="handleInputConfirm"
+                    @blur="handleInputConfirm"
+                >
+                </el-input>
+                <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
               </div>
               <div class="right-item">
                 <div class="item-label"></div>
@@ -381,7 +403,10 @@ export default {
         description: '',
         quantity: 1,
         price: '',
-        commTag: ''
+        commTag: '',
+        dynamicTags: ['标签一', '标签二', '标签三'],
+        inputVisible: false,
+        inputValue: ''
       },
       imageUrl: '',
       imageFile: '',
@@ -407,17 +432,17 @@ export default {
     this.userBean = this.$store.state.userBean
     this.token = this.$store.state.token
     this.$nextTick(function () {
-      if (this.token === null || this.token === '') {
-        this.$notify({
-          title: '未登入',
-          message: '即将前往登入页',
-          type: 'error'
-        })
-        clearTimeout(this.timer);
-        this.timer = setTimeout(() => {
-          this.$router.push({path: '/login'});
-        }, 1500);
-      }
+      // if (this.token === null || this.token === '') {
+      //   this.$notify({
+      //     title: '未登入',
+      //     message: '即将前往登入页',
+      //     type: 'error'
+      //   })
+      //   clearTimeout(this.timer);
+      //   this.timer = setTimeout(() => {
+      //     this.$router.push({path: '/login'});
+      //   }, 1500);
+      // }
       this.initData()
     })
   },
@@ -742,6 +767,26 @@ export default {
         })
       }
     },
+    //自定义标签
+    handleClose(tag) {
+      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
+    },
+    showInput() {
+      this.inputVisible = true;
+      // eslint-disable-next-line no-unused-vars
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus();
+      });
+    },
+    handleInputConfirm() {
+      let inputValue = this.inputValue;
+      if (inputValue) {
+        this.dynamicTags.push(inputValue);
+      }
+      this.inputVisible = false;
+      this.inputValue = '';
+    },
+    //自定义个人资料
     reset() {
       this.$axios.post('/shop/user/updateUserInfo', this.$qs.stringify({
         userInfo: this.userBean.userInfo,
@@ -1015,6 +1060,24 @@ export default {
           .right-item {
             line-height: 50px;
             margin-bottom: 20px;
+          }
+
+          .el-tag + .el-tag {
+            margin-left: 10px;
+          }
+
+          .button-new-tag {
+            margin-left: 10px;
+            height: 32px;
+            line-height: 30px;
+            padding-top: 0;
+            padding-bottom: 0;
+          }
+
+          .input-new-tag {
+            width: 90px;
+            margin-left: 10px;
+            vertical-align: bottom;
           }
         }
 
