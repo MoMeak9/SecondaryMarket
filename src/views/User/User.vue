@@ -270,7 +270,7 @@
                     @blur="handleInputConfirm"
                 >
                 </el-input>
-                <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
+                <el-button v-else class="button-new-tag" size="small" @click="showInput">+ 自定义标签</el-button>
               </div>
               <div class="right-item">
                 <div class="item-label"></div>
@@ -404,7 +404,7 @@ export default {
         quantity: 1,
         price: '',
         commTag: '',
-        dynamicTags: ['标签一', '标签二', '标签三'],
+        dynamicTags: ['99新', '包邮','立即发货'],
         inputVisible: false,
         inputValue: ''
       },
@@ -432,17 +432,17 @@ export default {
     this.userBean = this.$store.state.userBean
     this.token = this.$store.state.token
     this.$nextTick(function () {
-      // if (this.token === null || this.token === '') {
-      //   this.$notify({
-      //     title: '未登入',
-      //     message: '即将前往登入页',
-      //     type: 'error'
-      //   })
-      //   clearTimeout(this.timer);
-      //   this.timer = setTimeout(() => {
-      //     this.$router.push({path: '/login'});
-      //   }, 1500);
-      // }
+      if (this.token === null || this.token === '') {
+        this.$notify({
+          title: '未登入',
+          message: '即将前往登入页',
+          type: 'error'
+        })
+        clearTimeout(this.timer);
+        this.timer = setTimeout(() => {
+          this.$router.push({path: '/login'});
+        }, 1500);
+      }
       this.initData()
     })
   },
@@ -769,22 +769,22 @@ export default {
     },
     //自定义标签
     handleClose(tag) {
-      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
+      this.commodity.dynamicTags.splice(this.commodity.dynamicTags.indexOf(tag), 1);
     },
     showInput() {
-      this.inputVisible = true;
+      this.commodity.inputVisible = true;
       // eslint-disable-next-line no-unused-vars
       this.$nextTick(_ => {
         this.$refs.saveTagInput.$refs.input.focus();
       });
     },
     handleInputConfirm() {
-      let inputValue = this.inputValue;
+      let inputValue = this.commodity.inputValue;
       if (inputValue) {
-        this.dynamicTags.push(inputValue);
+        this.commodity.dynamicTags.push(inputValue);
       }
-      this.inputVisible = false;
-      this.inputValue = '';
+      this.commodity.inputVisible = false;
+      this.commodity.inputValue = '';
     },
     //自定义个人资料
     reset() {
