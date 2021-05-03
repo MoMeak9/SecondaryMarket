@@ -1,22 +1,50 @@
 <template>
   <div id="admin-home">
-    <el-header>
-      <el-menu default-active="/adminHome" class="el-menu-demo" mode="horizontal" router="true">
-        <el-menu-item index="/">首页</el-menu-item>
-        <el-menu-item index="/search">搜索</el-menu-item>
-        <el-menu-item index="/adminHome">管理中心</el-menu-item>
-        <el-menu-item index="/user">个人中心</el-menu-item>
+    <aside style="z-index: 99;position: absolute">
+      <el-menu default-active="1-4-1" class="el-menu-vertical-demo"
+               :collapse="isCollapse">
+        <el-menu-item index="1" @click="isCollapse=!isCollapse">
+          <i class="el-icon-caret-right" v-if="isCollapse"></i><i class="el-icon-caret-left" v-else></i>
+          <span slot="title"><a v-if="isCollapse">展开</a><a v-else>关闭</a></span>
+        </el-menu-item>
+        <el-menu-item index="2" @click="tabActive='1'">
+          <i class="el-icon-s-data"></i>
+          <span slot="title">数据监控</span>
+        </el-menu-item>
+        <el-menu-item index="3" @click="tabActive='2'">
+          <i class="el-icon-s-custom"></i>
+          <span slot="title">账号管理</span>
+        </el-menu-item>
+        <el-menu-item index="4" @click="tabActive='3'">
+          <i class="el-icon-s-shop"></i>
+          <span slot="title">商品管理</span>
+        </el-menu-item>
+        <el-menu-item index="5" @click="tabActive='4'">
+          <i class="el-icon-s-claim"></i>
+          <span slot="title">用户审核</span>
+        </el-menu-item>
+        <el-menu-item index="6" @click="logOut">
+          <i class="el-icon-close"></i>
+          <span slot="title">登出</span>
+        </el-menu-item>
       </el-menu>
-    </el-header>
+    </aside>
     <div class="content">
+      <header><h1>”转小二“管理中心</h1></header>
       <el-tabs v-model="tabActive">
-        <el-tab-pane label="账号管理" name="first">
+        <!--        数据统计展示-->
+        <el-tab-pane label="数据监控" name="1">
+          <div class="item-reg">
+            <Echarts></Echarts>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="账号管理" name="2">
           <div class="item-reg">
             <el-table :data="userList" style="width: 100%">
               <el-table-column prop="lastLoginTime" label="最后登入日期" width></el-table-column>
               <el-table-column prop="userName" label="用户名" width="180"></el-table-column>
               <el-table-column prop="userEmail" label="邮箱" width="180"></el-table-column>
-              <el-table-column prop="userNo" label="编号" width=""></el-table-column>
+              <el-table-column prop="userNo" label="UUID" width=""></el-table-column>
               <el-table-column prop="isBan" label="账号状态" width="180">
                 <div slot-scope="scope">
                   <div v-if="scope.row.isBan === 0">正常</div>
@@ -32,12 +60,20 @@
                 </template>
               </el-table-column>
             </el-table>
+            <el-pagination
+                @current-change="changeUserList()"
+                background
+                :current-page="userListCurrent"
+                :pager-count="11"
+                layout="prev, pager, next"
+                :page-count="userListPages">
+            </el-pagination>
           </div>
         </el-tab-pane>
         <!--        管理所有商品  可筛选-->
-        <el-tab-pane label="商品管理" name="second">
+        <el-tab-pane label="商品管理" name="3">
           <div class="item-audit">
-            <el-table :data="commList" style="width: 100%" height="90vh" stripe
+            <el-table :data="commList" stripe
                       :default-sort="{prop: 'commodity.commName', order: 'increasing'}">
               <el-table-column label="图片" width="120">
                 <template slot-scope="scope">
@@ -45,36 +81,44 @@
                             style="width: 70px;height: 70px"></el-image>
                 </template>
               </el-table-column>
-              <el-table-column prop="commName" label="名称" sortable></el-table-column>
-              <el-table-column prop="commNo" label="单号"></el-table-column>
-              <el-table-column prop="commDesc" label="简述"></el-table-column>
-              <el-table-column prop="userName" label="创建者" width="180" sortable></el-table-column>
-              <el-table-column prop="auditStatus" label="审核状态" sortable
-                               :filters="[{text: '待审核', value: 0},{text: '审核通过', value: 1},{text: '驳回', value: 2}]"
+              <el-table-column prop="commodity.commName" label="名称" sortable></el-table-column>
+              <el-table-column prop="commodity.commNo" label="单号"></el-table-column>
+              <el-table-column prop="commodity.commDesc" label="简述"></el-table-column>
+              <el-table-column prop="commodity.userName" label="创建者" width="180" sortable></el-table-column>
+              <el-table-column prop="commodity.auditStatus" label="审核状态" sortable
+                               :filters="[{text: '待审核', value: '0'},{text: '审核通过', value: 1},{text: '驳回', value: 2}]"
                                :filter-method="filterHandler">
                 <div slot-scope="scope">
-                  <div v-if="scope.row.auditStatus === 0">待审核</div>
-                  <div v-else-if="scope.row.auditStatus === 1">审核通过</div>
+                  <div v-if="scope.row.commodity.auditStatus === 0">待审核</div>
+                  <div v-else-if="scope.row.commodity.auditStatus === 1">审核通过</div>
                   <div v-else>驳回</div>
                 </div>
               </el-table-column>
               <el-table-column label="商品操作" width="300">
                 <template slot-scope="scope">
-                  <el-button type="primary" @click="checkCommo(scope.row.commNo)" size="small">查看
+                  <el-button type="primary" @click="checkCommo(scope.row.commodity.commNo)" size="small">查看
                   </el-button>
-                  <el-button type="primary" @click="allowCommo(scope.row.commNo)" size="small"
-                             v-show="scope.row.auditStatus===0||scope.row.auditStatus===2">通过
+                  <el-button type="primary" @click="allowCommo(scope.row.commodity.commNo)" size="small"
+                             v-show="scope.row.commodity.auditStatus===0||scope.row.auditStatus===2">通过
                   </el-button>
-                  <el-button type="danger" @click="refuseCommo(scope.row.commNo)" size="small"
-                             v-show="scope.row.auditStatus===0||scope.row.auditStatus===1">拒绝
+                  <el-button type="danger" @click="refuseCommo(scope.row.commodity.commNo)" size="small"
+                             v-show="scope.row.commodity.auditStatus===0||scope.row.commodity.auditStatus===1">拒绝
                   </el-button>
                 </template>
               </el-table-column>
             </el-table>
+            <el-pagination
+                @current-change="changeCommList"
+                background
+                :current-page="commListCurrent"
+                :pager-count="11"
+                layout="prev, pager, next"
+                :page-count="commListPages">
+            </el-pagination>
           </div>
         </el-tab-pane>
         <!--        学院信息审核-->
-        <el-tab-pane label="认证审核" name="third">
+        <el-tab-pane label="认证审核" name="4">
           <div class="item-reg">
             <el-table :data="userList" style="width: 100%">
               <el-table-column prop="userName" label="用户名" width="180"></el-table-column>
@@ -98,7 +142,8 @@
               </el-table-column>
               <el-table-column label="账号操作">
                 <template slot-scope="scope">
-                  <el-button type="success" @click="changeAuthentication(scope.row.userNo,2)" v-if="scope.row.authentication!==2&&scope.row.authentication!==0">
+                  <el-button type="success" @click="changeAuthentication(scope.row.userNo,2)"
+                             v-if="scope.row.authentication!==2&&scope.row.authentication!==0">
                     通过
                   </el-button>
                   <el-button type="danger" @click="changeAuthentication(scope.row.userNo,3)"
@@ -107,6 +152,14 @@
                 </template>
               </el-table-column>
             </el-table>
+            <el-pagination
+                @current-change="changeUserList()"
+                background
+                :current-page="userListCurrent"
+                :pager-count="11"
+                layout="prev, pager, next"
+                :page-count="userListPages">
+            </el-pagination>
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -114,20 +167,31 @@
   </div>
 </template>
 <script>
+import Echarts from "@/components/Echarts";
+
 export default {
   comments: {},
   data() {
     return {
+      isCollapse: true,
       userName: '',
-      tabActive: 'first',
+      tabActive: '1',
       allUsers: [],
       auditCommos: [],
       userList: [],
       commList: [],
-      token: this.$store.state.token,
+      token: '',
+      userBean: '',
       auditMsg: '',
-      activeIndex: '/adminHome'
+      activeIndex: '/adminHome',
+      userListCurrent: 1,
+      userListPages: 1,
+      commListCurrent: 1,
+      commListPages: 1,
     }
+  },
+  components: {
+    Echarts
   },
   methods: {
     //审核通过
@@ -269,7 +333,10 @@ export default {
     },
     //用户列表
     getUserList() {
-      this.$axios.post('/shop/admin/userList', {}, {
+      this.$axios.post('/shop/admin/userList', this.$qs.stringify({
+        current: this.userListCurrent,
+        size: '10'
+      }), {
         headers: {
           Authorization: this.token
         }
@@ -277,7 +344,28 @@ export default {
         var data = resp.data
         console.log(data)
         if (data.code === 1) {
-          this.userList = data.obj
+          this.userListPages = data.obj.pages
+          this.userList = data.obj.obj
+          for (let i = 0; i < this.userList.length; i++) {
+            this.userList[i].lastLoginTime = this.rTime(this.userList[i].lastLoginTime);
+          }
+        }
+      })
+    },
+    changeUserList(val){
+      this.$axios.post('/shop/admin/userList', this.$qs.stringify({
+        current: val,
+        size: '10'
+      }), {
+        headers: {
+          Authorization: this.token
+        }
+      }).then(resp => {
+        var data = resp.data
+        console.log(data)
+        if (data.code === 1) {
+          this.userListPages = data.obj.pages
+          this.userList = data.obj.obj
           for (let i = 0; i < this.userList.length; i++) {
             this.userList[i].lastLoginTime = this.rTime(this.userList[i].lastLoginTime);
           }
@@ -289,12 +377,35 @@ export default {
       this.$axios.get('/shop/admin/commList', {
         headers: {
           Authorization: this.token
+        },
+        params: {
+          current: 1,
+          size: 10
         }
       }).then(resp => {
         console.log(resp)
         var data = resp.data
         if (data.code === 1) {
-          this.commList = data.obj
+          this.commList = data.obj.obj
+          this.commListPages = data.obj.pages
+        }
+      })
+    },
+    changeCommList(val) {
+      this.$axios.get('/shop/admin/commList', {
+        headers: {
+          Authorization: this.token
+        },
+        params: {
+          current: val,
+          size: 10
+        }
+      }).then(resp => {
+        console.log(resp)
+        var data = resp.data
+        if (data.code === 1) {
+          this.commList = data.obj.obj
+          this.commListPages = data.obj.pages
         }
       })
     },
@@ -318,13 +429,26 @@ export default {
     goBack() {
       this.$router.push({path: '/user'})
     },
+    //登出
+    logOut() {
+      this.$store.commit('LOGOUT')
+      this.$store.commit('DEL_TOKEN')
+      this.$notify({
+        title: '成功',
+        message: '退出系统',
+        type: 'success'
+      })
+      this.$router.push({path: '/login'})
+    }
   },
   mounted() {
     this.token = this.$store.state.token
+    this.userBean = this.$store.state.userBean
     console.log(this.token)
     this.$nextTick(function () {
-      if (this.token === '') {
-        this.$message({
+      if (this.token === '' || this.token === null) {
+        this.$notify({
+          title: '错误',
           message: '用户未登录！即将返回登录页面',
           type: 'error'
         });
@@ -344,10 +468,24 @@ export default {
   background-color: #f5f5f5;
   position: relative;
 
+  .el-menu {
+    height: 100vh;
+  }
+
+  .el-pagination {
+    text-align: center;
+    margin-top: 15px
+  }
+
+  .el-menu-vertical-demo:not(.el-menu--collapse) {
+    width: 200px;
+    height: 100vh;
+  }
+
   .content {
     background-color: white;
     width: 90%;
-    margin: 30px auto;
+    margin: 0 auto;
     padding: 1rem;
     border-radius: 5px;
     box-shadow: 10px 5px 30px #99a9bf;
