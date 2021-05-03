@@ -7,10 +7,6 @@
           <i class="el-icon-caret-right" v-if="isCollapse"></i><i class="el-icon-caret-left" v-else></i>
           <span slot="title"><a v-if="isCollapse">展开</a><a v-else>关闭</a></span>
         </el-menu-item>
-        <el-menu-item index="2" @click="tabActive='1'">
-          <i class="el-icon-s-data"></i>
-          <span slot="title">数据监控</span>
-        </el-menu-item>
         <el-menu-item index="3" @click="tabActive='2'">
           <i class="el-icon-s-custom"></i>
           <span slot="title">账号管理</span>
@@ -32,12 +28,6 @@
     <div class="content">
       <header><h1>”转小二“管理中心</h1></header>
       <el-tabs v-model="tabActive">
-        <!--        数据统计展示-->
-        <el-tab-pane label="数据监控" name="1">
-          <div class="item-reg">
-            <Echarts></Echarts>
-          </div>
-        </el-tab-pane>
         <el-tab-pane label="账号管理" name="2">
           <div class="item-reg">
             <el-table :data="userList" style="width: 100%">
@@ -167,7 +157,6 @@
   </div>
 </template>
 <script>
-import Echarts from "@/components/Echarts";
 
 export default {
   comments: {},
@@ -175,7 +164,7 @@ export default {
     return {
       isCollapse: true,
       userName: '',
-      tabActive: '1',
+      tabActive: '2',
       allUsers: [],
       auditCommos: [],
       userList: [],
@@ -191,7 +180,6 @@ export default {
     }
   },
   components: {
-    Echarts
   },
   methods: {
     //审核通过
