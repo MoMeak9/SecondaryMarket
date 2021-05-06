@@ -27,3 +27,4 @@ Vue全家桶+Element_Ui
 - axios qs库
 ## 参考
 **flea-market-frontend**：[https://github.com/hwhhhh/flea-market-frontend]
+## 已知BUG

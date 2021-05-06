@@ -34,6 +34,22 @@
             </el-card>
           </el-col>
         </el-row>
+        <el-pagination
+            @current-change="changeSearchComm"
+            background
+            :current-page="currentPage"
+            :pager-count="11"
+            layout="prev, pager, next"
+            :page-count="pages" v-if="this.searchText">
+        </el-pagination>
+        <el-pagination
+            @current-change="changeQueryCommByTag"
+            background
+            :current-page="currentPage"
+            :pager-count="11"
+            layout="prev, pager, next"
+            :page-count="pages" v-else>
+        </el-pagination>
       </div>
     </div>
   </div>
@@ -47,7 +63,11 @@ export default {
       searchText: '',
       commList: [],
       commTag: '',
-      userRoot: ''
+      userRoot: '',
+      //  分页
+      currentPage: 1,
+      pages: '',
+      size: 36,
     }
   },
   mounted() {
@@ -62,31 +82,9 @@ export default {
       this.commTag = this.$store.state.commTag
       // 获取搜索列表
       if (this.searchText !== '' && this.searchText !== null) {
-        this.$axios.get('/shop/commodity/searchComm', {
-          params: {
-            keyName: this.searchText,
-          }
-        }).then(resp => {
-          var data = resp.data
-          if (data.code === 1) {
-            this.commList = data.obj
-          }
-        }).catch(function (error) {
-          console.log(error)
-        })
+        this.searchComm()
       } else if (this.commTag !== '' && this.commTag !== null) {
-        this.$axios.get('/shop/commodity/queryCommByTag', {
-          params: {
-            commTag: this.commTag,
-          }
-        }).then(resp => {
-          var data = resp.data
-          if (data.code === 1) {
-            this.commList = data.obj
-          }
-        }).catch(function (error) {
-          console.log(error)
-        })
+        this.queryCommByTag()
       }
     },
     getCommodityInfo(commNo) {
@@ -97,12 +95,67 @@ export default {
     searchComm() {
       this.$axios.get('/shop/commodity/searchComm', {
         params: {
+          current: 1,
           keyName: this.searchText,
+          size: this.size
         }
       }).then(resp => {
         var data = resp.data
         if (data.code === 1) {
-          this.commList = data.obj
+          this.commList = data.obj.obj
+          this.pages = data.obj.pages
+        }
+        this.currentPage = 1
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    changeSearchComm(val) {
+      this.$axios.get('/shop/commodity/searchComm', {
+        params: {
+          current: val,
+          keyName: this.searchText,
+          size: this.size
+        }
+      }).then(resp => {
+        var data = resp.data
+        if (data.code === 1) {
+          this.commList = data.obj.obj
+          this.pages = data.obj.pages
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    queryCommByTag() {
+      this.$axios.get('/shop/commodity/queryCommByTag', {
+        params: {
+          commTag: this.commTag,
+          current: 1,
+          size: this.size
+        }
+      }).then(resp => {
+        var data = resp.data
+        if (data.code === 1) {
+          this.commList = data.obj.obj
+          this.pages = data.obj.pages
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    changeQueryCommByTag(val) {
+      this.$axios.get('/shop/commodity/queryCommByTag', {
+        params: {
+          commTag: this.commTag,
+          current: val,
+          size: this.size
+        }
+      }).then(resp => {
+        var data = resp.data
+        if (data.code === 1) {
+          this.commList = data.obj.obj
+          this.pages = data.obj.pages
         }
       }).catch(function (error) {
         console.log(error)
@@ -127,6 +180,10 @@ export default {
     handSelect(item) {
       this.getCommodityInfo(item.content)
     }
+  },
+  destroyed() {
+    this.$store.commit('DEL_SEARCH')
+    this.$store.commit('DEL_COMMTAG')
   }
 }
 </script>
