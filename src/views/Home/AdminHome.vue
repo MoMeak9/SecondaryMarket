@@ -31,21 +31,21 @@
         <el-tab-pane label="账号管理" name="2">
           <div class="item-reg">
             <el-table :data="userList" style="width: 100%">
-              <el-table-column prop="lastLoginTime" label="最后登入日期" width></el-table-column>
-              <el-table-column prop="userName" label="用户名" width="180"></el-table-column>
-              <el-table-column prop="userEmail" label="邮箱" width="180"></el-table-column>
-              <el-table-column prop="userNo" label="UUID" width=""></el-table-column>
-              <el-table-column prop="isBan" label="账号状态" width="180">
+              <el-table-column prop="userBean.lastLoginTime" label="最后登入日期" width></el-table-column>
+              <el-table-column prop="userBean.userName" label="用户名" width="180"></el-table-column>
+              <el-table-column prop="userBean.userEmail" label="邮箱" width="180"></el-table-column>
+              <el-table-column prop="userBean.userNo" label="UUID" width=""></el-table-column>
+              <el-table-column prop="userBean.isBan" label="账号状态" width="180">
                 <div slot-scope="scope">
-                  <div v-if="scope.row.isBan === 0">正常</div>
+                  <div v-if="scope.row.userBean.isBan === 0">正常</div>
                   <div v-else>封禁</div>
                 </div>
               </el-table-column>
               <el-table-column label="账号操作">
                 <template slot-scope="scope">
-                  <el-button type="danger" @click="banUser(scope.row.userNo)" v-show="scope.row.isBan===0">封禁
+                  <el-button type="danger" @click="banUser(scope.row.userBean.userNo)" v-show="scope.row.userBean.isBan===0">封禁
                   </el-button>
-                  <el-button type="success" @click="unBanUser(scope.row.userNo)" v-show="scope.row.isBan===1">解封
+                  <el-button type="success" @click="unBanUser(scope.row.userBean.userNo)" v-show="scope.row.userBean.isBan===1">解封
                   </el-button>
                 </template>
               </el-table-column>
@@ -111,33 +111,33 @@
         <el-tab-pane label="认证审核" name="4">
           <div class="item-reg">
             <el-table :data="userList" style="width: 100%">
-              <el-table-column prop="userName" label="用户名" width="180"></el-table-column>
+              <el-table-column prop="userBean.userName" label="用户名" width="180"></el-table-column>
               <el-table-column label="学生证照片">
                 <template slot-scope="scope">
-                  <el-image :src="scope.row.photoUrl" fit='cover' :preview-src-list="scope.row.photoUrl"
+                  <el-image :src="scope.row.photoList[1]" fit='cover' :preview-src-list="scope.row.photoList"
                             style="width: 70px;height: 70px">
                   </el-image>
                 </template>
               </el-table-column>
-              <el-table-column prop="userRealName" label="真实姓名" width="180"></el-table-column>
-              <el-table-column prop="college" label="学院" width=""></el-table-column>
-              <el-table-column prop="sno" label="学号" width=""></el-table-column>
-              <el-table-column prop="authentication" label="认证状态" width="">
+              <el-table-column prop="userBean.userRealName" label="真实姓名" width="180"></el-table-column>
+              <el-table-column prop="userBean.college" label="学院" width=""></el-table-column>
+              <el-table-column prop="userBean.sno" label="学号" width=""></el-table-column>
+              <el-table-column prop="userBean.authentication" label="认证状态" width="">
                 <div slot-scope="scope">
-                  <div v-if="scope.row.authentication === 0">未认证</div>
-                  <div v-else-if="scope.row.authentication === 1">认证中</div>
-                  <div v-else-if="scope.row.authentication === 2">审核通过</div>
+                  <div v-if="scope.row.userBean.authentication === 0">未认证</div>
+                  <div v-else-if="scope.row.userBean.authentication === 1">认证中</div>
+                  <div v-else-if="scope.row.userBean.authentication === 2">审核通过</div>
                   <div v-else>认证失败</div>
                 </div>
               </el-table-column>
               <el-table-column label="账号操作">
                 <template slot-scope="scope">
-                  <el-button type="success" @click="changeAuthentication(scope.row.userNo,2)"
-                             v-if="scope.row.authentication!==2&&scope.row.authentication!==0">
+                  <el-button type="success" @click="changeAuthentication(scope.row.userBean.userNo,2)"
+                             v-if="scope.row.userBean.authentication!==2&&scope.row.userBean.authentication!==0">
                     通过
                   </el-button>
-                  <el-button type="danger" @click="changeAuthentication(scope.row.userNo,3)"
-                             v-if="scope.row.authentication===2">驳回
+                  <el-button type="danger" @click="changeAuthentication(scope.row.userBean.userNo,3)"
+                             v-if="scope.row.userBean.authentication===2">驳回
                   </el-button>
                 </template>
               </el-table-column>
@@ -335,7 +335,7 @@ export default {
           this.userListPages = data.obj.pages
           this.userList = data.obj.obj
           for (let i = 0; i < this.userList.length; i++) {
-            this.userList[i].lastLoginTime = this.rTime(this.userList[i].lastLoginTime);
+            this.userList[i].userBean.lastLoginTime = this.rTime(this.userList[i].userBean.lastLoginTime);
           }
         }
       })
