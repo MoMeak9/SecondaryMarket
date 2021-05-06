@@ -433,6 +433,7 @@ export default {
     }
   },
   mounted() {
+    this.imageFile = new FormData()
     this.userBean = this.$store.state.userBean
     this.token = this.$store.state.token
     this.$nextTick(function () {
@@ -696,9 +697,8 @@ export default {
       var windowURL = window.URL || window.webkitURL
       this.imageUrl = windowURL.createObjectURL(file)
       // 重新写一个表单上传的方法
-      var commImages = new FormData()
-      commImages.append('commPicList', file, file.name)
-      this.imageFile = commImages
+      this.imageFile.append('commPicList', file, file.name)
+      console.log(this.imageFile)
       return false
     },
     //商品标签转换
@@ -735,7 +735,7 @@ export default {
             'Content-Type': 'multipart/form-data'
           }
         }
-        let param = this.imageFile;
+        let param = this.imageFile
         param.append('commDesc', this.commodity.description)
         param.append('commName', this.commodity.name)
         param.append('commPrice', this.commodity.price)
@@ -751,7 +751,17 @@ export default {
               type: 'success'
             })
             this.initData()
-            this.commodity = []
+            this.commodity = {
+              name: '',
+              description: '',
+              quantity: 1,
+              price: '',
+              commTag: '',
+              dynamicTags: ['包邮'],
+              inputVisible: false,
+              inputValue: ''
+            }
+            this.imageFile = new FormData()
             this.menuTab[3].isActive = false
             this.menuTab[2].isActive = true
             this.imageUrl = ''
@@ -810,7 +820,7 @@ export default {
             message: '修改成功',
             type: 'success'
           })
-        }else {
+        } else {
           this.$notify({
             title: '错误',
             message: data.message,
