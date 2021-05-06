@@ -34,18 +34,20 @@
             <el-form-item label="联系电话" prop="phone">
               <el-input v-model="buyForm.phone" style="width: 100%;"></el-input>
             </el-form-item>
-            <el-form-item label="购买数量" style="text-align: left">
+            <el-form-item label="购买数量" style="text-align: left" prop="number">
               <el-input-number v-model="buyForm.num" size="small" :min="1"
                                :max="obj.commodity.commStock - obj.commodity.commSale"></el-input-number>
             </el-form-item>
-            <el-form-item label="送货时间" style="text-align: left">
-              <el-date-picker
-                  v-model="buyForm.arriveDate"
-                  type="datetime"
-                  placeholder="选择日期时间"
-                  align="right"
-                  :picker-options="buyForm.pickerOptions">
-              </el-date-picker>
+            <el-form-item label="送货时间" style="text-align: left" prop="time">
+                  <el-date-picker
+                      v-model="buyForm.Time"
+                      type="datetimerange"
+                      :picker-options="buyForm.pickerOptions"
+                      range-separator="至"
+                      start-placeholder="开始日期"
+                      end-placeholder="结束日期"
+                      align="right">
+                  </el-date-picker>
             </el-form-item>
             <el-form-item label="收件地址" prop="address">
               <el-input v-model="buyForm.address" type="textarea" style="width: 100%;"
@@ -86,19 +88,32 @@ export default {
         address: '',
         consignee: '',
         phone: '',
-        arriveDate: '',
+        // 送货时间
+        Time: '',
         pickerOptions: {
           shortcuts: [{
-            text: '今天',
+            text: '最近一周',
             onClick(picker) {
-              picker.$emit('pick', new Date());
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit('pick', [start, end]);
             }
           }, {
-            text: '明天',
+            text: '最近一个月',
             onClick(picker) {
-              const date = new Date();
-              date.setTime(date.getTime() + 3600 * 1000 * 24);
-              picker.$emit('pick', date);
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit('pick', [start, end]);
             }
           }]
         },
@@ -113,6 +128,12 @@ export default {
         ],
         address: [
           {required: true, message: '请填写详细地址', trigger: 'blur'}
+        ],
+        time: [
+          {required: true, message: '选择送货时间段', trigger: 'this.buyForm.Time'}
+        ],
+        number: [
+          {required: true, message: '请选择购买数量', trigger: 'this.buyForm.num'}
         ]
       }
     }
@@ -153,6 +174,8 @@ export default {
         address: this.buyForm.address,
         commNo: this.commNo,
         consignee: this.buyForm.consignee,
+        deTimeFrom: this.rTime(this.buyForm.Time[0]),
+        deTimeTo: this.rTime(this.buyForm.Time[1]),
         num: this.buyForm.num,
         phone: this.buyForm.phone
       }), {

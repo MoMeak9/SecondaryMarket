@@ -19,14 +19,14 @@
           <i class="el-icon-s-claim"></i>
           <span slot="title">用户审核</span>
         </el-menu-item>
-        <el-menu-item index="6" @click="logOut">
+        <el-menu-item index="6" @click="back">
           <i class="el-icon-close"></i>
-          <span slot="title">登出</span>
+          <span slot="title">返回</span>
         </el-menu-item>
       </el-menu>
     </aside>
     <div class="content">
-      <header><h1>”转小二“管理中心</h1></header>
+      <header><h1>管理中心</h1></header>
       <el-tabs v-model="tabActive">
         <el-tab-pane label="账号管理" name="2">
           <div class="item-reg">
@@ -418,15 +418,13 @@ export default {
       this.$router.push({path: '/user'})
     },
     //登出
-    logOut() {
-      this.$store.commit('LOGOUT')
-      this.$store.commit('DEL_TOKEN')
+    back() {
       this.$notify({
         title: '成功',
-        message: '退出系统',
+        message: '返回个人中心',
         type: 'success'
       })
-      this.$router.push({path: '/login'})
+      this.$router.push({path: '/user'})
     }
   },
   mounted() {

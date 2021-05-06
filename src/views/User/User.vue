@@ -74,12 +74,14 @@
                 <el-tab-pane label="更改密码" name="second">
                   <el-form :model="resetForm" ref="resetForm" style="width: 50%;margin: 3em" :rules="rules" status-icon>
                     <el-form-item prop="password">
+                      旧密码：
                       <el-input type="password" v-model="resetForm.password" placeholder="请输入旧密码"
-                                prefix-icon="el-icon-lock" show-password></el-input>
+                                prefix-icon="el-icon-lock" show-password style="width: 85%;float: right"></el-input>
                     </el-form-item>
                     <el-form-item prop="repassword">
+                      新密码：
                       <el-input type="password" v-model="resetForm.repassword" placeholder="请输入新密码"
-                                prefix-icon="el-icon-lock" show-password></el-input>
+                                prefix-icon="el-icon-lock" show-password style="width: 85%;float: right"></el-input>
                     </el-form-item>
                     <el-button type="danger" @click="repassword()">更改密码</el-button>
                   </el-form>
