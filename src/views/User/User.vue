@@ -133,7 +133,7 @@
                   <div slot-scope="scope">
                     <div v-if="scope.row.orderStatus === 0">待处理</div>
                     <div v-else-if="scope.row.orderStatus === 1">已发货</div>
-                    <div v-else-if="scope.row.orderStatus === 2">待确认</div>
+                    <div v-else-if="scope.row.orderStatus === 2">已收货</div>
                     <div v-else-if="scope.row.orderStatus === 3">申请取消</div>
                     <div v-else>已取消</div>
                   </div>
@@ -762,16 +762,29 @@ export default {
               inputValue: ''
             }
             this.imageFile = new FormData()
-            this.menuTab[3].isActive = false
-            this.menuTab[2].isActive = true
             this.imageUrl = ''
             this.commType = ''
+            this.menuTab[3].isActive = false
+            this.menuTab[2].isActive = true
           } else {
             this.$notify({
               title: '失败',
               message: '商品上传失败',
               type: 'error'
             })
+            this.commodity = {
+              name: '',
+              description: '',
+              quantity: 1,
+              price: '',
+              commTag: '',
+              dynamicTags: ['包邮'],
+              inputVisible: false,
+              inputValue: ''
+            }
+            this.imageFile = new FormData()
+            this.imageUrl = ''
+            this.commType = ''
           }
         }).catch(function (error) {
           this.$notify.error({

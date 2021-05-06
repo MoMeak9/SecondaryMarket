@@ -107,7 +107,7 @@ export default {
       //初始商品列表
       this.$axios.get('/shop/commodity/initialCommList', {
         params: {
-          num: 10,
+          num: 12,
         }
       }).then(resp => {
         var data = resp.data

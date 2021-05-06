@@ -310,9 +310,9 @@ export default {
             message: '处理完成',
             type: 'success'
           })
+          this.getUserList()
         }
       })
-      this.getUserList()
     },
     //  获取数据
     initDate() {

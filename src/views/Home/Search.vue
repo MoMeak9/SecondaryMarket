@@ -104,6 +104,7 @@ export default {
         if (data.code === 1) {
           this.commList = data.obj.obj
           this.pages = data.obj.pages
+          this.$store.commit('DEL_COMMTAG')
         }
         this.currentPage = 1
       }).catch(function (error) {
@@ -139,6 +140,7 @@ export default {
         if (data.code === 1) {
           this.commList = data.obj.obj
           this.pages = data.obj.pages
+          this.$store.commit('DEL_SEARCH')
         }
       }).catch(function (error) {
         console.log(error)
@@ -182,8 +184,6 @@ export default {
     }
   },
   destroyed() {
-    this.$store.commit('DEL_SEARCH')
-    this.$store.commit('DEL_COMMTAG')
   }
 }
 </script>

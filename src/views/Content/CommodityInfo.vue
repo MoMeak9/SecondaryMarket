@@ -15,7 +15,7 @@
           <h3>￥{{ obj.commodity.commPrice }} RMB</h3>
           <h4>库存：{{ obj.commodity.commStock - obj.commodity.commSale }}</h4>
           <h4>类别：{{ obj.commodity.commTag }}</h4>
-          <h4>卖家：{{ obj.commodity.createUser }}</h4>
+          <h4>卖家：{{ obj.commodity.userName }}</h4>
           <el-divider><i class="el-icon-shopping-cart-full"></i></el-divider>
           <h4>描述：{{ obj.commodity.commDesc }}</h4>
           <el-button type="danger" @click="changShow" style="margin-top: 12rem">购买商品</el-button>
