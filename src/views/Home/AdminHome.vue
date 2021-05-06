@@ -72,7 +72,7 @@
                 </template>
               </el-table-column>
               <el-table-column prop="commodity.commName" label="名称" sortable></el-table-column>
-              <el-table-column prop="commodity.commNo" label="单号"></el-table-column>
+              <el-table-column prop="commodity.commNo" label="商品编码"></el-table-column>
               <el-table-column prop="commodity.commDesc" label="简述"></el-table-column>
               <el-table-column prop="commodity.userName" label="创建者" width="180" sortable></el-table-column>
               <el-table-column prop="commodity.auditStatus" label="审核状态" sortable

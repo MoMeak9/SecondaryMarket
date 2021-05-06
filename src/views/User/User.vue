@@ -741,6 +741,7 @@ export default {
         param.append('commPrice', this.commodity.price)
         param.append('commStock', this.commodity.quantity)
         param.append('commTag', this.commodity.commTag)
+        param.append('customTags', this.commodity.dynamicTags)
         this.$axios.post('/shop/commodity/releaseComm', param, config).then(resp => {
           var data = resp.data
           if (data.code === 1) {
@@ -808,6 +809,12 @@ export default {
             title: '成功',
             message: '修改成功',
             type: 'success'
+          })
+        }else {
+          this.$notify({
+            title: '错误',
+            message: data.message,
+            type: 'error'
           })
         }
       })
