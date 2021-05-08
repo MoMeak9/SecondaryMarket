@@ -8,7 +8,7 @@
     </el-menu>
     <div id="header">
       <div class="input-wrap">
-        <el-autocomplete v-model="searchText" placeholder="搜索 校内二手市场 商品/用户" class="search-input"
+        <el-autocomplete v-model="searchText" placeholder="搜索 转小二 商品" class="search-input"
                          :fetch-suggestions="querySearchAsync" @select="handSelect"
                          style="width: 20rem;" :trigger-on-focus="false"></el-autocomplete>
         <el-button icon="el-icon-search" @click="searchComm(searchText)">搜索</el-button>
