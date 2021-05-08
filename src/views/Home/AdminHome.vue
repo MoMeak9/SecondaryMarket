@@ -11,10 +11,16 @@
           <i class="el-icon-s-custom"></i>
           <span slot="title">账号管理</span>
         </el-menu-item>
-        <el-menu-item index="4" @click="tabActive='3'">
-          <i class="el-icon-s-shop"></i>
-          <span slot="title">商品管理</span>
-        </el-menu-item>
+        <el-submenu index="4" @click="tabActive='3'">
+          <template slot="title">
+            <i class="el-icon-s-shop"></i>
+            <span slot="title">商品管理</span>
+          </template>
+          <el-menu-item index="1-1" @click="filterHandler('')">所有商品</el-menu-item>
+          <el-menu-item index="1-2" @click="filterHandler(0)">待审核的</el-menu-item>
+          <el-menu-item index="1-3" @click="filterHandler(1)">审核通过</el-menu-item>
+          <el-menu-item index="1-4" @click="filterHandler(2)">被驳回的</el-menu-item>
+        </el-submenu>
         <el-menu-item index="5" @click="tabActive='4'">
           <i class="el-icon-s-claim"></i>
           <span slot="title">用户审核</span>
@@ -43,9 +49,11 @@
               </el-table-column>
               <el-table-column label="账号操作">
                 <template slot-scope="scope">
-                  <el-button type="danger" @click="banUser(scope.row.userBean.userNo)" v-show="scope.row.userBean.isBan===0">封禁
+                  <el-button type="danger" @click="banUser(scope.row.userBean.userNo)"
+                             v-show="scope.row.userBean.isBan===0">封禁
                   </el-button>
-                  <el-button type="success" @click="unBanUser(scope.row.userBean.userNo)" v-show="scope.row.userBean.isBan===1">解封
+                  <el-button type="success" @click="unBanUser(scope.row.userBean.userNo)"
+                             v-show="scope.row.userBean.isBan===1">解封
                   </el-button>
                 </template>
               </el-table-column>
@@ -75,9 +83,7 @@
               <el-table-column prop="commodity.commNo" label="商品编码"></el-table-column>
               <el-table-column prop="commodity.commDesc" label="简述"></el-table-column>
               <el-table-column prop="commodity.userName" label="创建者" width="180" sortable></el-table-column>
-              <el-table-column prop="commodity.auditStatus" label="审核状态" sortable
-                               :filters="[{text: '待审核', value: '0'},{text: '审核通过', value: 1},{text: '驳回', value: 2}]"
-                               :filter-method="filterHandler">
+              <el-table-column prop="commodity.auditStatus" label="审核状态" sortable>
                 <div slot-scope="scope">
                   <div v-if="scope.row.commodity.auditStatus === 0">待审核</div>
                   <div v-else-if="scope.row.commodity.auditStatus === 1">审核通过</div>
@@ -173,14 +179,16 @@ export default {
       userBean: '',
       auditMsg: '',
       activeIndex: '/adminHome',
+      //分页
+      tryCount: 1,
+      auditStatus: '',
       userListCurrent: 1,
       userListPages: 1,
       commListCurrent: 1,
       commListPages: 1,
     }
   },
-  components: {
-  },
+  components: {},
   methods: {
     //审核通过
     allowCommo(commNo) {
@@ -340,7 +348,7 @@ export default {
         }
       })
     },
-    changeUserList(val){
+    changeUserList(val) {
       this.$axios.post('/shop/admin/userList', this.$qs.stringify({
         current: val,
         size: '10'
@@ -367,6 +375,7 @@ export default {
           Authorization: this.token
         },
         params: {
+          auditStatus: this.auditStatus,
           current: 1,
           size: 10
         }
@@ -385,6 +394,7 @@ export default {
           Authorization: this.token
         },
         params: {
+          auditStatus: this.auditStatus,
           current: val,
           size: 10
         }
@@ -397,10 +407,26 @@ export default {
         }
       })
     },
-    //  待审核商品筛选器
-    filterHandler(value, row, column) {
-      const property = column['property'];
-      return row[property] === value;
+    filterHandler(value) {
+
+      this.auditStatus = value
+      this.$axios.get('/shop/admin/commList', {
+        headers: {
+          Authorization: this.token
+        },
+        params: {
+          auditStatus: this.auditStatus,
+          current: 1,
+          size: 10
+        }
+      }).then(resp => {
+        console.log(resp)
+        var data = resp.data
+        if (data.code === 1) {
+          this.commList = data.obj.obj
+          this.commListPages = data.obj.pages
+        }
+      })
     },
     //  数据格式化
     rTime: function (date) {

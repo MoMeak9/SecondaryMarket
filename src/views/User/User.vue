@@ -178,7 +178,7 @@
                       <el-button type="danger" size="small" @click="changeStatus(scope.row, 3)">取消订单</el-button>
                     </div>
                     <div v-if="scope.row.orderStatus === 2">
-                      <el-button type="danger" size="small" @click="changeStatus(scope.row, 3)">取消</el-button>
+                      <el-tag type="success">订单已完成！</el-tag>
                     </div>
                     <div v-else-if="scope.row.orderStatus === 3">
                       <el-tag>等待确认</el-tag>
@@ -365,7 +365,7 @@
                       <el-button type="danger" size="small" @click="changeStatus(scope.row,4)">取消订单</el-button>
                     </div>
                     <div v-if="scope.row.orderStatus === 2">
-                      <el-button type="danger" size="small" @click="changeStatus(scope.row, 4)">取消订单</el-button>
+                      <el-tag type="success">订单已完成！</el-tag>
                     </div>
                     <div v-else-if="scope.row.orderStatus === 3">
                       <el-button type="danger" size="small" @click="changeStatus(scope.row,4 )">确认取消</el-button>
@@ -959,6 +959,12 @@ export default {
             message: '提交失败',
             type: 'error'
           })
+        }
+        this.authenticationForm = {
+          college: '',
+          sno: '',
+          userRealName: '',
+          profileUrl: ''
         }
       })
     },
