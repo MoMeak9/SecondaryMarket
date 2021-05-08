@@ -126,7 +126,7 @@
                 </el-tab-pane>
               </el-tabs>
             </div>
-            <!--            历史订单展示-->
+            <!--            购买历史-->
             <div class="history-order" v-show="menuTab[1].isActive">
               <el-table :data="historyOrder" stripe style="width: 100%">
                 <el-table-column type="expand">
@@ -135,14 +135,14 @@
                       <el-form-item label="联系电话">
                         <span>{{ props.row.phone }}</span>
                       </el-form-item>
-                      <el-form-item label="送货地址">
+                      <el-form-item label="收货地址">
                         <span>{{ props.row.address }}</span>
                       </el-form-item>
                       <el-form-item label="订单号">
                         <span>{{ props.row.orderNo }}</span>
                       </el-form-item>
-                      <el-form-item label="商品编号">
-                        <span>{{ props.row.commNo }}</span>
+                      <el-form-item label="商品描述">
+                        <span>{{ props.row.commDesc }}</span>
                       </el-form-item>
                     </el-form>
                   </template>
@@ -159,7 +159,6 @@
                 <el-table-column prop="num" label="数量" width="50"></el-table-column>
                 <el-table-column prop="price" label="单价" width="50"></el-table-column>
                 <!--                描述-->
-                <el-table-column prop="note" label="商品描述"></el-table-column>
                 <el-table-column label="状态">
                   <div slot-scope="scope">
                     <div v-if="scope.row.orderStatus === 0">待处理</div>
