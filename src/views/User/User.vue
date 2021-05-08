@@ -204,7 +204,7 @@
                 <el-table-column prop="commodity.commName" label="商品名称" width="100"></el-table-column>
                 <el-table-column prop="commodity.commDesc" label="商品描述" width="200"></el-table-column>
                 <el-table-column prop="commodity.commSale" label="卖出" width="50"></el-table-column>
-                <el-table-column prop="commodity.commStock" label="数量" width="50"></el-table-column>
+                <el-table-column prop="commodity.commStock" label="库存" width="50"></el-table-column>
                 <el-table-column prop="commodity.auditStatus" label="审核状态">
                   <div slot-scope="scope">
                     <div v-if="scope.row.commodity.auditStatus === 0">待审核</div>

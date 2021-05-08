@@ -164,8 +164,7 @@ export default {
 <style lang="scss">
 #check {
   background-color: #f5f5f5;
-  padding-top: 1rem;
-  padding-bottom: 3rem;
+  padding: 1rem;
 
   .information {
     width: 45rem;
