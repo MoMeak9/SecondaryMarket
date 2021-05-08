@@ -244,7 +244,7 @@ export default {
           } else {
             this.$notify.error({
               title: '错误',
-              message: '邮箱验证码错误！',
+              message: data.msg,
               type: 'error'
             })
           }

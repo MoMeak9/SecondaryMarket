@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-menu default-active="/" class="el-menu-demo" mode="horizontal" router="true" style="border: none">
+    <el-menu default-active="/" class="el-menu-demo" mode="horizontal" router style="border: none">
       <el-menu-item index="/" style="border:none !important">首页</el-menu-item>
       <el-menu-item index="/search">搜索</el-menu-item>
       <el-menu-item index="/user" v-if="this.userBean">个人中心</el-menu-item>
@@ -26,13 +26,27 @@
       </div>
       <!--      分类栏-->
       <div class="commTag">
+        <el-tooltip content="衣物" placement="bottom" effect="light">
         <el-button><i class="iconfont" @click="getCommTag(0)">&#xe621;</i></el-button>
+        </el-tooltip>
+        <el-tooltip content="数码" placement="bottom" effect="light">
         <el-button><i class="iconfont" @click="getCommTag(1)">&#xe61f;</i></el-button>
+        </el-tooltip>
+        <el-tooltip content="食品" placement="bottom" effect="light">
         <el-button><i class="iconfont" @click="getCommTag(2)">&#xe622;</i></el-button>
+        </el-tooltip>
+        <el-tooltip content="图书" placement="bottom" effect="light">
         <el-button><i class="iconfont" @click="getCommTag(3)">&#xe648;</i></el-button>
+        </el-tooltip>
+        <el-tooltip content="化妆品" placement="bottom" effect="light">
         <el-button><i class="iconfont" @click="getCommTag(4)">&#xe625;</i></el-button>
+        </el-tooltip>
+        <el-tooltip content="文具" placement="bottom" effect="light">
         <el-button><i class="iconfont" @click="getCommTag(5)">&#xe624;</i></el-button>
+        </el-tooltip>
+        <el-tooltip content="居家" placement="bottom" effect="light">
         <el-button><i class="iconfont" @click="getCommTag(6)">&#xe620;</i></el-button>
+        </el-tooltip>
       </div>
       <!--      热表-->
       <div class="hot-list">
@@ -90,7 +104,6 @@ export default {
   mounted() {
     this.userBean = this.$store.state.userBean
     this.$nextTick(function () {
-      console.log("执行")
       //轮播图
       this.$axios.get('/shop/commodity/bannerCommList', {
         params: {

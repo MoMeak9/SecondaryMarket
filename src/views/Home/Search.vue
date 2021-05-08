@@ -1,6 +1,6 @@
 <template>
   <div id="search">
-    <el-menu default-active="/search" class="el-menu-demo" mode="horizontal" router="true">
+    <el-menu default-active="/search" class="el-menu-demo" mode="horizontal" router>
       <el-menu-item index="/">首页</el-menu-item>
       <el-menu-item index="/search">搜索</el-menu-item>
       <el-menu-item index="/user">个人中心</el-menu-item>
@@ -63,15 +63,13 @@ export default {
       searchText: '',
       commList: [],
       commTag: '',
-      userRoot: '',
       //  分页
       currentPage: 1,
-      pages: '',
+      pages: 1,
       size: 36,
     }
   },
   mounted() {
-    this.userRoot = this.$store.state.userBean.userRoot;
     this.$nextTick(function () {
       this.initData()
     })

@@ -5,7 +5,7 @@
     <div class="information">
       <el-carousel indicator-position="outside" height="30rem">
         <el-carousel-item v-for="item in obj.commPicList" :key="item">
-          <el-image :src=item fit="cover" class="banner-img" ></el-image>
+          <el-image :src=item fit="cover" class="banner-img"></el-image>
         </el-carousel-item>
       </el-carousel>
       <div class="data-content">
@@ -33,10 +33,10 @@
           商品销售：{{ obj.commodity.commSale }}
         </div>
         <div class="text-data">
-          商品库存：{{ obj.commodity.commStock - obj.commodity.commSale }}
+          商品库存：{{ obj.commodity.commStock }}
         </div>
         <div class="text-data">
-          商品总量：{{ obj.commodity.commStock }}
+          商品总量：{{ obj.commodity.commStock + obj.commodity.commSale }}
         </div>
         <el-divider><i class="el-icon-edit-outline
 "></i>审核情况

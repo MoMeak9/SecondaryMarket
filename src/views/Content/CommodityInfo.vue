@@ -13,7 +13,8 @@
           <h2>{{ obj.commodity.commName }}</h2>
           <el-divider><i class="el-icon-tickets"></i></el-divider>
           <h3>￥{{ obj.commodity.commPrice }} RMB</h3>
-          <h4>库存：{{ obj.commodity.commStock - obj.commodity.commSale }}</h4>
+          <h4>已售出：{{ obj.commodity.commSale }}</h4>
+          <h4>库存：{{ obj.commodity.commStock }}</h4>
           <h4>类别：{{ obj.commodity.commTag }}</h4>
           <h4>卖家：{{ obj.commodity.userName }}</h4>
           <el-divider><i class="el-icon-shopping-cart-full"></i></el-divider>
@@ -170,35 +171,43 @@ export default {
       }
     },
     submit() {
-      this.$axios.post('/shop/order/submitOrder', this.$qs.stringify({
-        address: this.buyForm.address,
-        commNo: this.commNo,
-        consignee: this.buyForm.consignee,
-        deTimeFrom: this.rTime(this.buyForm.Time[0]),
-        deTimeTo: this.rTime(this.buyForm.Time[1]),
-        num: this.buyForm.num,
-        phone: this.buyForm.phone
-      }), {
-        headers: {
-          Authorization: this.token
-        }
-      }).then(resp => {
-        var data = resp.data
-        if (data.code === 1) {
-          this.$notify({
-            title: '成功',
-            message: '下单成功，请在个人中心查看',
-            type: 'success'
-          })
-          this.show = !this.show
-        }
-      }).catch(function (error) {
-        this.$notify.error({
+      if (this.obj.commodity.commStock === 0) {
+        this.$notify({
           title: '错误',
-          message: '下单失败'
+          message: '尚无库存',
+          type: 'error'
         })
-        console.log(error)
-      })
+      } else {
+        this.$axios.post('/shop/order/submitOrder', this.$qs.stringify({
+          address: this.buyForm.address,
+          commNo: this.commNo,
+          consignee: this.buyForm.consignee,
+          deTimeFrom: this.rTime(this.buyForm.Time[0]),
+          deTimeTo: this.rTime(this.buyForm.Time[1]),
+          num: this.buyForm.num,
+          phone: this.buyForm.phone
+        }), {
+          headers: {
+            Authorization: this.token
+          }
+        }).then(resp => {
+          var data = resp.data
+          if (data.code === 1) {
+            this.$notify({
+              title: '成功',
+              message: '下单成功，请在个人中心查看',
+              type: 'success'
+            })
+            this.show = !this.show
+          }
+        }).catch(function (error) {
+          this.$notify.error({
+            title: '错误',
+            message: '下单失败'
+          })
+          console.log(error)
+        })
+      }
     },
     rTime(date) {
       var date1 = new Date(date).toJSON();
