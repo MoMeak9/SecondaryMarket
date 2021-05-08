@@ -28,7 +28,7 @@
                 <span>{{ item.commodity.commName }}</span>
                 <div class="bottom clearfix">
                   <div class="price">￥{{ item.commodity.commPrice }}</div>
-                  <div class="button">销量 {{ item.commodity.commSale }}</div>
+                  <div class="sale">销量 {{ item.commodity.commSale }}</div>
                 </div>
               </div>
             </el-card>
@@ -79,11 +79,8 @@ export default {
       this.searchText = this.$store.state.searchText
       this.commTag = this.$store.state.commTag
       // 获取搜索列表
-      if (this.searchText !== '' && this.searchText !== null) {
-        this.searchComm()
-      } else if (this.commTag !== '' && this.commTag !== null) {
-        this.queryCommByTag()
-      }
+      this.searchComm()
+      this.queryCommByTag()
     },
     getCommodityInfo(commNo) {
       this.$store.commit('GET_COMM', commNo)
@@ -192,6 +189,9 @@ export default {
     width: 70%;
     margin: 0 auto;
 
+    .el-pagination{
+      margin-top: 10px;
+    }
     #header {
       display: flex;
       justify-content: center;
@@ -232,7 +232,7 @@ export default {
       color: #999;
     }
 
-    .bottom {
+    .sale {
       margin-top: 13px;
       line-height: 12px;
     }

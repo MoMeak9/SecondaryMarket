@@ -71,6 +71,14 @@
                       <div class="item-info" v-if="userBean.authentication === 2">已认证</div>
                       <div class="item-info" v-else>未认证</div>
                     </div>
+                    <div class="right-item">
+                      <div class="item-label">学院 :</div>
+                      <div class="item-info">{{ userBean.college }}</div>
+                    </div>
+                    <div class="right-item">
+                      <div class="item-label">学号 :</div>
+                      <div class="item-info">{{ userBean.sno }}</div>
+                    </div>
                     <el-button type="primary" @click="reset()">保存修改</el-button>
                     <el-button type="danger" @click="logout()">登出账号</el-button>
                   </el-form>
@@ -325,7 +333,7 @@
                         <span>{{ props.row.commNo }}</span>
                       </el-form-item>
                       <el-form-item label="送货时间">
-                        <span>{{ props.row.deTimeFrom }}至{{props.row.deTimeTo}}</span>
+                        <span>{{ props.row.deTimeFrom }}至{{ props.row.deTimeTo }}</span>
                       </el-form-item>
                     </el-form>
                   </template>
@@ -970,10 +978,12 @@ export default {
   .demo-table-expand {
     font-size: 0;
   }
+
   .demo-table-expand label {
     width: 90px;
     color: #99a9bf;
   }
+
   .demo-table-expand .el-form-item {
     margin-right: 0;
     margin-bottom: 0;
@@ -991,13 +1001,11 @@ export default {
   .content {
     background: #f5f5f5;
 
-    .history-order {
-    }
-
     .container {
       display: flex;
       width: 1210px;
       margin: 80px auto;
+      padding: 0 4rem 2rem 0;
       min-height: 1000px;
       background: #fff;
       border-radius: 4px;

@@ -259,8 +259,7 @@ export default {
 #Commodity {
   background-color: #f5f5f5;
   height: 100vh;
-  padding-top: 1rem;
-  padding-bottom: 3rem;
+  padding: 1rem;
   z-index: -1;
 
   .in {
