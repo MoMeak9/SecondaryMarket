@@ -14,7 +14,10 @@ Vue.use(VueRouter)
 const routes = [
     {
         path: '/',
-        redirect: '/home'
+        redirect: '/home',
+        meta: {
+            title: '转小二 校园二手交易平台'
+        }
     },
     {
         path: '/login',
@@ -37,7 +40,7 @@ const routes = [
         name: 'home',
         component: Home,
         meta: {
-            title: '商城主页'
+            title: '转小二 校园二手交易平台'
         }
     },
     {
