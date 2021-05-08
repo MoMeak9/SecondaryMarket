@@ -6,9 +6,13 @@
 ## 技术栈
 Vue全家桶 + Element_Ui
 ## 项目使用
+
 安装： 'npm install'
+
 热加载： 'npm run serve'
+
 构建项目：'npm run build'
+
 ## 其他引用
 - VueParticles粒子背景库
 - iconfont 图标库
