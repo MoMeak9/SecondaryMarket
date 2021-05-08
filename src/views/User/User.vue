@@ -66,6 +66,11 @@
                       <div class="item-info" v-if="userBean.userRoot === 0">普通用户</div>
                       <div class="item-info" v-else>管理员</div>
                     </div>
+                    <div class="right-item">
+                      <div class="item-label">状态 :</div>
+                      <div class="item-info" v-if="userBean.authentication === 2">已认证</div>
+                      <div class="item-info" v-else>未认证</div>
+                    </div>
                     <el-button type="primary" @click="reset()">保存修改</el-button>
                     <el-button type="danger" @click="logout()">登出账号</el-button>
                   </el-form>
@@ -116,6 +121,24 @@
             <!--            历史订单展示-->
             <div class="history-order" v-show="menuTab[1].isActive">
               <el-table :data="historyOrder" stripe style="width: 100%">
+                <el-table-column type="expand">
+                  <template slot-scope="props">
+                    <el-form label-position="left" inline class="demo-table-expand">
+                      <el-form-item label="联系电话">
+                        <span>{{ props.row.phone }}</span>
+                      </el-form-item>
+                      <el-form-item label="送货地址">
+                        <span>{{ props.row.address }}</span>
+                      </el-form-item>
+                      <el-form-item label="订单号">
+                        <span>{{ props.row.orderNo }}</span>
+                      </el-form-item>
+                      <el-form-item label="商品编号">
+                        <span>{{ props.row.commNo }}</span>
+                      </el-form-item>
+                    </el-form>
+                  </template>
+                </el-table-column>
                 <!--                商品图片-->
                 <el-table-column label="图片">
                   <template slot-scope="scope">
@@ -286,12 +309,36 @@
             <!--            卖家订单管理-->
             <div class="pending-order" v-show="menuTab[4].isActive">
               <el-table :data="pendingOrder" stripe style="width: 100%">
+                <el-table-column type="expand">
+                  <template slot-scope="props">
+                    <el-form label-position="left" inline class="demo-table-expand">
+                      <el-form-item label="收货人">
+                        <span>{{ props.row.consignee }}</span>
+                      </el-form-item>
+                      <el-form-item label="联系电话">
+                        <span>{{ props.row.phone }}</span>
+                      </el-form-item>
+                      <el-form-item label="收货地址">
+                        <span>{{ props.row.address }}</span>
+                      </el-form-item>
+                      <el-form-item label="订单号">
+                        <span>{{ props.row.commNo }}</span>
+                      </el-form-item>
+                      <el-form-item label="送货时间">
+                        <span>{{ props.row.deTimeFrom }}至{{props.row.deTimeTo}}</span>
+                      </el-form-item>
+                    </el-form>
+                  </template>
+                </el-table-column>
+                <el-table-column label="图片">
+                  <template slot-scope="scope">
+                    <el-image :src="scope.row.commPicList[0]" fit='cover' :preview-src-list="scope.row.commPicList"
+                              style="width: 50px;height: 50px"></el-image>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="commName" label="商品名"></el-table-column>
                 <el-table-column prop="createTime" label="下单时间"></el-table-column>
-                <el-table-column prop="commName" label="名称"></el-table-column>
                 <el-table-column prop="num" label="数量"></el-table-column>
-                <el-table-column prop="consignee" label="收货人"></el-table-column>
-                <el-table-column prop="phone" label="联系电话"></el-table-column>
-                <el-table-column prop="address" label="收货地址" width="180"></el-table-column>
                 <el-table-column label="状态">
                   <div slot-scope="scope">
                     <div v-if="scope.row.orderStatus === 0">待处理</div>
@@ -494,6 +541,8 @@ export default {
           this.pendingOrder = data.obj
           for (let i = 0; i < this.pendingOrder.length; i++) {
             this.pendingOrder[i].createTime = this.rTime(this.pendingOrder[i].createTime)
+            this.pendingOrder[i].deTimeFrom = this.rTime(this.pendingOrder[i].deTimeFrom)
+            this.pendingOrder[i].deTimeTo = this.rTime(this.pendingOrder[i].deTimeTo)
           }
         }
       }).catch(function (error) {
@@ -513,12 +562,12 @@ export default {
         }).then(resp => {
           var data = resp.data
           if (data.code === 1) {
-            row.orderStatus += 1
             this.$notify({
               title: '成功',
               message: '发货成功！请及时发货！',
               type: 'success'
             })
+            this.initData()
           }
         }).catch(function (error) {
           console.log(error)
@@ -539,6 +588,7 @@ export default {
               message: '已取消订单',
               type: 'success'
             })
+            this.initData()
           }
         }).catch(function (error) {
           console.log(error)
@@ -559,6 +609,7 @@ export default {
               message: '已确认收货',
               type: 'success'
             })
+            this.initData()
           }
         }).catch(function (error) {
           console.log(error)
@@ -574,12 +625,12 @@ export default {
         }).then(resp => {
           var data = resp.data
           if (data.code === 1) {
-            // row.orderStatus += 1
             this.$notify({
               title: '成功',
               message: '订单申请取消',
               type: 'success'
             })
+            this.initData()
           }
         }).catch(function (error) {
           console.log(error)
@@ -915,8 +966,21 @@ export default {
 </script>
 <style lang="scss">
 #user {
-  .header {
 
+  .demo-table-expand {
+    font-size: 0;
+  }
+  .demo-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+  }
+  .demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 50%;
+  }
+
+  .header {
   }
 
   .nav {
@@ -928,74 +992,6 @@ export default {
     background: #f5f5f5;
 
     .history-order {
-      .history-item {
-        margin-bottom: 20px;
-        margin-right: 90px;
-        border-bottom: #e4e3e3 solid 1px;
-
-        .item-top {
-          display: flex;
-
-          p {
-            margin: 0;
-            font-size: 14px;
-            color: #3c3c3c;
-          }
-        }
-
-        .item-content {
-          display: flex;
-          margin-top: 10px;
-
-          .img-wrap {
-            img {
-              height: 100px;
-              width: 100px;
-            }
-          }
-
-          .content-item {
-            height: 100px;
-            font-size: 14px;
-            line-height: 100px;
-            margin-left: 20px;
-            color: #3c3c3c;
-
-            span {
-              display: inline-block;
-              vertical-align: middle;
-              line-height: 22px;
-            }
-          }
-
-          .item-name {
-            width: 400px;
-          }
-
-          .item-num {
-            width: 50px;
-            text-align: center;
-          }
-
-          .item-price {
-            width: 50px;
-            text-align: center;
-            color: #3c3c3c;
-            font-weight: bolder;
-          }
-        }
-
-        .item-bottom {
-          position: relative;
-          height: 45px;
-
-          .button-wrap {
-            position: absolute;
-            line-height: 40px;
-            right: 20px;
-          }
-        }
-      }
     }
 
     .container {
