@@ -42,7 +42,10 @@ export const Server = new class {
     }
 
     releaseComm(params, token) {
-        return axios.get(hostlocation + '/shop/commodity/releaseComm', params, {headers: {Authorization: token}}).then((res) => res.data)
+        return axios.get(hostlocation + '/shop/commodity/releaseComm', {
+            headers: {Authorization: token},
+            params
+        }).then((res) => res.data)
     }
 
     searchComm(params) {
@@ -57,20 +60,55 @@ export const Server = new class {
     sendEmail(params) {
         return axios.post(hostlocation + '/shop/message/sendEmail', params).then((res) => res.data)
     }
+
 //    用户相关
     login(params) {
         return axios.post(hostlocation + '/shop/user/login', qs.stringify(params)).then((res) => res.data)
     }
+
     forgetPassword(params) {
         return axios.post(hostlocation + '/shop/user/forgetPassword', qs.stringify(params)).then((res) => res.data)
     }
-    changePassword(params,token) {
+
+    changePassword(params, token) {
         return axios.post(hostlocation + '/shop/user/changePassword', params, {headers: {Authorization: token}}).then((res) => res.data)
     }
+
     register(params) {
         return axios.post(hostlocation + '/shop/user/register', qs.stringify(params)).then((res) => res.data)
     }
+
     updateUserInfo(params) {
         return axios.post(hostlocation + '/shop/user/updateUserInfo', qs.stringify(params)).then((res) => res.data)
     }
+
+//    订单相关接口
+    deleteOrderRecord(params, token) {
+        return axios.post(hostlocation + '/shop/order/deleteOrderRecord', params, {headers: {Authorization: token}}).then((res) => res.data)
+    }
+
+    queryUserReceiveOrderList(params, token) {
+        return axios.get(hostlocation + '/shop/order/queryUserReceiveOrderList', {
+            headers: {Authorization: token},
+            params
+        }).then((res) => res.data)
+    }
+
+    queryUserSubmitOrderList(params, token) {
+        return axios.get(hostlocation + '/shop/order/queryUserSubmitOrderList', {
+            headers: {Authorization: token},
+            params
+        }).then((res) => res.data)
+    }
+
+    submitOrder(params, token) {
+        return axios.post(hostlocation + '/shop/order/submitOrder', params, {headers: {Authorization: token}}).then((res) => res.data)
+    }
+
+    updateOrderStatus(params, token) {
+        return axios.post(hostlocation + '/shop/order/updateOrderStatus', params, {headers: {Authorization: token}}).then((res) => res.data)
+    }
+
+//    商品评论
+
 }

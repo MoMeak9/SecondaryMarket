@@ -28,16 +28,10 @@ router.beforeEach((to, from, next) => {
     } else if (to.path === '/home') {
         document.title = to.meta.title
         next()
-    } else if (to.path === '/adminHome') {
-        document.title = to.meta.title
-        next()
     } else if (to.path === '/user') {
         document.title = to.meta.title
         next()
     } else if (to.path === '/CommodityInfo') {
-        document.title = to.meta.title
-        next()
-    } else if (to.path === '/check') {
         document.title = to.meta.title
         next()
     } else if (to.path === '/search') {
@@ -49,11 +43,14 @@ router.beforeEach((to, from, next) => {
 })
 
 import axios from 'axios'
+
 Vue.prototype.$axios = axios;
 axios.defaults.baseURL = window.PLATFROM_CONFIG.baseURL
 
 import qs from 'qs'
+
 Vue.prototype.$qs = qs;
 
 import VueCropper from 'vue-cropper'
+
 Vue.use(VueCropper)

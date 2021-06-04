@@ -7,7 +7,6 @@ import Home from "@/views/Home/Home";
 import User from "@/views/User/User";
 import CommodityInfo from "@/views/Content/CommodityInfo";
 import Search from "@/views/Home/Search";
-import CheckComm from "@/views/Content/CheckComm";
 
 Vue.use(VueRouter)
 const routes = [
@@ -66,15 +65,6 @@ const routes = [
             title: '搜索商品'
         }
     },
-    {
-        path: '/check',
-        name: 'check',
-        component: CheckComm,
-        meta: {
-            title: '检查商品信息'
-        }
-    }
-
 ]
 
 const router = new VueRouter({

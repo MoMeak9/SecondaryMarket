@@ -66,6 +66,8 @@
 </template>
 
 <script>
+import {Server} from "@/service/api";
+
 export default {
   data() {
     let validatePass = (rule, value, callback) => {
@@ -141,7 +143,7 @@ export default {
   },
   methods: {
     initDate() {
-      this.$axios.get('/shop/commodity/queryCommByNo', {
+      Server.queryCommByNo({
         params: {
           commNo: this.commNo,
         }
@@ -178,7 +180,7 @@ export default {
           type: 'error'
         })
       } else {
-        this.$axios.post('/shop/order/submitOrder', this.$qs.stringify({
+        Server.submitOrder({
           address: this.buyForm.address,
           commNo: this.commNo,
           consignee: this.buyForm.consignee,
@@ -186,11 +188,7 @@ export default {
           deTimeTo: this.rTime(this.buyForm.Time[1]),
           num: this.buyForm.num,
           phone: this.buyForm.phone
-        }), {
-          headers: {
-            Authorization: this.token
-          }
-        }).then(resp => {
+        },this.token).then(resp => {
           var data = resp.data
           if (data.code === 1) {
             this.$notify({
@@ -247,7 +245,7 @@ export default {
   },
   mounted() {
     this.token = this.$store.state.token
-    this.commNo = this.$store.state.commNo
+    this.commNo = this.$route.query.commNo
     this.$nextTick(function () {
       this.initDate()
     })
