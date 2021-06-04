@@ -71,6 +71,8 @@
   </div>
 </template>
 <script>
+import {Server} from "@/service/api";
+
 export default {
   data() {
     let validatePass = (rule, value, callback) => {
@@ -172,10 +174,10 @@ export default {
           type: 'error'
         })
       } else {
-        this.$axios.post('/shop/user/login', this.$qs.stringify({
+        Server.login({
           userEmail: this.loginForm.email,
           userPassword: this.loginForm.password,
-        })).then((resp) => {
+        }).then((resp) => {
           const data = resp.data
           if (data.code === 1) {
             if (data.obj.userBean.isBan === 1) {
@@ -223,14 +225,14 @@ export default {
           type: 'error',
         })
       } else {
-        this.$axios.post('/shop/user/register', this.$qs.stringify({
+        Server.register({
           code: this.code,
           encryptionCode: this.encryptionCode,
           time: this.time,
           userEmail: this.registerForm.email,
           userName: this.registerForm.name,
           userPassword: this.registerForm.password,
-        })).then((resp) => {
+        }).then((resp) => {
           const data = resp.data
           if (data.code === 1) {
             this.$notify({
@@ -252,7 +254,7 @@ export default {
       }
     },
     validation() {
-      this.$axios.get('/shop/message/sendEmail', {
+      Server.sendEmail({
         params: {
           userEmail: this.registerForm.email,
         }

@@ -49,6 +49,8 @@
 </template>
 
 <script>
+import {Server} from "@/service/api";
+
 export default {
   data() {
     var validatePass = (rule, value, callback) => {
@@ -101,10 +103,8 @@ export default {
   },
   methods: {
     validation() {
-      this.$axios.get('/shop/message/sendEmail', {
-        params: {
-          userEmail: this.resetForm.userEmail,
-        }
+      Server.sendEmail({
+        userEmail: this.resetForm.userEmail,
       }).then((response) => {
         const data = response.data
         if (data.code === 1) {
@@ -134,13 +134,13 @@ export default {
           type: 'error'
         })
       } else {
-        this.$axios.post('/shop/user/forgetPassword', this.$qs.stringify({
+        Server.forgetPassword({
           code: this.resetForm.code,
           encryptionCode: this.resetForm.encryptionCode,
           time: this.resetForm.time,
           userEmail: this.resetForm.userEmail,
           userPassword: this.resetForm.password
-        })).then((response) => {
+        }).then((response) => {
           const data = response.data
           if (data.code === 1) {
             this.$notify({

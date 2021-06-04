@@ -5,17 +5,13 @@ import qs from 'qs'
 const hostlocation = 'https://zhuanxiaoer.cn'
 // const hostlocation = ''
 export const Server = new class {
-    login(params) {
-        return axios.post(hostlocation + '/shop/user/login', qs.stringify(params)).then((res) => res.data)
-    }
-
 //    商品相关
     bannerList(params) {
         return axios.get(hostlocation + '/shop/commodity/bannerList', params).then((res) => res.data)
     }
 
     deleteComm(params, token) {
-        return axios.post(hostlocation + '/shop/admin/deleteCommComment', params, {headers: {Authorization: token}}).then((res) => res.data)
+        return axios.post(hostlocation + '/shop/commodity/deleteCommComment', params, {headers: {Authorization: token}}).then((res) => res.data)
     }
 
     initialCommList(params) {
@@ -51,5 +47,30 @@ export const Server = new class {
 
     searchComm(params) {
         return axios.get(hostlocation + '/shop/commodity/searchComm', params).then((res) => res.data)
+    }
+
+//    通知接口
+    orderSendEmail(params, token) {
+        return axios.post(hostlocation + '/shop/message/orderSendEmail', params, {headers: {Authorization: token}}).then((res) => res.data)
+    }
+
+    sendEmail(params) {
+        return axios.post(hostlocation + '/shop/message/sendEmail', params).then((res) => res.data)
+    }
+//    用户相关
+    login(params) {
+        return axios.post(hostlocation + '/shop/user/login', qs.stringify(params)).then((res) => res.data)
+    }
+    forgetPassword(params) {
+        return axios.post(hostlocation + '/shop/user/forgetPassword', qs.stringify(params)).then((res) => res.data)
+    }
+    changePassword(params,token) {
+        return axios.post(hostlocation + '/shop/user/changePassword', params, {headers: {Authorization: token}}).then((res) => res.data)
+    }
+    register(params) {
+        return axios.post(hostlocation + '/shop/user/register', qs.stringify(params)).then((res) => res.data)
+    }
+    updateUserInfo(params) {
+        return axios.post(hostlocation + '/shop/user/updateUserInfo', qs.stringify(params)).then((res) => res.data)
     }
 }
