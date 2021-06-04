@@ -1,0 +1,55 @@
+//引入axios和qs插件
+import axios from 'axios'
+import qs from 'qs'
+//创建一个类并导出
+const hostlocation = 'https://zhuanxiaoer.cn'
+// const hostlocation = ''
+export const Server = new class {
+    login(params) {
+        return axios.post(hostlocation + '/shop/user/login', qs.stringify(params)).then((res) => res.data)
+    }
+
+//    商品相关
+    bannerList(params) {
+        return axios.get(hostlocation + '/shop/commodity/bannerList', params).then((res) => res.data)
+    }
+
+    deleteComm(params, token) {
+        return axios.post(hostlocation + '/shop/admin/deleteCommComment', params, {headers: {Authorization: token}}).then((res) => res.data)
+    }
+
+    initialCommList(params) {
+        return axios.get(hostlocation + '/shop/commodity/initialCommList', params).then((res) => res.data)
+    }
+
+    preSearchComm(params) {
+        return axios.get(hostlocation + '/shop/commodity/preSearchComm', params).then((res) => res.data)
+    }
+
+    queryCommByNo(params) {
+        return axios.get(hostlocation + '/shop/commodity/queryCommByNo', params).then((res) => res.data)
+    }
+
+    queryCommByTag(params) {
+        return axios.get(hostlocation + '/shop/commodity/queryCommByTag', params).then((res) => res.data)
+    }
+
+    queryUserComm(params, token) {
+        return axios.get(hostlocation + '/shop/commodity/queryUserComm', {
+            headers: {Authorization: token},
+            params
+        }).then((res) => res.data)
+    }
+
+    recommendCommList(params) {
+        return axios.get(hostlocation + '/shop/commodity/recommendCommList', params).then((res) => res.data)
+    }
+
+    releaseComm(params, token) {
+        return axios.get(hostlocation + '/shop/commodity/releaseComm', params, {headers: {Authorization: token}}).then((res) => res.data)
+    }
+
+    searchComm(params) {
+        return axios.get(hostlocation + '/shop/commodity/searchComm', params).then((res) => res.data)
+    }
+}

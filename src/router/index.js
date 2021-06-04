@@ -4,7 +4,6 @@ import VueRouter from 'vue-router'
 import Repassword from "@/views/Login/Repassword";
 import Login from "@/views/Login/Login";
 import Home from "@/views/Home/Home";
-import AdminHome from "@/views/Home/AdminHome";
 import User from "@/views/User/User";
 import CommodityInfo from "@/views/Content/CommodityInfo";
 import Search from "@/views/Home/Search";
@@ -41,14 +40,6 @@ const routes = [
         component: Home,
         meta: {
             title: '转小二 校园二手交易平台'
-        }
-    },
-    {
-        path: '/adminHome',
-        name: 'AdminHome',
-        component: AdminHome,
-        meta: {
-            title: '管理审核'
         }
     },
     {
