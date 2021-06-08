@@ -123,7 +123,7 @@ export default {
       obj: {},
       show: false,
       //评论内容
-      content:'',
+      content: '',
       buyForm: {
         commNo: this.$route.query.commNo,
         num: 1,
@@ -280,7 +280,44 @@ export default {
       console.log('go back');
     },
     comment() {
-
+      Server.insertCommComment({
+        commNo: this.commNo,
+        content: this.content
+      }).then(resp => {
+        if (resp.code === 1) {
+          this.$notify({
+            title: '成功',
+            message: '留言评论成功',
+            type: 'success'
+          })
+        }
+      }).catch(function (error) {
+        this.$notify.error({
+          title: '错误',
+          message: '留言评论失败'
+        })
+        console.log(error)
+      })
+    },
+    queryCommCommentList(){
+      Server.queryCommCommentList({
+        commNo: this.commNo,
+        num:10
+      }).then(resp => {
+        if (resp.code === 1) {
+          this.$notify({
+            title: '成功',
+            message: '留言评论成功',
+            type: 'success'
+          })
+        }
+      }).catch(function (error) {
+        this.$notify.error({
+          title: '错误',
+          message: '留言评论失败'
+        })
+        console.log(error)
+      })
     }
   },
   mounted() {
