@@ -27,25 +27,25 @@
       <!--      分类栏-->
       <div class="commTag">
         <el-tooltip content="衣物" placement="bottom" effect="light">
-        <el-button><i class="iconfont" @click="getCommTag(0)">&#xe621;</i></el-button>
+          <el-button><i class="iconfont" @click="getCommTag(0)">&#xe621;</i></el-button>
         </el-tooltip>
         <el-tooltip content="数码" placement="bottom" effect="light">
-        <el-button><i class="iconfont" @click="getCommTag(1)">&#xe61f;</i></el-button>
+          <el-button><i class="iconfont" @click="getCommTag(1)">&#xe61f;</i></el-button>
         </el-tooltip>
         <el-tooltip content="食品" placement="bottom" effect="light">
-        <el-button><i class="iconfont" @click="getCommTag(2)">&#xe622;</i></el-button>
+          <el-button><i class="iconfont" @click="getCommTag(2)">&#xe622;</i></el-button>
         </el-tooltip>
         <el-tooltip content="图书" placement="bottom" effect="light">
-        <el-button><i class="iconfont" @click="getCommTag(3)">&#xe648;</i></el-button>
+          <el-button><i class="iconfont" @click="getCommTag(3)">&#xe648;</i></el-button>
         </el-tooltip>
         <el-tooltip content="化妆品" placement="bottom" effect="light">
-        <el-button><i class="iconfont" @click="getCommTag(4)">&#xe625;</i></el-button>
+          <el-button><i class="iconfont" @click="getCommTag(4)">&#xe625;</i></el-button>
         </el-tooltip>
         <el-tooltip content="文具" placement="bottom" effect="light">
-        <el-button><i class="iconfont" @click="getCommTag(5)">&#xe624;</i></el-button>
+          <el-button><i class="iconfont" @click="getCommTag(5)">&#xe624;</i></el-button>
         </el-tooltip>
         <el-tooltip content="居家" placement="bottom" effect="light">
-        <el-button><i class="iconfont" @click="getCommTag(6)">&#xe620;</i></el-button>
+          <el-button><i class="iconfont" @click="getCommTag(6)">&#xe620;</i></el-button>
         </el-tooltip>
       </div>
       <!--      热表-->
@@ -61,6 +61,8 @@
   </div>
 </template>
 <script>
+import {Server} from "@/service/api";
+
 export default {
   components: {},
   data() {
@@ -74,7 +76,7 @@ export default {
       noMore: false,
       userBean: {
         userName: '',
-        userRoot:0,
+        userRoot: 0,
       },
       //  商品类型选择
       options: [{
@@ -105,27 +107,22 @@ export default {
     this.userBean = this.$store.state.userBean
     this.$nextTick(function () {
       //轮播图
-      this.$axios.get('/shop/commodity/bannerCommList', {
+      Server.bannerList({
         params: {
           num: 4,
         }
-      }).then((resp) => {
-        console.log("执行")
-        var data = resp.data
-        this.bannerList = data.obj
-        this.isLoadDom = true
+      }).then(resp => {
+        this.bannerList = resp.obj
       }).catch(function (error) {
         console.log(error)
       })
       //初始商品列表
-      this.$axios.get('/shop/commodity/initialCommList', {
+      Server.initialCommList({
         params: {
           num: 12,
         }
       }).then(resp => {
-        var data = resp.data
-        this.hotList = data.obj
-        // this.commonList = data.obj
+        this.hotList = resp.obj
       }).catch(function (error) {
         console.log(error)
       })
@@ -133,13 +130,17 @@ export default {
   },
   methods: {
     getCommodityInfo(commNo) {
-      this.$store.commit('GET_COMM', commNo)
-      // 跳转至商品页面
-      this.$router.push({path: '/CommodityInfo'})
+      this.$router.push({
+        path: '/CommodityInfo', query: {
+          commNo: commNo
+        }
+      })
     },
     querySearchAsync(queryString, cb) {
-      this.$axios.get('/shop/commodity/preSearchComm', {params: {keyName: queryString, num: 6}}).then(resp => {
-        var respData = resp.data
+      Server.preSearchComm({
+        params: {keyName: queryString, num: 6}
+      }).then(resp => {
+        var respData = resp
         if (respData.code === 1) {
           var data = respData.obj
           var results = []
@@ -161,7 +162,7 @@ export default {
       if (this.commonList.length !== 0) {
         this.loading = true
         setTimeout(() => {
-          this.$axios.get('/shop/commodity/initialCommList', {
+          Server.initialCommList({
             params: {
               num: 5
             }
@@ -197,9 +198,6 @@ export default {
     }
   },
   computed: {
-    disabled() {
-      return this.loading || this.noMore
-    }
   }
 }
 </script>

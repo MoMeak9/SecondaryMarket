@@ -31,15 +31,6 @@ const mutations = {
         state.userBean = null
         window.localStorage.removeItem('user')
     },
-    //商品编码
-    GET_COMM: (state, commNo) => {
-        state.commNo = commNo
-        window.localStorage.commNo = commNo
-    },
-    DEL_COMM: (state) => {
-        state.commNo = ''
-        window.localStorage.removeItem('commNo')
-    },
     //    搜索信息
     GET_SEARCH: (state, searchText) => {
         state.searchText = searchText
