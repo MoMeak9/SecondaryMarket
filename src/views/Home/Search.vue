@@ -56,6 +56,8 @@
 </template>
 
 <script>
+import {Server} from "@/service/api";
+
 export default {
   name: "Search",
   data() {
@@ -76,30 +78,46 @@ export default {
   },
   methods: {
     initData() {
-      this.searchText = this.$store.state.searchText
-      this.commTag = this.$store.state.commTag
+      this.searchText = this.$route.query.keyName
+      this.commTag = this.$route.query.commTag
+      console.log(this.searchText)
       // 获取搜索列表
-      this.searchComm()
-      this.queryCommByTag()
+      if(this.searchText === undefined && this.commTag === undefined){
+        //初始商品列表
+        Server.initialCommList({
+          params: {
+            num: 6,
+          }
+        }).then(resp => {
+          this.commList = resp.obj
+        }).catch(function (error) {
+          console.log(error)
+        })
+      }else if (this.searchText === undefined || this.searchText===null) {
+        this.queryCommByTag()
+      } else {
+        this.searchComm()
+      }
     },
     getCommodityInfo(commNo) {
-      this.$store.commit('GET_COMM', commNo)
       // 跳转至商品页面
-      this.$router.push({path: '/CommodityInfo'})
+      this.$router.push({
+        path: '/CommodityInfo', query: {
+          commNo: commNo
+        }
+      })
     },
     searchComm() {
-      this.$axios.get('/shop/commodity/searchComm', {
+      Server.searchComm({
         params: {
           current: 1,
           keyName: this.searchText,
           size: this.size
         }
       }).then(resp => {
-        var data = resp.data
-        if (data.code === 1) {
-          this.commList = data.obj.obj
-          this.pages = data.obj.pages
-          this.$store.commit('DEL_COMMTAG')
+        if (resp.code === 1) {
+          this.commList = resp.obj.obj
+          this.pages = resp.obj.pages
         }
         this.currentPage = 1
       }).catch(function (error) {
@@ -107,52 +125,48 @@ export default {
       })
     },
     changeSearchComm(val) {
-      this.$axios.get('/shop/commodity/searchComm', {
+      Server.searchComm({
         params: {
           current: val,
           keyName: this.searchText,
           size: this.size
         }
       }).then(resp => {
-        var data = resp.data
-        if (data.code === 1) {
-          this.commList = data.obj.obj
-          this.pages = data.obj.pages
+        if (resp.code === 1) {
+          this.commList = resp.obj.obj
+          this.pages = resp.obj.pages
         }
       }).catch(function (error) {
         console.log(error)
       })
     },
     queryCommByTag() {
-      this.$axios.get('/shop/commodity/queryCommByTag', {
+      Server.queryCommByTag({
         params: {
           commTag: this.commTag,
           current: 1,
           size: this.size
         }
       }).then(resp => {
-        var data = resp.data
-        if (data.code === 1) {
-          this.commList = data.obj.obj
-          this.pages = data.obj.pages
-          this.$store.commit('DEL_SEARCH')
+        if (resp.code === 1) {
+          this.commList = resp.obj.obj
+          this.pages = resp.obj.pages
         }
       }).catch(function (error) {
         console.log(error)
       })
     },
     changeQueryCommByTag(val) {
-      this.$axios.get('/shop/commodity/queryCommByTag', {
+      Server.queryCommByTag({
         params: {
           commTag: this.commTag,
           current: val,
           size: this.size
         }
       }).then(resp => {
-        var data = resp.data
-        if (data.code === 1) {
-          this.commList = data.obj.obj
-          this.pages = data.obj.pages
+        if (resp.code === 1) {
+          this.commList = resp.obj.obj
+          this.pages = resp.obj.pages
         }
       }).catch(function (error) {
         console.log(error)
@@ -189,9 +203,10 @@ export default {
     width: 70%;
     margin: 0 auto;
 
-    .el-pagination{
+    .el-pagination {
       margin-top: 10px;
     }
+
     #header {
       display: flex;
       justify-content: center;

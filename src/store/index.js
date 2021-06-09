@@ -5,10 +5,7 @@ Vue.use(Vuex)
 //更换为Token存储
 const state = {
     userBean: window.localStorage.getItem('user'),
-    commodity: window.localStorage.getItem('commodity'),
     token: window.localStorage.getItem('token'),
-    searchText: window.localStorage.getItem('searchText'),
-    commNo: window.localStorage.getItem('commNo')
 }
 const mutations = {
     //用户Token
@@ -31,24 +28,6 @@ const mutations = {
         state.userBean = null
         window.localStorage.removeItem('user')
     },
-    //    搜索信息
-    GET_SEARCH: (state, searchText) => {
-        state.searchText = searchText
-        window.localStorage.searchText = searchText
-    },
-    DEL_SEARCH: (state) => {
-        state.searchText = ''
-        window.localStorage.removeItem('searchText')
-    },
-//    商品类型详细
-    GET_COMMTAG:(state,commTag)=>{
-        state.commTag = commTag
-        window.localStorage.searchText = commTag
-    },
-    DEL_COMMTAG:(state) =>{
-        state.commTag = ''
-        window.localStorage.removeItem('commTag')
-    }
 }
 export default new Vuex.Store({
     state,

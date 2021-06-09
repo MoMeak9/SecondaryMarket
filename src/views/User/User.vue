@@ -4,7 +4,6 @@
       <el-menu default-active="/user" class="el-menu-demo" mode="horizontal" router>
         <el-menu-item index="/">首页</el-menu-item>
         <el-menu-item index="/search">搜索</el-menu-item>
-        <el-menu-item index="/adminHome" v-if="userBean.userRoot!==0">管理中心</el-menu-item>
         <el-menu-item index="/user">个人中心</el-menu-item>
       </el-menu>
     </el-header>

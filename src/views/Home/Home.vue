@@ -19,7 +19,7 @@
       <div class="banner-slider">
         <el-carousel indicator-position="outside" height="27vw" style="width: 48vw;margin: 0 auto">
           <el-carousel-item v-for="item in bannerList" :key="item.id">
-            <el-image :src=item.commPicList[0] fit="cover" @click="getCommodityInfo(item.commodity.commNo)"
+            <el-image :src=item.picUrl fit="cover" @click="getCommodityInfo(item.commodity.commNo)"
                       class="banner-img"></el-image>
           </el-carousel-item>
         </el-carousel>
@@ -188,13 +188,15 @@ export default {
     },
     //  搜索商品
     searchComm(text) {
-      this.$store.commit('GET_SEARCH', text)
-      this.$router.push({path: '/search'})
+      this.$router.push({path: '/search',query:{
+          keyName:text
+        }})
     },
     // 前往分区
     getCommTag(commTag) {
-      this.$store.commit("GET_COMMTAG", commTag)
-      this.$router.push({path: '/search'})
+      this.$router.push({path: '/search',query:{
+          commTag:commTag
+        }})
     }
   },
   computed: {

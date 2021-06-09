@@ -178,9 +178,8 @@ export default {
           userEmail: this.loginForm.email,
           userPassword: this.loginForm.password,
         }).then((resp) => {
-          const data = resp.data
-          if (data.code === 1) {
-            if (data.obj.userBean.isBan === 1) {
+          if (resp.code === 1) {
+            if (resp.obj.userBean.isBan === 1) {
               this.$notify({
                 title: 'Error',
                 message: '账户被封禁',
@@ -188,11 +187,9 @@ export default {
               })
             } else {
               //用户数据
-              this.$store.commit('SET_TOKEN', data.obj.token)
-              this.$store.commit('GET_USER', data.obj.userBean)
-              console.log(this.$store.state.token)
-              console.log(this.$store.state.user)
-              if (data.obj.userBean.userRoot === 0) {
+              this.$store.commit('SET_TOKEN', resp.obj.token)
+              this.$store.commit('GET_USER', resp.obj.userBean)
+              if (resp.obj.userBean.userRoot === 0) {
                 this.$notify({
                   title: '登入成功',
                   message: '福大二手交易市场欢迎您',
@@ -233,8 +230,7 @@ export default {
           userName: this.registerForm.name,
           userPassword: this.registerForm.password,
         }).then((resp) => {
-          const data = resp.data
-          if (data.code === 1) {
+          if (resp.code === 1) {
             this.$notify({
               title: '注册成功',
               message: '福大二手交易市场欢迎您',
@@ -246,7 +242,7 @@ export default {
           } else {
             this.$notify.error({
               title: '错误',
-              message: data.msg,
+              message: resp.msg,
               type: 'error'
             })
           }
@@ -258,16 +254,15 @@ export default {
         params: {
           userEmail: this.registerForm.email,
         }
-      }).then((response) => {
-        const data = response.data
-        if (data.code === 1) {
+      }).then((resp) => {
+        if (resp.code === 1) {
           this.$notify({
             title: '发送成功',
             message: '请查看您的邮箱',
             type: 'success'
           })
-          this.encryptionCode = data.obj.code;
-          this.time = data.obj.time;
+          this.encryptionCode = resp.obj.code;
+          this.time = resp.obj.time;
           console.log(this.encryptionCode)
           console.log(this.time)
         } else {

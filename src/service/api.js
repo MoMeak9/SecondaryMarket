@@ -111,11 +111,11 @@ export const Server = new class {
 
 //    商品评论
     insertCommComment(params, token) {
-        return axios.post(hostlocation + '/shop/commComment/insertCommComment', params, {headers: {Authorization: token}}).then((res) => res.data)
+        return axios.post(hostlocation + '/shop/commComment/insertCommComment', qs.stringify(params), {headers: {Authorization: token}}).then((res) => res.data)
     }
 
     reportCommComment(params) {
-        return axios.post(hostlocation + '/shop/commComment/reportCommComment', params).then((res) => res.data)
+        return axios.post(hostlocation + '/shop/commComment/reportCommComment', qs.stringify(params)).then((res) => res.data)
     }
 
     queryCommCommentList(params) {
