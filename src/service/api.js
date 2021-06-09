@@ -30,10 +30,9 @@ export const Server = new class {
         return axios.get(hostlocation + '/shop/commodity/queryCommByTag', params).then((res) => res.data)
     }
 
-    queryUserComm(params, token) {
+    queryUserComm(token) {
         return axios.get(hostlocation + '/shop/commodity/queryUserComm', {
-            headers: {Authorization: token},
-            params
+            headers: {Authorization: token}
         }).then((res) => res.data)
     }
 
@@ -87,17 +86,15 @@ export const Server = new class {
         return axios.post(hostlocation + '/shop/order/deleteOrderRecord', params, {headers: {Authorization: token}}).then((res) => res.data)
     }
 
-    queryUserReceiveOrderList(params, token) {
+    queryUserReceiveOrderList(token) {
         return axios.get(hostlocation + '/shop/order/queryUserReceiveOrderList', {
-            headers: {Authorization: token},
-            params
+            headers: {Authorization: token}
         }).then((res) => res.data)
     }
 
-    queryUserSubmitOrderList(params, token) {
+    queryUserSubmitOrderList(token) {
         return axios.get(hostlocation + '/shop/order/queryUserSubmitOrderList', {
-            headers: {Authorization: token},
-            params
+            headers: {Authorization: token}
         }).then((res) => res.data)
     }
 

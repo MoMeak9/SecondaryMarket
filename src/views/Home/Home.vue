@@ -274,8 +274,7 @@ export default {
 
     .hot-wrap {
       background-color: #fff;
-      width: 234px;
-      height: 300px;
+      flex: 1 1 auto;
       margin-left: 22px;
       margin-top: 13px;
       text-align: center;

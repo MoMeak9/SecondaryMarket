@@ -1,10 +1,33 @@
 <template>
   <el-tabs type="card" v-model="activeName">
     <el-tab-pane label="个人信息" name="first">
+      <el-dialog
+          title="申请提现"
+          :visible.sync="isShow"
+          width="35%"
+          center>
+        <span>
+          <el-form label-width="80px" :model="drawingsForm" :rules="rules">
+            <el-form-item label="户名" prop="realName">
+              <el-input v-model="drawingsForm.realName" style="width: 90%;"></el-input>
+            </el-form-item>
+            <el-form-item label="卡号" prop="cardNo">
+              <el-input v-model="drawingsForm.cardNo" style="width: 90%;"></el-input>
+            </el-form-item>
+            <el-form-item label="提现金额" prop="money">
+              <el-input v-model="drawingsForm.money" style="width: 90%;"></el-input>
+            </el-form-item>
+          </el-form>
+        </span>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="isShow=false">取 消</el-button>
+          <el-button type="primary" @click="drawings">申请提现</el-button>
+       </span>
+      </el-dialog>
       <el-form :model="userBean" style="width: 50%;margin: 3em">
         <div class="right-item">
           <div class="item-label">余额 :</div>
-          <div class="item-info">{{ this.userBean.userEmail }}</div>
+          <div class="item-info">998.00 元</div>
         </div>
         <div class="right-item">
           <div class="item-label">邮箱 :</div>
@@ -47,6 +70,7 @@
           <div class="item-info">{{ userBean.sno }}</div>
         </div>
         <el-button type="primary" @click="reset()">保存修改</el-button>
+        <el-button type="success" @click="isShow=!isShow">余额提现</el-button>
         <el-button type="danger" @click="logout()">登出账号</el-button>
       </el-form>
     </el-tab-pane>
@@ -91,18 +115,6 @@
       </el-form>
       <el-button type="primary" @click="submitAuthentication()">提交审核</el-button>
     </el-tab-pane>
-    <el-tab-pane label="收益" name="fifth">
-      <div v-if="userBean.authentication===2">
-        <el-image></el-image>
-      </div>
-      <div v-else>
-        <div class="title">账户余额</div>
-        <div class="money">
-          998.00
-        </div>
-        <el-button @click="drawings">提现</el-button>
-      </div>
-    </el-tab-pane>
   </el-tabs>
 </template>
 
@@ -133,13 +145,13 @@ export default {
       },
       activeName: 'first',
       first: '',
-      userBean: '',
+      userBean: this.$store.state.userBean,
       authenticationForm: '',
       resetForm: {
         password: '',
         repassword: '',
       },
-      profilePhotoAction:'',
+      profilePhotoAction: '',
       rules: {
         repassword: [
           {validator: validatePass, trigger: 'blur'}
@@ -147,11 +159,26 @@ export default {
         password: [
           {validator: validatePass2, trigger: 'blur'}
         ],
-      }
+        realName: [
+          {required: true, message: '请填写户名', trigger: 'blur'}
+        ],
+        cardNo: [
+          {required: true, message: '请填写卡号', trigger: 'blur'}
+        ],
+        money: [
+          {required: true, message: '填写提现金额', trigger: 'blur'}
+        ],
+      },
+      isShow: false,
+      drawingsForm: {
+        realName: '',
+        cardNo: '',
+        money: ''
+      },
     }
   },
   methods: {
-    reset(){
+    reset() {
 
     },
     //登出
@@ -170,7 +197,7 @@ export default {
       Server.changePassword({
         newPassword: this.resetForm.repassword,
         oldPassword: this.resetForm.password
-      },this.token).then(resp => {
+      }, this.token).then(resp => {
         var data = resp.data
         console.log(data)
         if (data.code === 1) {
@@ -240,8 +267,13 @@ export default {
       return false
     },
     //提现
-    drawings(){
-
+    drawings() {
+      this.$notify({
+        title: '成功',
+        message: '提交审核成功',
+        type: 'success'
+      })
+      this.isShow = false
     }
   }
 }

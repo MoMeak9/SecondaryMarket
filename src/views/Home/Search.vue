@@ -15,42 +15,40 @@
         </div>
       </div>
       <div class="commInfo">
-        <el-row :gutter="25" type="flex">
-          <el-col :span="4" v-for="item in commList" :key="item">
-            <el-card :body-style="{padding:0}" shadow="hover">
-              <el-image :src="item.commPicList[0]" fit="cover" style="height: 200px;width: 200px;cursor: pointer"
-                        @click="getCommodityInfo(item.commodity.commNo)">
-                <div slot="placeholder" class="image-slot">
-                  加载中<span class="dot">...</span>
-                </div>
-              </el-image>
-              <div style="padding: 14px;">
-                <span>{{ item.commodity.commName }}</span>
-                <div class="bottom clearfix">
-                  <div class="price">￥{{ item.commodity.commPrice }}</div>
-                  <div class="sale">销量 {{ item.commodity.commSale }}</div>
-                </div>
+        <el-col :span="4" v-for="item in commList" :key="item" style="margin: 5px">
+          <el-card :body-style="{padding:0}" shadow="hover">
+            <el-image :src="item.commPicList[0]" fit="cover" style="height: 200px;width: 200px;cursor: pointer"
+                      @click="getCommodityInfo(item.commodity.commNo)">
+              <div slot="placeholder" class="image-slot">
+                加载中<span class="dot">...</span>
               </div>
-            </el-card>
-          </el-col>
-        </el-row>
-        <el-pagination
-            @current-change="changeSearchComm"
-            background
-            :current-page="currentPage"
-            :pager-count="11"
-            layout="prev, pager, next"
-            :page-count="pages" v-if="this.searchText">
-        </el-pagination>
-        <el-pagination
-            @current-change="changeQueryCommByTag"
-            background
-            :current-page="currentPage"
-            :pager-count="11"
-            layout="prev, pager, next"
-            :page-count="pages" v-else>
-        </el-pagination>
+            </el-image>
+            <div style="padding: 14px;">
+              <span>{{ item.commodity.commName }}</span>
+              <div class="bottom clearfix">
+                <div class="price">￥{{ item.commodity.commPrice }}</div>
+                <div class="sale">销量 {{ item.commodity.commSale }}</div>
+              </div>
+            </div>
+          </el-card>
+        </el-col>
       </div>
+      <el-pagination
+          @current-change="changeSearchComm"
+          background
+          :current-page="currentPage"
+          :pager-count="11"
+          layout="prev, pager, next"
+          :page-count="pages" v-if="this.searchText">
+      </el-pagination>
+      <el-pagination
+          @current-change="changeQueryCommByTag"
+          background
+          :current-page="currentPage"
+          :pager-count="11"
+          layout="prev, pager, next"
+          :page-count="pages" v-else>
+      </el-pagination>
     </div>
   </div>
 </template>
@@ -82,18 +80,18 @@ export default {
       this.commTag = this.$route.query.commTag
       console.log(this.searchText)
       // 获取搜索列表
-      if(this.searchText === undefined && this.commTag === undefined){
+      if (this.searchText === undefined && this.commTag === undefined) {
         //初始商品列表
         Server.initialCommList({
           params: {
-            num: 6,
+            num: 20,
           }
         }).then(resp => {
           this.commList = resp.obj
         }).catch(function (error) {
           console.log(error)
         })
-      }else if (this.searchText === undefined || this.searchText===null) {
+      } else if (this.searchText === undefined || this.searchText === null) {
         this.queryCommByTag()
       } else {
         this.searchComm()
@@ -240,6 +238,10 @@ export default {
 
   .commInfo {
     margin-top: 5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
     //  卡片布局
     .price {
       float: left;

@@ -294,6 +294,8 @@
 </template>
 <script>
 import myInfo from "@/components/myInfo";
+import {Server} from "@/service/api";
+
 export default {
   components: {
     myInfo
@@ -373,17 +375,17 @@ export default {
     this.userBean = this.$store.state.userBean
     this.token = this.$store.state.token
     this.$nextTick(function () {
-      // if (this.token === null || this.token === '') {
-      //   this.$notify({
-      //     title: '未登入',
-      //     message: '即将前往登入页',
-      //     type: 'error'
-      //   })
-      //   clearTimeout(this.timer);
-      //   this.timer = setTimeout(() => {
-      //     this.$router.push({path: '/login'});
-      //   }, 1500);
-      // }
+      if (this.token === null || this.token === '') {
+        this.$notify({
+          title: '未登入',
+          message: '即将前往登入页',
+          type: 'error'
+        })
+        clearTimeout(this.timer);
+        this.timer = setTimeout(() => {
+          this.$router.push({path: '/login'});
+        }, 1500);
+      }
       this.initData()
     })
   },
@@ -391,14 +393,9 @@ export default {
     //初始化方法
     initData() {
       // 获取购买历史(用户提交的订单列表接口)
-      this.$axios.get('/shop/order/queryUserSubmitOrderList', {
-        headers: {
-          Authorization: this.token
-        }
-      }).then(resp => {
-        var data = resp.data
-        if (data.code === 1) {
-          this.historyOrder = data.obj
+      Server.queryUserSubmitOrderList(this.token).then(resp => {
+        if (resp.code === 1) {
+          this.historyOrder = resp.obj
           for (let i = 0; i < this.historyOrder.length; i++) {
             this.historyOrder[i].createTime = this.rTime(this.historyOrder[i].createTime)
           }
@@ -407,27 +404,17 @@ export default {
         console.log(error)
       })
       // 获取用户在售卖的商品
-      this.$axios.get('/shop/commodity/queryUserComm', {
-        headers: {
-          Authorization: this.token
-        }
-      }).then(resp => {
-        var data = resp.data
-        if (data.code === 1) {
-          this.myCommodity = data.obj
+      Server.queryUserComm(this.token).then(resp => {
+        if (resp.code === 1) {
+          this.myCommodity = resp.obj
         }
       }).catch(function (error) {
         console.log(error)
       })
       // 获取用户已卖出的商品
-      this.$axios.get('/shop/order/queryUserReceiveOrderList', {
-        headers: {
-          Authorization: this.token
-        }
-      }).then(resp => {
-        var data = resp.data
-        if (data.code === 1) {
-          this.pendingOrder = data.obj
+      Server.queryUserReceiveOrderList(this.token).then(resp => {
+        if (resp.code === 1) {
+          this.pendingOrder = resp.obj
           for (let i = 0; i < this.pendingOrder.length; i++) {
             this.pendingOrder[i].createTime = this.rTime(this.pendingOrder[i].createTime)
             this.pendingOrder[i].deTimeFrom = this.rTime(this.pendingOrder[i].deTimeFrom)
