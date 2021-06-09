@@ -17,7 +17,7 @@
     <div id="content" style="overflow:auto">
       <!--      轮播图-->
       <div class="banner-slider">
-        <el-carousel indicator-position="outside" height="27vw" style="width: 48vw;margin: 0 auto">
+        <el-carousel indicator-position="outside" height="27vw" style="width: 55vw;margin: 0 auto">
           <el-carousel-item v-for="item in bannerList" :key="item.id">
             <el-image :src=item.picUrl fit="cover" @click="getCommodityInfo(item.commodity.commNo)"
                       class="banner-img"></el-image>
