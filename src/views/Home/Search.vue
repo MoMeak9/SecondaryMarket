@@ -84,7 +84,7 @@ export default {
         //初始商品列表
         Server.initialCommList({
           params: {
-            num: 20,
+            num: 15,
           }
         }).then(resp => {
           this.commList = resp.obj

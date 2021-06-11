@@ -48,13 +48,19 @@
           <el-button><i class="iconfont" @click="getCommTag(6)">&#xe620;</i></el-button>
         </el-tooltip>
       </div>
+      <!--      推荐表-->
+      <h2 class="box-title">转小二推荐</h2>
+      <FlashSale></FlashSale>
       <!--      热表-->
-      <div class="hot-list">
-        <div class="hot-wrap" v-for="item in hotList" :key="item.id" @click="getCommodityInfo(item.commodity.commNo)">
-          <div class="hot-item-tag"></div>
-          <el-image el-image :src="item.commPicList[0]" fit="cover" class="hot-item-img"></el-image>
-          <div class="hot-item-title">{{ item.commodity.commName }}</div>
-          <div class="hot-item-price">￥{{ item.commodity.commPrice }}</div>
+      <div class="goods-show">
+        <h2 class="box-title">商城精选</h2>
+        <div class="hot-list">
+          <div class="hot-wrap" v-for="item in hotList" :key="item.id" @click="getCommodityInfo(item.commodity.commNo)">
+            <div class="hot-item-tag"></div>
+            <el-image el-image :src="item.commPicList[0]" fit="cover" class="hot-item-img"></el-image>
+            <div class="hot-item-title">{{ item.commodity.commName }}</div>
+            <div class="hot-item-price">￥{{ item.commodity.commPrice.toFixed(2) }}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -62,9 +68,12 @@
 </template>
 <script>
 import {Server} from "@/service/api";
+import FlashSale from "@/components/FlashSale";
 
 export default {
-  components: {},
+  components: {
+    FlashSale,
+  },
   data() {
     return {
       bannerList: [],
@@ -188,19 +197,22 @@ export default {
     },
     //  搜索商品
     searchComm(text) {
-      this.$router.push({path: '/search',query:{
-          keyName:text
-        }})
+      this.$router.push({
+        path: '/search', query: {
+          keyName: text
+        }
+      })
     },
     // 前往分区
     getCommTag(commTag) {
-      this.$router.push({path: '/search',query:{
-          commTag:commTag
-        }})
+      this.$router.push({
+        path: '/search', query: {
+          commTag: commTag
+        }
+      })
     }
   },
-  computed: {
-  }
+  computed: {}
 }
 </script>
 <style lang="scss">
@@ -266,11 +278,20 @@ export default {
     background-color: #d3dce6;
   }
 
+  .box-title {
+    display: inline-block;
+    font-size: 22px;
+    font-weight: 200;
+    line-height: 58px;
+    color: #333;
+    margin-top: 20px;
+  }
+
   .hot-list {
     display: flex;
     flex-wrap: wrap;
     float: left;
-    margin: 50px 22vw 80px;
+    margin: 10px 22vw 80px;
 
     .hot-wrap {
       background-color: #fff;
