@@ -71,12 +71,15 @@
           </el-form>
         </span>
         <span slot="footer" class="dialog-footer">
-    <el-button @click="show=false">取 消</el-button>
-    <el-button type="primary" @click="submit">确认下单</el-button>
-  </span>
+          <el-button @click="show=false">取 消</el-button>
+          <el-button type="primary" @click="submit">确认下单</el-button>
+        </span>
       </el-dialog>
     </div>
     <div class="user-comment">
+      <div style="text-align: left;margin: 10px 0">
+        <h2>留言板</h2>
+      </div>
       <div class="comments-section">
         <div class="comment-post" v-for="item in commentList" :key="item.id">
           <div class="comment-img">

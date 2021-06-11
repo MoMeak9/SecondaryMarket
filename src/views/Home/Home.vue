@@ -226,6 +226,7 @@ export default {
 
     .el-input__inner {
       width: 100%;
+      height: 100%;
       border: none;
       border-radius: 0;
     }
