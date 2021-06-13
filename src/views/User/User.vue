@@ -15,6 +15,7 @@
                 class="avatar-uploader"
                 :headers="headers"
                 :show-file-list="false"
+                action="https://zhuanxiaoer.cn/market/user/updateUserInfo"
                 name="profile"
                 :on-success="handleProfilePhotoSuccess"
                 :before-upload="beforeProfilePhotoUpload">
@@ -318,12 +319,6 @@ export default {
         userEmail: '',
         authentication: '',
       },
-      authenticationForm: {
-        college: '',
-        sno: '',
-        userRealName: '',
-        profileUrl: ''
-      },
       menuTab: [
         {
           id: 1,
@@ -428,16 +423,11 @@ export default {
     //更改订单状态
     changeStatus(row, orderStatus) {
       if (orderStatus === 1) {
-        this.$axios.post('/shop/order/updateOrderStatus', this.$qs.stringify({
+        Server.updateOrderStatus({
           orderNo: row.orderNo,
-          orderStatus: orderStatus
-        }), {
-          headers: {
-            Authorization: this.token
-          }
-        }).then(resp => {
-          var data = resp.data
-          if (data.code === 1) {
+          orderStatus: orderStatus,
+        }, this.token).then(resp => {
+          if (resp.code === 1) {
             this.$notify({
               title: '成功',
               message: '发货成功！请及时发货！',
@@ -449,16 +439,11 @@ export default {
           console.log(error)
         })
       } else if (orderStatus === 4) {
-        this.$axios.post('/shop/order/updateOrderStatus', this.$qs.stringify({
+        Server.updateOrderStatus({
           orderNo: row.orderNo,
-          orderStatus: orderStatus
-        }), {
-          headers: {
-            Authorization: this.token
-          }
-        }).then(resp => {
-          var data = resp.data
-          if (data.code === 1) {
+          orderStatus: orderStatus,
+        }, this.token).then(resp => {
+          if (resp.code === 1) {
             this.$notify({
               title: '成功',
               message: '已取消订单',
@@ -470,16 +455,11 @@ export default {
           console.log(error)
         })
       } else if (orderStatus === 2) {
-        this.$axios.post('/shop/order/updateOrderStatus', this.$qs.stringify({
+        Server.updateOrderStatus({
           orderNo: row.orderNo,
           orderStatus: orderStatus
-        }), {
-          headers: {
-            Authorization: this.token
-          }
-        }).then(resp => {
-          var data = resp.data
-          if (data.code === 1) {
+        }, this.token).then(resp => {
+          if (resp.code === 1) {
             this.$notify({
               title: '成功',
               message: '已确认收货',
@@ -491,16 +471,11 @@ export default {
           console.log(error)
         })
       } else {
-        this.$axios.post('/shop/order/updateOrderStatus', this.$qs.stringify({
+        Server.updateOrderStatus({
           orderNo: row.orderNo,
-          orderStatus: orderStatus
-        }), {
-          headers: {
-            Authorization: this.token
-          }
-        }).then(resp => {
-          var data = resp.data
-          if (data.code === 1) {
+          orderStatus: orderStatus,
+        }, this.token).then(resp => {
+          if (resp.code === 1) {
             this.$notify({
               title: '成功',
               message: '订单申请取消',
@@ -515,15 +490,10 @@ export default {
     },
     //下架商品commNo
     deleteComm(commNo) {
-      this.$axios.post('/shop/commodity/deleteComm', this.$qs.stringify({
+      Server.deleteCommComment({
         commNo: commNo,
-      }), {
-        headers: {
-          Authorization: this.token
-        }
-      }).then(resp => {
-        var data = resp.data
-        if (data.code === 1) {
+      }, this.token).then(resp => {
+        if (resp.code === 1) {
           this.$notify({
             title: '成功',
             message: '操作成功！',
@@ -542,9 +512,11 @@ export default {
       })
     },
     getCommodityInfo(commNo) {
-      this.$store.commit('GET_COMM', commNo)
-      // 跳转至商品页面
-      this.$router.push({path: '/check'})
+      this.$router.push({
+        path: '/CommodityInfo', query: {
+          commNo: commNo
+        }
+      })
     },
     // 切换左侧菜单
     toggleMenuItem(data) {
@@ -633,72 +605,66 @@ export default {
           message: '尚未认证卖家身份',
           type: 'error'
         })
-      } else {
-        let config = {
-          headers: {
-            Authorization: this.token,
-            'Content-Type': 'multipart/form-data'
-          }
-        }
-        let param = this.imageFile
-        param.append('commDesc', this.commodity.description)
-        param.append('commName', this.commodity.name)
-        param.append('commPrice', this.commodity.price)
-        param.append('commStock', this.commodity.quantity)
-        param.append('commTag', this.commodity.commTag)
-        param.append('customTags', this.commodity.dynamicTags)
-        this.$axios.post('/shop/commodity/releaseComm', param, config).then(resp => {
-          var data = resp.data
-          if (data.code === 1) {
-            this.$notify({
-              title: '成功',
-              message: '创建商品成功，请等待审核',
-              type: 'success'
-            })
-            this.initData()
-            this.commodity = {
-              name: '',
-              description: '',
-              quantity: 1,
-              price: '',
-              commTag: '',
-              dynamicTags: ['包邮'],
-              inputVisible: false,
-              inputValue: ''
-            }
-            this.imageFile = new FormData()
-            this.imageUrl = ''
-            this.commType = ''
-            this.menuTab[3].isActive = false
-            this.menuTab[2].isActive = true
-          } else {
-            this.$notify({
-              title: '失败',
-              message: '商品上传失败',
-              type: 'error'
-            })
-            this.commodity = {
-              name: '',
-              description: '',
-              quantity: 1,
-              price: '',
-              commTag: '',
-              dynamicTags: ['包邮'],
-              inputVisible: false,
-              inputValue: ''
-            }
-            this.imageFile = new FormData()
-            this.imageUrl = ''
-            this.commType = ''
-          }
-        }).catch(function (error) {
-          this.$notify.error({
-            title: '错误',
-            message: '发布失败'
-          })
-          console.log(error)
-        })
       }
+      var param = this.imageFile
+      param.append('commDesc', this.commodity.description)
+      param.append('commName', this.commodity.name)
+      param.append('commPrice', this.commodity.price)
+      param.append('commStock', this.commodity.quantity)
+      param.append('commTag', this.commodity.commTag)
+      param.append('customTags', this.commodity.dynamicTags)
+      param.append('isFreeShipping ', 1)
+      Server.releaseComm(param, this.token).then(resp => {
+        this.imageFile = ''
+        if (resp.code === 1) {
+          this.$notify({
+            title: '成功',
+            message: '创建商品成功，请等待审核',
+            type: 'success'
+          })
+          this.initData()
+          this.commodity = {
+            name: '',
+            description: '',
+            quantity: 1,
+            price: '',
+            commTag: '',
+            dynamicTags: ['包邮'],
+            inputVisible: false,
+            inputValue: ''
+          }
+          this.imageFile = new FormData()
+          this.imageUrl = ''
+          this.commType = ''
+          this.menuTab[3].isActive = false
+          this.menuTab[2].isActive = true
+        } else {
+          this.$notify({
+            title: '失败',
+            message: '商品上传失败',
+            type: 'error'
+          })
+          this.commodity = {
+            name: '',
+            description: '',
+            quantity: 1,
+            price: '',
+            commTag: '',
+            dynamicTags: ['包邮'],
+            inputVisible: false,
+            inputValue: ''
+          }
+          this.imageFile = new FormData()
+          this.imageUrl = ''
+          this.commType = ''
+        }
+      }).catch(function (error) {
+        this.$notify.error({
+          title: '错误',
+          message: '发布失败'
+        })
+        console.log(error)
+      })
     },
     //自定义标签
     handleClose(tag) {
@@ -718,34 +684,6 @@ export default {
       }
       this.commodity.inputVisible = false;
       this.commodity.inputValue = '';
-    },
-    //自定义个人资料
-    reset() {
-      this.$axios.post('/shop/user/updateUserInfo', this.$qs.stringify({
-        userInfo: this.userBean.userInfo,
-        userName: this.userBean.userName,
-        userSex: this.userBean.userSex
-      }), {
-        headers: {
-          Authorization: this.token
-        }
-      }).then(resp => {
-        var data = resp.data
-        console.log(data)
-        if (data.code === 1) {
-          this.$notify({
-            title: '成功',
-            message: '修改成功',
-            type: 'success'
-          })
-        } else {
-          this.$notify({
-            title: '错误',
-            message: data.message,
-            type: 'error'
-          })
-        }
-      })
     },
     //  数据格式化
     rTime: function (date) {

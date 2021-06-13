@@ -10,8 +10,8 @@ export const Server = new class {
         return axios.get(hostlocation + '/commodity/bannerList', params).then((res) => res.data)
     }
 
-    deleteComm(params, token) {
-        return axios.post(hostlocation + '/commodity/deleteCommComment', params, {headers: {Authorization: token}}).then((res) => res.data)
+    deleteCommComment(params, token) {
+        return axios.post(hostlocation + '/commodity/deleteCommComment', qs.stringify(params), {headers: {Authorization: token}}).then((res) => res.data)
     }
 
     initialCommList(params) {
@@ -41,10 +41,7 @@ export const Server = new class {
     }
 
     releaseComm(params, token) {
-        return axios.get(hostlocation + '/commodity/releaseComm', {
-            headers: {Authorization: token},
-            params
-        }).then((res) => res.data)
+        return axios.post(hostlocation + '/commodity/releaseComm', params, {headers: {Authorization: token}}).then((res) => res.data)
     }
 
     searchComm(params) {
@@ -53,11 +50,11 @@ export const Server = new class {
 
 //    通知接口
     orderSendEmail(params, token) {
-        return axios.post(hostlocation + '/message/orderSendEmail', params, {headers: {Authorization: token}}).then((res) => res.data)
+        return axios.post(hostlocation + '/message/orderSendEmail', qs.stringify(params), {headers: {Authorization: token}}).then((res) => res.data)
     }
 
     sendEmail(params) {
-        return axios.post(hostlocation + '/message/sendEmail', params).then((res) => res.data)
+        return axios.post(hostlocation + '/message/sendEmail', qs.stringify(params)).then((res) => res.data)
     }
 
 //    用户相关
@@ -70,20 +67,20 @@ export const Server = new class {
     }
 
     changePassword(params, token) {
-        return axios.post(hostlocation + '/user/changePassword', params, {headers: {Authorization: token}}).then((res) => res.data)
+        return axios.post(hostlocation + '/user/changePassword', qs.stringify(params), {headers: {Authorization: token}}).then((res) => res.data)
     }
 
     register(params) {
         return axios.post(hostlocation + '/user/register', qs.stringify(params)).then((res) => res.data)
     }
 
-    updateUserInfo(params) {
-        return axios.post(hostlocation + '/user/updateUserInfo', qs.stringify(params)).then((res) => res.data)
+    updateUserInfo(params, token) {
+        return axios.post(hostlocation + '/user/updateUserInfo', qs.stringify(params), {headers: {Authorization: token}}).then((res) => res.data)
     }
 
 //    订单相关接口
     deleteOrderRecord(params, token) {
-        return axios.post(hostlocation + '/order/deleteOrderRecord', params, {headers: {Authorization: token}}).then((res) => res.data)
+        return axios.post(hostlocation + '/order/deleteOrderRecord', qs.stringify(params), {headers: {Authorization: token}}).then((res) => res.data)
     }
 
     queryUserReceiveOrderList(token) {
@@ -99,11 +96,11 @@ export const Server = new class {
     }
 
     submitOrder(params, token) {
-        return axios.post(hostlocation + '/order/submitOrder', params, {headers: {Authorization: token}}).then((res) => res.data)
+        return axios.post(hostlocation + '/order/submitOrder', qs.stringify(params), {headers: {Authorization: token}}).then((res) => res.data)
     }
 
     updateOrderStatus(params, token) {
-        return axios.post(hostlocation + '/order/updateOrderStatus', params, {headers: {Authorization: token}}).then((res) => res.data)
+        return axios.post(hostlocation + '/order/updateOrderStatus', qs.stringify(params), {headers: {Authorization: token}}).then((res) => res.data)
     }
 
 //    商品评论
@@ -118,4 +115,9 @@ export const Server = new class {
     queryCommCommentList(params) {
         return axios.get(hostlocation + '/commComment/queryCommCommentList', {params}).then((res) => res.data)
     }
+
+    uploadAuthenticationInfo(params, token) {
+        return axios.post(hostlocation + '/user/uploadAuthenticationInfo', params, {headers: {Authorization: token}}).then((res) => res.data)
+    }
+
 }

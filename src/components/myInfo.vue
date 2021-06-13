@@ -104,7 +104,6 @@
         </el-form-item>
         <el-upload
             class="avatar-uploader"
-            :headers="headers"
             :action=profilePhotoAction
             :show-file-list="false"
             name="profile"
@@ -140,13 +139,16 @@ export default {
       }
     }
     return {
-      headers: {
-        Authorization: this.$store.state.token
-      },
+      token: '',
       activeName: 'first',
       first: '',
       userBean: this.$store.state.userBean,
-      authenticationForm: '',
+      authenticationForm: {
+        college: '',
+        sno: '',
+        userRealName: '',
+        profileUrl: ''
+      },
       resetForm: {
         password: '',
         repassword: '',
@@ -179,7 +181,25 @@ export default {
   },
   methods: {
     reset() {
-
+      Server.updateUserInfo({
+        userInfo: this.userBean.userInfo,
+        userName: this.userBean.userName,
+        userSex: this.userBean.userSex
+      }, this.token).then(resp => {
+        if (resp.code === 1) {
+          this.$notify({
+            title: '成功',
+            message: '修改成功',
+            type: 'success'
+          })
+        } else {
+          this.$notify({
+            title: '错误',
+            message: resp.message,
+            type: 'error'
+          })
+        }
+      })
     },
     //登出
     logout() {
@@ -198,9 +218,7 @@ export default {
         newPassword: this.resetForm.repassword,
         oldPassword: this.resetForm.password
       }, this.token).then(resp => {
-        var data = resp.data
-        console.log(data)
-        if (data.code === 1) {
+        if (resp.code === 1) {
           this.$notify({
             title: '成功',
             message: '密码修改成功',
@@ -211,20 +229,12 @@ export default {
     },
     //提交审核内容
     submitAuthentication() {
-      let config = {
-        headers: {
-          Authorization: this.token,
-          'Content-Type': 'multipart/form-data'
-        }
-      }
       let param = this.AuthenticationImageFile;
       param.append('college', this.authenticationForm.college)
       param.append('sno', this.authenticationForm.sno)
       param.append('userRealName', this.authenticationForm.userRealName)
-      this.$axios.post('/shop/user/uploadAuthenticationInfo', param, config).then(resp => {
-        var data = resp.data
-        console.log(data)
-        if (data.code === 1) {
+      Server.uploadAuthenticationInfo(param, this.token).then(resp => {
+        if (resp.code === 1) {
           this.$notify({
             title: '成功',
             message: '提交审核成功',
@@ -275,6 +285,9 @@ export default {
       })
       this.isShow = false
     }
+  },
+  mounted() {
+    this.token = this.$store.state.token
   }
 }
 </script>

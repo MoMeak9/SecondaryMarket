@@ -171,10 +171,11 @@ export default {
       })
     },
     querySearchAsync(queryString, cb) {
-      this.$axios.get('/shop/commodity/preSearchComm', {params: {keyName: queryString, num: 6}}).then(resp => {
-        var respData = resp.data
-        if (respData.code === 1) {
-          var data = respData.obj
+      Server.preSearchComm({
+        params: {keyName: queryString, num: 6}
+      }).then(resp => {
+        if (resp.code === 1) {
+          var data = resp.obj
           var results = []
           data.forEach(element => {
             results.push({

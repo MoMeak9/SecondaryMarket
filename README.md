@@ -17,6 +17,7 @@ Vue全家桶 + Element_Ui
 - axios qs 等库
 - v-cropper
 ## 项目预览
-**转小二**：[待定]
+**转小二**：http://syhwdsj.xyz/
+
 ## 已知BUG
 - 很少了，所有接口可用

@@ -83,7 +83,7 @@
       <div class="comments-section">
         <div class="comment-post" v-for="item in commentList" :key="item.id">
           <div class="comment-img">
-            <el-avatar shape="square" :src="item.profileUrl" alt="user" fit="contain"></el-avatar>
+            <el-avatar shape="square" :src="item.profileUrl" alt="user"></el-avatar>
           </div>
           <div class="comment-details">
             <p>
