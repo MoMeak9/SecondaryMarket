@@ -235,8 +235,7 @@ export default {
           num: this.buyForm.num,
           phone: this.buyForm.phone
         }, this.token).then(resp => {
-          var data = resp.data
-          if (data.code === 1) {
+          if (resp.code === 1) {
             this.$notify({
               title: '成功',
               message: '下单成功，请在个人中心查看',
